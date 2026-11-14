@@ -1,0 +1,139 @@
+================================================================================
+KAATYA OS 3.0 -- STAGE 2.2 AI SECURITY, PRIVACY, AND PROVIDER SPECIFICATION (VERSION 5)
+Document ID: KAATYA-SEC-2.2-AI-v5
+Phase: CREDENTIAL VAULT REDESIGN, 15-PROVIDER TAXONOMY & EMERGENCY STOP
+Authorized Root: T:\KAATYA\
+Date: 2026-11-14
+Status: RECONCILED SECURITY & PRIVACY SPECIFICATION (VERSION 5)
+================================================================================
+
+1. AUTHORITATIVE 15-PROVIDER & ADAPTER TAXONOMY TABLE
+--------------------------------------------------------------------------------
+KAATYA OS 3.0 supports exactly 15 providers across 3 distinct architectural categories.
+Universal model gateways (OpenRouter, Hugging Face) are counted separately from direct
+commercial APIs. There are strictly THREE local engine adapters (no 4th adapter exists).
+
+Provider Name   Category        API Type       Default Endpoint                     Auth Method        Discovery  Connection Test Method       Billing Risk  Streaming Status
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+1. OpenAI       Commercial API  REST / HTTPS   https://api.openai.com/v1            Bearer Token (API) Supported  GET /v1/models (Zero token)  Pay-per-token Supported Active
+2. Anthropic    Commercial API  Messages REST  https://api.anthropic.com/v1/messages x-api-key Header    Supported  GET /v1/models (Zero token)  Pay-per-token Supported Active
+3. Google Gemini Commercial API REST v1beta    https://generativelanguage.googleapis.com API Key query/header Supported GET /v1beta/models (Zero)     Pay-per-token Supported Active
+4. Mistral AI   Commercial API  REST / HTTPS   https://api.mistral.ai/v1            Bearer Token       Supported  GET /v1/models (Zero token)  Pay-per-token Supported Active
+5. Groq Cloud   Commercial API  Ultra-fast LPU https://api.groq.com/openai/v1       Bearer Token       Supported  GET /v1/models (Zero token)  Pay-per-token Supported Active
+6. DeepSeek     Commercial API  REST / HTTPS   https://api.deepseek.com/v1          Bearer Token       Supported  GET /v1/models (Zero token)  Pay-per-token Supported Active
+7. Cohere       Commercial API  REST v2        https://api.cohere.com/v2            Bearer Token       Supported  GET /v2/models (Zero token)  Pay-per-token Supported Active
+8. Perplexity AI Commercial API REST / HTTPS   https://api.perplexity.ai            Bearer Token       Supported  GET /models (Zero token)     Pay-per-token Supported Active
+9. Together AI  Commercial API  REST / HTTPS   https://api.together.xyz/v1          Bearer Token       Supported  GET /v1/models (Zero token)  Pay-per-token Supported Active
+10. xAI         Commercial API  REST / HTTPS   https://api.x.ai/v1                  Bearer Token       Supported  GET /v1/models (Zero token)  Pay-per-token Supported Active
+11. OpenRouter  Universal Hub   Unified Proxy  https://openrouter.ai/api/v1         Bearer Token       Supported  GET /api/v1/models (Zero)    Aggregated    Supported Active
+12. Hugging Face Universal Hub  Inference API  https://api-inference.huggingface.co Bearer Token       Supported  GET /api/models (Zero token) Pay/Free Tier Supported Active
+13. llama.cpp   Local Engine    C++ / Socket   Unix Domain Socket / Local Library   Internal IPC (None)Local GGUF  Load GGUF Header (Offline)   Zero (Local)  Supported Active
+14. whisper.cpp Local Engine    C++ / Socket   Internal C++ Engine API              Internal IPC (None)Local Model Model Header Check (Offline) Zero (Local)  Supported Active
+15. piper       Local Engine    C++ / ONNX     Internal C++ Engine API              Internal IPC (None)Local ONNX  Model Check (Offline)        Zero (Local)  Supported Active
+
+Zero-Cost Connection Testing Rule: Connection tests MUST NEVER trigger paid token generation.
+Validation is performed exclusively via HTTP `GET /v1/models` (or equivalent schema metadata
+discovery routes) without submitting prompts or tokens to the inference pipeline.
+
+================================================================================
+2. REDESIGNED CREDENTIAL VAULT & KEY MANAGEMENT ARCHITECTURE
+================================================================================
+
+A. MASTER KEY DERIVATION & SALT SPECIFICATION
+--------------------------------------------------------------------------------
+- Master Secret Source: User-provided master passphrase entered at setup / PAM login.
+- Rejection of Machine-ID: `/etc/machine-id` is world-readable (`chmod 644`) by any local
+  process; it MUST NOT be treated as a secret or used as the sole encryption key source.
+- Random Salt Generation: A unique 32-byte (256-bit) cryptographically secure salt is
+  generated per installation via the Linux kernel `getrandom()` system call and stored
+  in the vault metadata header.
+- Key Derivation Function (KDF): Argon2id (RFC 9106):
+  * Parameters: Memory cost $m = 65,536\text{ KiB}$ (64 MiB), Time cost $t = 3$ iterations,
+    Parallelism $p = 4$ threads.
+  * Calibration Protocol: Setup wizard runs a non-destructive benchmark calibrating Argon2id
+    iterations to achieve an evaluation delay between 1.0 and 1.5 seconds on the target CPU.
+
+B. SYMMETRIC ENCRYPTION & DATA INTEGRITY
+--------------------------------------------------------------------------------
+- Cipher: AES-256-GCM (Galois/Counter Mode).
+- Key Length: 256 bits (32 bytes) derived from Argon2id.
+- Nonce Specification: Strictly unique 96-bit (12-byte) initialization vector (IV) generated
+  fresh via `getrandom()` for every individual encryption operation. Nonces are never reused.
+- Authentication Tag: 128-bit (16-byte) GCM authentication tag appended to ciphertext to
+  detect any tampering or storage corruption before decryption is attempted.
+
+C. KEY ROTATION & RECOVERY PROTOCOLS
+--------------------------------------------------------------------------------
+- Passphrase Change / Key Rotation:
+  1. User authenticates with current passphrase.
+  2. All secret records are decrypted into ephemeral locked memory.
+  3. A new 32-byte salt is generated via `getrandom()`.
+  4. Argon2id derives a new 256-bit AES key from the new passphrase.
+  5. All records are re-encrypted with fresh 96-bit nonces under the new key.
+  6. Atomic write to `vault.new` followed by atomic `rename()` over `credentials.enc`.
+  7. Plaintext buffers in memory are wiped immediately with `explicit_bzero()`.
+- Credential Recovery & Device Migration:
+  * Users may generate an armored, encrypted export (`kaatya-vault.backup`) protected by
+    an independent 256-bit recovery paper key (BIP-39 24-word seed phrase).
+  * Direct raw filesystem copying of `credentials.enc` to a new machine will decrypt cleanly
+    provided the user enters the correct master passphrase, as the salt is self-contained.
+
+D. MEMORY SECURITY & REALISTIC LIMITATIONS DISCLOSURE
+--------------------------------------------------------------------------------
+- Kernel Keyring Storage: Plaintext master keys are retained ephemerally in the Linux
+  Kernel Session Keyring (`keyctl`) with restricted POSIX access permissions.
+- In-Process Memory Protections:
+  * `mlock()`: Secret memory pages are pinned in physical RAM to prevent paging to disk swap.
+  * `madvise(..., MADV_DONTDUMP)`: Memory pages containing secrets are excluded from core dumps.
+  * `explicit_bzero()` / `sodium_memzero()`: Memory buffers are immediately overwritten with
+    zeros upon completion of the cryptographic operation or API request preparation.
+- CRITICAL SECURITY HONESTY DISCLOSURE:
+  * `mlock()` and `MADV_DONTDUMP` DO NOT make secrets impossible to extract.
+  * An attacker or debugger with `CAP_SYS_PTRACE`, root privileges (`UID 0`), kernel module
+    execution rights, or physical RAM bus access (cold-boot attacks) CAN extract secrets
+    from unlocked running memory.
+  * KAATYA architecture minimizes the plaintext exposure window to microsecond durations.
+
+E. LOGGING INTEGRITY: PREVENTION OVER FILTERING
+--------------------------------------------------------------------------------
+- Architectural Principle: Credentials must NEVER be intentionally written to logs.
+- Structural Log Design: System loggers employ structured JSON schemas where API key fields
+  are omitted or masked by definition (`••••••••[Last 4 chars]`).
+- Defense-in-Depth Sanitizer: A secondary regular-expression filter intercepts logger outputs
+  before disk write. However, regex filters are acknowledged as FALLIBLE (bypassable by
+  hex-encoding, base64 chunks, or line breaks). Structural omission is the primary security boundary.
+
+================================================================================
+3. AI EMERGENCY STOP & GRANULAR CONSENT ENGINE
+================================================================================
+
+A. GLOBAL EMERGENCY STOP ("KILL SWITCH") MECHANICS
+--------------------------------------------------------------------------------
+- Activation: Universal keyboard hotkey (`Super + Shift + X`) or persistent Taskbar AI Kill button.
+- Immediate Actions Executed:
+  1. Active Cloud API Connections: Kernel-level `SO_LINGER(0)` socket termination (sends TCP RST)
+     to all outbound HTTP/2, HTTP/1.1, and WebSocket connections owned by `kaatya-aid`.
+  2. Queued API Requests: In-flight request queue is wiped immediately; pending promises
+     rejected with `AbortError("Emergency Stop Triggered")`.
+  3. Local Model Inference: `llama.cpp` computation aborted immediately via `llama_cancel_eval()`
+     callback; scratch and compute buffers released.
+  4. Child & Helper Processes: `SIGTERM` issued to any active helper sandboxes or worker tools,
+     escalated to `SIGKILL` after 250 milliseconds if unresponsive.
+  5. Background AI Tasks: Background tasks marked `TERMINATED_BY_USER`; automated retries
+     and exponential backoff loops are completely killed.
+  6. Memory & Disk Buffers: Plaintext prompt buffers, clipboard caches, and screen frame grabs
+     in RAM are overwritten with zeros via `explicit_bzero()`; ephemeral files unlinked.
+
+B. GRANULAR PER-REQUEST CONSENT ENGINE
+--------------------------------------------------------------------------------
+- Rejection of Blanket Consent: A single global "Trust Cloud AI" toggle is strictly prohibited.
+- Two-Tier Consent Model:
+  * Tier 1 (Session Consent): Allowed ONLY for generic, non-sensitive queries (e.g. general coding syntax, dictionary lookups, public factual questions).
+  * Tier 2 (Mandatory Per-Request Authorization): REQUIRED whenever the AI payload touches:
+    1. Local filesystem files (documents, source code, spreadsheets, logs).
+    2. Active screen contents or pixel buffers.
+    3. Clipboard contents.
+    4. System configuration, hardware telemetry, or user identity files.
+- Modal Interface Details: Displays exact outbound payload preview, token count, target provider/model,
+  PII redaction highlights, and clear "Authorize Single Transmission" vs "Cancel / Run Offline" buttons.
+================================================================================

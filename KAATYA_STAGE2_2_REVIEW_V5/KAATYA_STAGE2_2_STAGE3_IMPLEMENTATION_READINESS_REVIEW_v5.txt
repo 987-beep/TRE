@@ -1,0 +1,83 @@
+================================================================================
+KAATYA OS 3.0 -- STAGE 2.2 STAGE 3 IMPLEMENTATION READINESS REVIEW (VERSION 5)
+Document ID: KAATYA-REVIEW-2.2-STAGE3-v5
+Phase: HOST PREFLIGHT AUDIT, BUILD PREREQUISITES & MILESTONE ROADMAP
+Authorized Root: T:\KAATYA\
+Date: 2026-11-14
+Development Status: STRICTLY LOCKED PENDING USER APPROVAL
+================================================================================
+
+1. HOST ENVIRONMENT NON-DESTRUCTIVE PREFLIGHT AUDIT
+--------------------------------------------------------------------------------
+A non-destructive preflight inspection of the Windows host environment was executed
+on 2026-11-14 to evaluate build readiness. The audit results are recorded below:
+
+Tool / Subsystem          Inspected Path / Detection Status        Readiness Finding
+-----------------------------------------------------------------------------------------------------------------------------
+Windows Subsystem Linux   `C:\Windows\system32\wsl.EXE`            UNINITIALIZED STUB: No Linux distribution installed
+QEMU Emulator             `qemu-system-x86_64` (None detected)     NOT INSTALLED: Virtual machine testing tool unavailable
+C/C++ Compiler (GCC)      `gcc` (None detected on Windows PATH)    NOT INSTALLED: Host cannot compile Linux C++ binaries
+C/C++ Compiler (Clang)    `clang` (None detected on Windows PATH)  NOT INSTALLED: LLVM/Clang toolchain unavailable
+Build System (CMake)      `cmake` (None detected on Windows PATH)  NOT INSTALLED: CMake build tool unavailable
+Build System (Meson)      `meson` (None detected on Windows PATH)  NOT INSTALLED: Meson build tool unavailable
+Build Tool (Ninja)        `ninja` (None detected on Windows PATH)  NOT INSTALLED: Ninja backend unavailable
+Version Control (Git)     `C:\...\GitHubDesktop\...\git.EXE` (2.47) AVAILABLE: Git version control operational
+Python Runtime            `C:\Python314\python.EXE` (Python 3.14)   AVAILABLE: Scripting and verification operational
+
+CRITICAL HOST READINESS FINDING:
+Windows PowerShell cannot natively execute Debian bootstrap commands (`debootstrap`, `live-build`),
+cannot compile Linux C++20 shared libraries (`libllama.so`, `kaatya-aid`), and cannot execute
+Wayland compositors directly on the Windows desktop.
+
+STAGE 3 PREREQUISITE:
+Before Milestone 1 can execute, a dedicated Linux build environment must be established.
+Recommended options:
+1. Initialize a Debian 13 "Trixie" WSL2 instance (`wsl --install -d Debian`).
+2. Run an isolated QEMU / VirtualBox Linux build appliance with root access inside `T:\KAATYA\`.
+
+================================================================================
+2. SEVEN STRUCTURED IMPLEMENTATION MILESTONES & ACCEPTANCE GATES
+================================================================================
+
+MILESTONE 1: BASE OS & BOOT INFRASTRUCTURE
+- Scope: Debian 13 base bootstrap (`debootstrap`), standard Debian LTS kernel (`linux-image-amd64`),
+  Syslinux (MBR) and GRUB2 (UEFI) live boot configuration.
+- Filesystem Setup: Btrfs default layout with dedicated subvolumes (`@`, `@home`, `@var_log`, `@snapshots`).
+- Test Gate: Headless QEMU virtual machine boots cleanly to multi-user target with systemd active.
+
+MILESTONE 2: DESKTOP SHELL & WINDOW MANAGEMENT
+- Scope: Qt 6 / QML Shell (`kaatya-shell`), KWin-Wayland wrapper, 6 supernatural anime themes,
+  20 custom Xcursor designs, and 1366x768 primary layout baseline.
+- Test Gate: Wayland session launches; 1366x768 reference UI renders cleanly at steady target frame rates.
+
+MILESTONE 3: CORE SYSTEM SERVICES & SECURITY CONTAINMENT
+- Scope: Bubblewrap sandboxing profiles (`bwrap`), Landlock LSM rules, UFW firewall integration,
+  Polkit authorization policies, and hardware kill switches.
+- Test Gate: Automated sandbox escape test confirms unprivileged processes cannot read `/home`.
+
+MILESTONE 4: AI DAEMON, LOCAL INFERENCE & PROVIDER GATEWAY
+- Scope: `kaatya-aid` C++20 daemon, D-Bus service, `llama.cpp` Qwen3-4B loader, Piper TTS,
+  Whisper STT, 15-provider gateway, Argon2id credential vault, and Super+Shift+X Emergency Kill Switch.
+- Test Gate: D-Bus round-trip latency < 50ms; verify model unloads after 15m idle; Wireshark confirms kill switch socket termination.
+
+MILESTONE 5: NATIVE CORE APPLICATIONS & PRODUCTIVITY SUITE
+- Scope: KAATYA Files (with AI summary), Settings, Task Manager, Notes, Document Centre, Coding Studio IDE.
+- Test Gate: All 7 native productivity apps launch, display without clipping, and pass smoke tests.
+
+MILESTONE 6: BROWSER, ANDROID & WINDOWS COMPATIBILITY RUNTIMES
+- Scope: KAATYA Browser (Chromium core with VA-API hardware video), Waydroid LXC container runner,
+  Bottles Wine prefix manager with Bubblewrap wrapper.
+- Test Gate: Chromium video playback via VA-API; test FOSS APK launch in Waydroid; test standard Win32 EXE launch in isolated prefix.
+
+MILESTONE 7: SOFTWARE CENTRE, INSTALLER, RECOVERY & FINAL VERIFICATION
+- Scope: KAATYA Software Centre, Calamares installer branding, `grub-btrfs` rollback hooks.
+- Test Gate: End-to-end dry-run installation into virtual disk; create snapshot; corrupt root;
+  reboot into GRUB snapshot menu and successfully rollback system.
+
+================================================================================
+3. STAGE 3 DEVELOPMENT STATUS CONFIRMATION
+================================================================================
+Stage 3 development remains STRICTLY LOCKED. No compiler will be invoked, no source
+code will be compiled, no packages will be installed, and no ISO will be generated
+without explicit written authorization from the user.
+================================================================================

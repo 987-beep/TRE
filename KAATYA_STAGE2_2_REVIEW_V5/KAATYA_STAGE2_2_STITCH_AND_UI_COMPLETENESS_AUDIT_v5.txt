@@ -1,0 +1,535 @@
+================================================================================
+KAATYA OS 3.0 -- STAGE 2.2 STITCH AND UI COMPLETENESS AUDIT (VERSION 5)
+Document ID: KAATYA-UI-2.2-AUDIT-v5
+Phase: 47-SCREEN INTERACTION, SOCIAL SERVICES & ACCESSIBILITY AUDIT
+Authorized Root: T:\KAATYA\
+Date: 2026-11-14
+Status: RECONCILED UI & STITCH SPECIFICATION (VERSION 5)
+================================================================================
+
+1. CRITICAL AUDIT CLARIFICATION: SPECIFICATION VS. VISUAL EVIDENCE
+--------------------------------------------------------------------------------
+The 47-screen inventory documented in KAATYA OS planning represents an exhaustive
+architectural specification, UI wireframe inventory, and functional interaction design.
+It DOES NOT represent proof that all 47 screens have been visually generated, compiled,
+or verified in a live desktop session. Physical UI verification is scheduled for Stage 3
+under Milestone 2.
+
+Primary Reference Display: 1366 x 768 Landscape Baseline (16:9 Aspect Ratio).
+Responsive Adaptation: All windows feature minimum dimensions of 640 x 480 and scale
+fluidly to Full HD (1920x1080), 2K (2560x1440), and 4K (3840x2160) resolutions.
+
+================================================================================
+2. COMPREHENSIVE 47-SCREEN STRUCTURED SPECIFICATION
+================================================================================
+
+Below is the authoritative design specification for all 47 individual KAATYA screens.
+Each screen defines geometry, components, actions, interaction states, keyboard navigation,
+and accessibility semantics:
+
+--------------------------------------------------------------------------------
+BATCH 1: DESKTOP SHELL & SYSTEM NAVIGATION (SCR-01 to SCR-07)
+--------------------------------------------------------------------------------
+
+SCR-01: Plymouth Boot Splash
+- Purpose: Early boot visual identity and disk encryption password prompt.
+- Layout: Fullscreen centered 1366x768 canvas with deep void backdrop and animated glowing logo.
+- Major Components: KAATYA OS animated vector emblem, pulsating energy ring, LUKS password input field, spinner.
+- Actions: Primary: Submit encryption passphrase; Secondary: Press Esc to toggle verbose boot log.
+- States: Loading: Rotating energy ring; Error: Red pulsing ring on incorrect passphrase; Disabled: Input locked during derivation.
+- Keyboard: Tab to toggle view, Enter to submit passphrase, Esc for verbose boot console.
+- Accessibility: High-contrast text prompt for password; audible beep on password prompt ready.
+- Responsive Behavior: Centers emblem identically across 1366x768 up to 4K displays.
+
+SCR-02: Login & Lock Screen
+- Purpose: User authentication, multi-user selection, and session locking.
+- Layout: Split layout: Left pane clock/weather (35% width); Right pane user card and password input (65% width).
+- Major Components: Avatar, user name selector, password/PIN box, session selector (Wayland/X11), power controls.
+- Actions: Primary: Log In (Enter); Secondary: Switch User, Sleep, Restart, Shut Down.
+- States: Loading: Shimmer on login button during PAM authentication; Error: "Incorrect password" shake animation.
+- Keyboard: Tab cycles users and buttons; Enter submits password; Esc clears input.
+- Accessibility: AT-SPI2 role `ROLE_PASSWORD_TEXT`; full Orca screen reader vocalization.
+
+SCR-03: User Welcome & OOBE Greeter
+- Purpose: First-boot setup wizard for locale, themes, Wi-Fi, and AI initialization.
+- Layout: Centered modal card (880x600px) with 5-step horizontal stepper.
+- Major Components: Stepper navigation, theme preview tiles, Wi-Fi network list, local AI benchmark runner.
+- Actions: Primary: "Next Step" / "Complete Setup"; Secondary: "Back", "Skip AI Setup".
+- States: Loading: Spinner during Wi-Fi connection and Argon2id benchmark; Empty: "No networks found" prompt.
+- Keyboard: Arrow keys navigate theme tiles; Alt+N triggers Next; Alt+B triggers Back.
+- Accessibility: Keyboard focus ring (2px cyan); ARIA/AT-SPI `ROLE_PAGE_TAB_LIST`.
+
+SCR-04: Desktop Workspace (Root Canvas)
+- Purpose: Primary application workspace, wallpaper canvas, and desktop icon grid.
+- Layout: Fullscreen canvas with 48px bottom taskbar margin; 80x90px grid cells for desktop icons.
+- Major Components: Desktop background, icon grid, selection marquee, desktop context menu.
+- Actions: Primary: Double-click to launch app; Secondary: Right-click for desktop settings / create folder.
+- States: Empty: Clean wallpaper canvas; Loading: Dimmed backdrop during workspace switch.
+- Keyboard: Ctrl+Alt+D shows desktop; Arrow keys select icons; Delete moves file to trash.
+- Accessibility: AT-SPI `ROLE_CANVAS`; desktop icons expose accessible names and paths.
+
+SCR-05: Taskbar & Dock
+- Purpose: System navigation, active window tracking, clock, system tray, and AI launcher orb.
+- Layout: 48px fixed bottom dock spanning 1366px; divided into Start (Left), Tasklist (Center), Tray (Right).
+- Major Components: Start button (Super), running app buttons, system tray icons, clock/calendar button, AI Orb.
+- Actions: Primary: Click icon to focus/minimize window; Secondary: Right-click window item to close.
+- States: Active: Glowing bottom indicator on focused app; Hover: Window thumbnail preview popover.
+- Keyboard: Super key toggles launcher; Super+1..9 activates taskbar position 1 through 9.
+- Accessibility: AT-SPI `ROLE_TOOL_BAR`; active window count vocalized by screen reader.
+
+SCR-06: Start Menu & App Launcher
+- Purpose: Categorized application menu, search entry point, and user shortcuts.
+- Layout: Bottom-left anchored popover (520x560px); left sidebar categories (160px), right app grid (360px).
+- Major Components: Search field, pinned apps grid, all-apps categorized list, user profile button, power button.
+- Actions: Primary: Click app to launch; Secondary: Right-click app to pin to taskbar / uninstall.
+- States: Loading: Skeleton grid during app list indexing; Empty: "No applications found" search message.
+- Keyboard: Up/Down/Left/Right navigates grid; Type immediately filters apps; Enter launches.
+- Accessibility: AT-SPI `ROLE_MENU`; categories announced as list items.
+
+SCR-07: Search Omnibox & Command Palette
+- Purpose: Global system search across files, apps, web, settings, and AI quick commands.
+- Layout: Centered floating pill/card (680x420px) positioned in top third of screen.
+- Major Components: Large input field with glowing border, categorized result list, action preview panel.
+- Actions: Primary: Enter executes top result / command; Secondary: Tab to cycle result categories.
+- States: Loading: Cyan scanning glow in search border; Empty: "Type to search apps, files, or ask AI".
+- Keyboard: Alt+Space opens omnibox; Esc closes; Down arrow selects result; Enter triggers.
+- Accessibility: AT-SPI `ROLE_AUTOCOMPLETE`; search result count vocalized.
+
+--------------------------------------------------------------------------------
+BATCH 2: PERMANENT AI SUBSYSTEM SCREENS (SCR-08 to SCR-13)
+--------------------------------------------------------------------------------
+
+SCR-08: AI Assistant HUD & Quick Prompt
+- Purpose: Compact floating overlay for rapid AI questions, document query, and voice command.
+- Layout: Bottom-right floating card (420x500px) or sliding side-panel.
+- Major Components: Conversation stream, prompt textarea, voice mic toggle, attachment clip, model pill badge.
+- Actions: Primary: Send prompt (Enter); Secondary: Toggle voice listening (Super+V), attach file.
+- States: Loading: Pulsing wave animation during model token streaming; Disabled: Grayed out during emergency stop.
+- Keyboard: Super+Space toggles HUD; Enter sends; Shift+Enter creates newline; Esc hides HUD.
+- Accessibility: AT-SPI `ROLE_CHAT_MESSAGE`; live region (`assertive`) vocalizes incoming tokens.
+
+SCR-09: Conversation Studio (Full AI Interface)
+- Purpose: Dedicated multi-turn conversation studio with branch management and artifact preview.
+- Layout: 3-column layout: Conversation history (220px), Chat thread (600px), Artifacts/Preview (546px).
+- Major Components: Session list, model selector dropdown, message bubbles, markdown code renderer, export button.
+- Actions: Primary: Send message; Secondary: Branch conversation, export markdown, copy code snippet.
+- States: Empty: Suggested starter prompt cards; Error: Red banner "Provider timeout / Local model busy".
+- Keyboard: Ctrl+N starts new chat; Ctrl+E exports conversation; Ctrl+/ focuses prompt input.
+- Accessibility: Full semantic heading hierarchy (H1-H4) in rendered markdown responses.
+
+SCR-10: Provider & API Management Centre
+- Purpose: Configuration of 15 AI providers, API key entry, and connection testing.
+- Layout: Master-detail window: Left provider list (240px); Right configuration card (600px).
+- Major Components: Provider status list, masked API key field, test connection button, model discovery picker.
+- Actions: Primary: "Save & Validate Key"; Secondary: "Test Connection", "Delete Key", "Set Default".
+- States: Loading: Spinner on Test Connection; Error: "Invalid API Key / Unauthorized"; Success: Green badge.
+- Keyboard: Tab moves between fields; Ctrl+S saves configuration; Esc cancels.
+- Accessibility: Password mask exposed via AT-SPI `ROLE_PASSWORD_TEXT`; test status vocalized.
+
+SCR-11: AI Model & Engine Centre
+- Purpose: Local model management (GGUF), quantization selection, and RAM governor controls.
+- Layout: Grid of installed model cards with top RAM consumption bar.
+- Major Components: RAM visualizer bar (16 GB breakdown), model cards (Qwen3, Nemotron), unload/load buttons.
+- Actions: Primary: "Load / Activate Model"; Secondary: "Unload from RAM", "Set Default", "Delete Model".
+- States: Loading: Progress bar during model weight mmap fault-in; Disabled: Nemotron disabled if RAM < 7 GB.
+- Keyboard: Arrow keys navigate cards; Space toggles load/unload; Enter views details.
+- Accessibility: RAM percentage exposed as accessible progress bar value.
+
+SCR-12: AI Semantic Memory Centre
+- Purpose: Inspection of vector embeddings database (`sqlite-vec`), memory chunks, and forget controls.
+- Layout: Searchable table of indexed memory records with right preview inspector.
+- Major Components: Memory search bar, chunk table (Date, Source, Tokens), similarity score slider, wipe button.
+- Actions: Primary: "Search Memories"; Secondary: "Delete Selected Memory", "Purge All Memories".
+- States: Empty: "No indexed memories found"; Loading: Table skeleton during vector scan.
+- Keyboard: Ctrl+F focuses search; Delete key purges selected memory record.
+- Accessibility: Accessible table headers with sort order announcements.
+
+SCR-13: Voice & Multilingual Speech Centre
+- Purpose: Audio STT/TTS configuration, microphone input levels, and voice model selection.
+- Layout: 2-column settings card: Left STT Whisper settings; Right TTS Piper settings.
+- Major Components: Live VU audio level meter, STT model selector, TTS voice preview picker, "Test Speech" button.
+- Actions: Primary: "Test Voice Synthesis"; Secondary: "Calibrate Microphone Sensitivity".
+- States: Active: VU meter bounces with microphone input; Loading: "Synthesizing test speech...".
+- Keyboard: Tab navigates controls; Space toggles microphone calibration test.
+- Accessibility: Sound output accompanied by closed-caption text preview on screen.
+
+--------------------------------------------------------------------------------
+BATCH 3: SYSTEM CUSTOMIZATION SCREENS (SCR-14 to SCR-17)
+--------------------------------------------------------------------------------
+
+SCR-14: System Settings Hub
+- Purpose: Central configuration hub for display, network, sound, users, and security.
+- Layout: Left sidebar category list (200px); Right scrollable settings view (700px).
+- Major Components: Category icons, setting toggle switches, sliders, dropdown pickers.
+- Actions: Primary: Toggle settings; Secondary: Reset category to defaults.
+- States: Normal: Clean list; Search State: Highlights matching configuration keywords.
+- Keyboard: Ctrl+F searches settings; Arrow keys cycle categories; Space toggles switches.
+- Accessibility: All switches expose AT-SPI `ROLE_CHECK_BOX` with state descriptions.
+
+SCR-15: Theme Studio (6 Supernatural Themes)
+- Purpose: Selection and customization of the 6 anime themes with live preview.
+- Layout: Top theme carousel (6 cards); Bottom live preview pane displaying shell widgets.
+- Major Components: 6 Theme cards with color palette swatches, accent picker, blur intensity slider.
+- Actions: Primary: "Apply Theme"; Secondary: "Export Theme Palette", "Reset to Default".
+- States: Active: Glowing border on current theme; Loading: 80ms cross-fade during palette change.
+- Keyboard: Left/Right arrows navigate themes; Enter applies selected theme.
+- Accessibility: Color values provided in text with color-contrast confirmation tags.
+
+SCR-16: Cursor Studio (20 Custom Cursors)
+- Purpose: Inspection and activation of the 20 custom Xcursor designs and trails.
+- Layout: 4x5 grid of interactive cursor demonstration tiles.
+- Major Components: 20 Cursor preview tiles, cursor size slider (24px, 32px, 48px), particle trail toggle.
+- Actions: Primary: Select cursor theme; Secondary: Adjust cursor scale.
+- States: Hover: Tile animates the specific cursor state (e.g. pointer, wait spinner, text beam).
+- Keyboard: Tab cycles tiles; Enter selects cursor theme; Arrow keys adjust scale slider.
+- Accessibility: High-visibility cursor scale option (48px) with high-contrast outline.
+
+SCR-17: Wallpaper & Visual Effects Studio
+- Purpose: Desktop wallpaper selection, multi-monitor wallpaper assignment, and shader controls.
+- Layout: Grid of wallpaper thumbnails with right display layout preview.
+- Major Components: Wallpaper thumbnail grid, "Add Custom Wallpaper" tile, blur shader slider, motion toggle.
+- Actions: Primary: "Set as Desktop Background"; Secondary: "Span Across Displays", "Toggle Reduced Motion".
+- States: Loading: Thumbnail generation skeleton; Error: "Unsupported image format".
+- Keyboard: Arrow keys navigate wallpapers; Enter sets active background.
+- Accessibility: Image descriptions provided for built-in supernatural wallpapers.
+
+--------------------------------------------------------------------------------
+BATCH 4: NATIVE CORE APPLICATIONS (SCR-18 to SCR-20, SCR-33 to SCR-39)
+--------------------------------------------------------------------------------
+
+SCR-18: File Explorer (KAATYA Files)
+- Purpose: Dual-pane filesystem navigation, file operations, and AI document summary.
+- Layout: Left navigation tree (200px); Center file grid/list (500px); Right AI inspector (300px).
+- Major Components: Breadcrumb path bar, file list, preview pane, AI "Summarize File" button.
+- Actions: Primary: Open file; Secondary: Cut/Copy/Paste, Summarize with AI, Compress to Archive.
+- States: Empty: "Folder is empty" graphic; Loading: Directory scanning indicator.
+- Keyboard: Ctrl+T new tab; F2 rename; Enter open; Ctrl+H toggle hidden files; Delete trash.
+- Accessibility: AT-SPI `ROLE_TREE_TABLE`; file names, sizes, and modification dates vocalized.
+
+SCR-19: Task Manager & Process Controller
+- Purpose: Process hierarchy inspection, CPU/RAM utilization, and process termination.
+- Layout: Filterable process table with top aggregate system utilization summary bar.
+- Major Components: Process table (PID, Name, User, CPU%, RAM, Runtime), "End Task" button.
+- Actions: Primary: "End Process" (SIGTERM); Secondary: "Force Kill" (SIGKILL), "Change Priority".
+- States: Error: Confirmation dialog before terminating system-critical processes.
+- Keyboard: Up/Down arrow selects process; Delete key issues SIGTERM; Shift+Delete issues SIGKILL.
+- Accessibility: Table rows expose process name and CPU percentage to screen readers.
+
+SCR-20: System Monitor & Hardware Telemetry
+- Purpose: Real-time telemetry graphs for 4-thread CPU, Intel HD 530 GPU, thermals, and memory.
+- Layout: 4-quadrant graphical dashboard: CPU telemetry, GPU telemetry, Memory/Swap, Thermals.
+- Major Components: Smooth SVG/Canvas line graphs, clock speed readouts, temperature gauges.
+- Actions: Primary: Change update interval (1s, 2s, 5s); Secondary: Export telemetry log.
+- States: Alert: Thermals graph flashes yellow if CPU temperature exceeds 85°C.
+- Keyboard: Tab switches between graph tabs; Space pauses live telemetry graphing.
+- Accessibility: Graph trends exposed as text: "CPU usage stable at 15 percent, temperature 48C".
+
+SCR-33: Document Centre
+- Purpose: Rich document reader and editor supporting PDF, Markdown, and TXT with AI analysis.
+- Layout: Top toolbar (format controls), Center document page canvas, Right AI annotation sidebar.
+- Major Components: Page view canvas, zoom slider, table of contents outline, AI query input.
+- Actions: Primary: Read/Edit document; Secondary: "Explain this paragraph", Export to PDF.
+- States: Loading: Page rendering skeleton; Error: "Corrupted PDF file".
+- Keyboard: PageUp/PageDown scrolls pages; Ctrl+F searches text; Ctrl+P prints.
+- Accessibility: Full AT-SPI document structure navigation with paragraph-by-paragraph reading.
+
+SCR-34: KAATYA Notes
+- Purpose: Quick markdown note-taking with automatic semantic tagging and SQLite storage.
+- Layout: Left note list (240px); Right markdown editor and live preview pane (600px).
+- Major Components: Note list, tag chips, markdown editor, word count indicator, sync status.
+- Actions: Primary: New note; Secondary: Delete note, insert AI summary, pin note.
+- States: Empty: "No notes yet. Click + to create your first note"; Auto-saving indicator.
+- Keyboard: Ctrl+N new note; Ctrl+S forces save; Ctrl+Shift+P toggles preview.
+- Accessibility: Edit field uses standard text editing cursor semantics.
+
+SCR-35: Calendar & Events
+- Purpose: Offline event scheduling, reminder management, and system task synchronization.
+- Layout: Month/Week/Day calendar grid view with right event agenda drawer.
+- Major Components: Calendar grid, mini-calendar navigator, event creation modal, reminder alert.
+- Actions: Primary: Create event; Secondary: Edit event, set reminder sound, delete event.
+- States: Empty: "No events scheduled for this day"; Active: Highlighted current date.
+- Keyboard: Arrow keys navigate calendar dates; Enter opens day detail; Ctrl+N creates event.
+- Accessibility: Dates announced with day of week and scheduled event count.
+
+SCR-36: Clock, Timer & Stopwatch
+- Purpose: World clock, countdown timer, precision stopwatch, and system alarms.
+- Layout: Top tab bar (Clock, Alarm, Stopwatch, Timer); Center digital display with circular track.
+- Major Components: Digital readout (large font), start/pause button, lap times table, time zone picker.
+- Actions: Primary: Start / Pause timer; Secondary: Reset, Record lap, Add alarm.
+- States: Active: Animated progress ring filling up; Alert: Modal popup with alarm chime.
+- Keyboard: Space starts/stops timer; R resets; Tab navigates controls.
+- Accessibility: Time countdown vocalized at periodic intervals when focused.
+
+SCR-37: Calculator (Standard & Programmer)
+- Purpose: Dual-mode desktop calculator supporting basic arithmetic and hex/bin programming.
+- Layout: Compact window (320x440px) with top expression display and keypad button grid.
+- Major Components: Dual-line display (formula + result), number pad, function buttons, mode toggle.
+- Actions: Primary: Calculate result (=); Secondary: Clear (C/AC), toggle Programmer mode.
+- States: Error: Displays "Cannot divide by zero" on invalid operation.
+- Keyboard: Numpad fully supported; Enter calculates; Esc clears; Backspace deletes digit.
+- Accessibility: Accessible button names; calculation results vocalized immediately.
+
+SCR-38: Coding Studio IDE
+- Purpose: Lightweight developer code editor with syntax highlighting, LSP, and terminal.
+- Layout: Left file tree (180px); Center tabbed editor (600px); Bottom collapsible terminal (200px).
+- Major Components: Editor canvas (Monaco/QML text), file tree, integrated terminal, AI code helper.
+- Actions: Primary: Save code (Ctrl+S); Secondary: Run code in terminal, AI Code Completion.
+- States: Loading: LSP server initializing spinner; Error: Red squiggly lines on syntax errors.
+- Keyboard: Full IDE keybindings (Ctrl+P quick open, Ctrl+Shift+F global search, F5 run).
+- Accessibility: AT-SPI `ROLE_TERMINAL` and `ROLE_EDITBAR` with line/column announcements.
+
+SCR-39: Research & Knowledge Centre
+- Purpose: Deep document synthesis, multi-source citations, and local vector RAG research hub.
+- Layout: Split view: Research query workspace on left; Graph citation view on right.
+- Major Components: Research prompt box, retrieved chunk cards, source citation links, export brief.
+- Actions: Primary: "Run Research Query"; Secondary: "Export Research Report", "Clear Context".
+- States: Loading: Step-by-step reasoning progress bar; Empty: "Enter research topic to begin".
+- Keyboard: Ctrl+Enter executes research query; Esc cancels search.
+- Accessibility: Sources formatted as accessible link lists with metadata descriptions.
+
+--------------------------------------------------------------------------------
+BATCH 5: COMPATIBILITY, ECOSYSTEM & SYSTEM MANAGEMENT (SCR-21 to SCR-32, SCR-40 to SCR-47)
+--------------------------------------------------------------------------------
+
+SCR-21: Unified Software Centre
+- Purpose: App discovery, installation, and update across APT, Flatpak, APK, and Wine formats.
+- Layout: Top banner featured apps; Center categorized grid; Left category sidebar.
+- Major Components: Search bar, featured carousel, app cards with runtime badges, install buttons.
+- Actions: Primary: "Install App"; Secondary: "Update All", "Uninstall", "View Changelog".
+- States: Loading: Download/installation progress bar; Error: "Dependency resolution failed".
+- Keyboard: Tab navigates app cards; Enter views app details; Ctrl+U opens updates tab.
+- Accessibility: Runtime badges (Native, Android, Windows) clearly vocalized.
+
+SCR-22: KAATYA Browser (Chromium Core)
+- Purpose: Full web platform with hardware-accelerated video and integrated AI assistant.
+- Layout: Top tab bar, URL omnibox, bookmarks bar, web content viewport, right AI side-panel.
+- Major Components: Web canvas, back/forward buttons, security shield indicator, AI assistant drawer.
+- Actions: Primary: Navigate URL; Secondary: Toggle AI Web Assistant, bookmark page, inspect DOM.
+- States: Loading: Progress bar in URL bar; Error: "Site cannot be reached" error page.
+- Keyboard: Ctrl+T new tab; Ctrl+W close tab; Ctrl+L focus address bar; F11 fullscreen.
+- Accessibility: Full W3C WAI-ARIA implementation through Chromium rendering engine.
+
+SCR-23: Social Media Hub (11 Configured Services)
+- Purpose: Central dashboard managing social media Web/PWA accounts and communication tools.
+- Layout: Left vertical service rail (64px icons); Main web container viewport (1100px).
+- Major Components: 11 Service icons with unread badges, isolated webview container, refresh button.
+- Actions: Primary: Switch service tab; Secondary: Mute notifications, clear cookies for service.
+- States: Loading: Service skeleton while web app loads; Empty: "Click icon to sign in to service".
+- Keyboard: Ctrl+1..9 switches between first 9 services; Ctrl+R reloads active service.
+- Accessibility: Unread notification counts exposed via accessible badges.
+
+SCR-24: Android Application Centre (Waydroid)
+- Purpose: Management of installed Android apps, Waydroid container controls, and APK launcher.
+- Layout: Grid of installed Android apps with top Waydroid status and memory consumption bar.
+- Major Components: Android app icon grid, Waydroid Start/Stop button, "Install APK" button.
+- Actions: Primary: Launch Android App; Secondary: "Restart Android Container", "Open F-Droid".
+- States: Loading: "Starting Android container..."; Disabled: Grayed out if container stopped.
+- Keyboard: Arrow keys navigate apps; Enter launches; Delete uninstalls app.
+- Accessibility: App icons announce "Android app" runtime type to screen readers.
+
+SCR-25: APK Inspector & Sideload Modal
+- Purpose: Pre-installation inspection of Android APK files, permissions, and security warning.
+- Layout: Centered modal card (480x560px) displaying APK metadata and requested permissions.
+- Major Components: App icon, package name, version, target SDK, permissions list, "Install" button.
+- Actions: Primary: "Install to Waydroid"; Secondary: "Cancel", "View Raw Manifest".
+- States: Warning: Yellow badge if APK requests sensitive permissions (Contacts, Location).
+- Keyboard: Tab moves between permissions; Enter confirms install; Esc cancels.
+- Accessibility: High-risk permissions highlighted with warning sounds and text tags.
+
+SCR-26: Windows Application Centre (Wine / Bottles)
+- Purpose: Management of Windows applications, Wine prefixes, and runtime dependencies.
+- Layout: List of configured Bottles prefixes with installed Win32/64 executable cards.
+- Major Components: Prefix list, "Create New Prefix" button, installed apps list, DXVK toggle.
+- Actions: Primary: Launch Windows App; Secondary: "Configure Wine Prefix", "Install EXE/MSI".
+- States: Loading: "Configuring Wine prefix..."; Error: "Missing Wine dependency (.NET/C++)".
+- Keyboard: Tab navigates prefixes; Enter launches selected executable.
+- Accessibility: Windows app cards vocalize runtime environment and prefix name.
+
+SCR-27: EXE / MSI Inspector & Sandbox Setup Modal
+- Purpose: Static security inspection of Windows executables before launching via Wine/Bottles.
+- Layout: Centered modal card (520x580px) displaying PE header metadata and sandbox parameters.
+- Major Components: File details, 32/64-bit architecture, digital signature status, sandbox profile picker.
+- Actions: Primary: "Run in Isolated Prefix"; Secondary: "Run in Sandbox Container", "Cancel".
+- States: Alert: Red warning badge if executable lacks Authenticode digital signature.
+- Keyboard: Enter confirms launch; Esc aborts; Tab cycles options.
+- Accessibility: Signature verification status explicitly vocalized before execution.
+
+SCR-28: Notification Panel & Action Centre
+- Purpose: Flyout panel displaying missed notifications, quick system toggles, and media controls.
+- Layout: Right-edge sliding drawer (340px width spanning screen height).
+- Major Components: Clear All button, grouped notification cards, quick toggles (Wi-Fi, BT, DND), volume slider.
+- Actions: Primary: Click notification to open app; Secondary: Dismiss notification, toggle DND.
+- States: Empty: "No new notifications"; Grouped: Collapsible application notification stacks.
+- Keyboard: Super+N toggles notification drawer; Esc closes drawer; Delete dismisses item.
+- Accessibility: AT-SPI `ROLE_NOTIFICATION`; screen reader vocalizes incoming notification text.
+
+SCR-29: Security & Privacy Centre
+- Purpose: Host firewall (UFW) status, hardware kill switches, permission audits, and security logs.
+- Layout: 3-column dashboard: Firewall status, active application permissions, audit event log.
+- Major Components: UFW toggle switch, blocked port list, camera/mic indicator, emergency kill button.
+- Actions: Primary: Toggle Firewall; Secondary: Revoke app permission, Trigger Emergency Stop.
+- States: Protected: Green shield indicator; Warning: Yellow shield if firewall is inactive.
+- Keyboard: Tab cycles controls; Space toggles switches; Alt+K triggers Emergency Stop.
+- Accessibility: Security status announced with clear accessible text tags.
+
+SCR-30: Network & Connectivity Manager
+- Purpose: Wi-Fi network scanning, Ethernet configuration, VPN connections, and proxy settings.
+- Layout: Master-detail window: Left interface list (Wi-Fi, Eth, VPN); Right connection list.
+- Major Components: Available Wi-Fi list with signal strength icons, password input, IP configuration.
+- Actions: Primary: Connect to network; Secondary: Disconnect, Forget Network, Add WireGuard VPN.
+- States: Scanning: Animated signal radar; Connecting: Spinner; Connected: Green checkmark.
+- Keyboard: Arrow keys navigate networks; Enter initiates connection; Esc cancels.
+- Accessibility: Signal strength vocalized as percentage: "Wi-Fi Network, 85 percent signal".
+
+SCR-31: Storage Backup & Snapshot Recovery Centre
+- Purpose: Management of Btrfs snapshots (`@snapshots`), system rollback, and user data backup.
+- Layout: Timeline view of system snapshots with disk storage utilization breakdown.
+- Major Components: Snapshot timeline, "Create Snapshot Now" button, "Rollback to Selected" button.
+- Actions: Primary: "Create System Snapshot"; Secondary: "Boot into Snapshot", "Delete Snapshot".
+- States: Loading: Spinner during snapshot creation; Error: "Insufficient disk space for snapshot".
+- Keyboard: Left/Right arrows navigate timeline; Enter views snapshot details.
+- Accessibility: Snapshots announced with exact timestamp and triggering event (e.g. "Pre-update").
+
+SCR-32: System Update Centre
+- Purpose: Graphical interface for system packages, security patches, and firmware updates.
+- Layout: Split window: Top update readiness banner; Bottom categorized list of available packages.
+- Major Components: "Check for Updates" button, "Install All Updates" button, changelog drawer.
+- Actions: Primary: Install updates (creates automatic pre-update Btrfs snapshot); Secondary: Refresh list.
+- States: Up-to-date: Green checkmark banner; Updates Available: Blue banner with package count.
+- Keyboard: Ctrl+R refreshes; Enter initiates update installation; Tab navigates package list.
+- Accessibility: Total download size and update severity vocalized to screen readers.
+
+SCR-40: Media Centre & Audio Player
+- Purpose: Local audio library playback, playlist manager, and PipeWire audio stream routing.
+- Layout: Left playlist drawer (200px); Center album art & track table; Bottom playback bar (64px).
+- Major Components: Track table, album art, play/pause, seek scrubber, volume slider, equalizer.
+- Actions: Primary: Play / Pause track; Secondary: Next track, previous track, create playlist.
+- States: Empty: "No music files found in ~/Music"; Playing: Live seek bar animation.
+- Keyboard: Space toggles play/pause; Left/Right arrows seek; Up/Down arrows adjust volume.
+- Accessibility: Track titles and elapsed time announced on track changes.
+
+SCR-41: KAATYA Video Player
+- Purpose: Hardware-accelerated (VA-API) video playback supporting 1080p60 H.264/HEVC media.
+- Layout: Fullscreen video canvas with auto-hiding floating playback controls.
+- Major Components: Video canvas, scrub bar, timecode, audio track selector, subtitle picker.
+- Actions: Primary: Play/Pause; Secondary: Subtitle selection, toggle hardware decode, fullscreen.
+- States: Loading: Centered buffering spinner; Error: "Codec not supported (software decode fallback)".
+- Keyboard: Space toggles play/pause; F toggles fullscreen; M mutes; Arrow keys seek 5s.
+- Accessibility: Embedded subtitles rendered with configurable high-contrast fonts.
+
+SCR-42: Image Viewer & Editor
+- Purpose: Photo viewing, cropping, color adjustment, and AI background removal tool.
+- Layout: Centered image canvas with top zoom controls and right editing tool palette.
+- Major Components: Image canvas, thumbnail filmstrip, crop tool, filter sliders, AI Remove BG button.
+- Actions: Primary: Zoom/Pan image; Secondary: Save edits, AI Background Removal, rotate.
+- States: Loading: High-res decoding progress bar; Editing: Interactive crop handles.
+- Keyboard: Left/Right arrow keys cycle images; + and - zoom; Ctrl+S saves.
+- Accessibility: EXIF metadata (date, camera, dimensions) exposed to screen readers.
+
+SCR-43: Screenshot & Screen Recording Tool
+- Purpose: Desktop screen capture, region selection, screen video recording, and AI OCR scan.
+- Layout: Translucent overlay canvas with floating control bar.
+- Major Components: Fullscreen/Window/Region capture buttons, delay timer picker, "AI OCR Text" button.
+- Actions: Primary: Capture screenshot; Secondary: Record 1080p video, Copy OCR text to clipboard.
+- States: Selecting: Drag handles for region selection; Active: Red recording indicator dot.
+- Keyboard: Enter captures selected region; Esc cancels capture; PrintScreen activates tool.
+- Accessibility: Capture action triggers audible camera shutter sound confirmation.
+
+SCR-44: Archive & Compression Manager
+- Purpose: Creation and extraction of `.zip`, `.tar.gz`, `.tar.zst`, and `.rar` file archives.
+- Layout: File list within archive with top extraction and compression toolbar.
+- Major Components: Archive file table, "Extract All" button, "Add Files" button, password box.
+- Actions: Primary: Extract archive; Secondary: Test archive integrity, create password-protected zip.
+- States: Loading: Progress bar during decompression; Error: "Incorrect archive password".
+- Keyboard: Enter opens selected file in archive; Delete removes file; Ctrl+E extracts.
+- Accessibility: Progress percentage announced at 25%, 50%, 75%, and completion.
+
+SCR-45: Clipboard History Manager
+- Purpose: Searchable history of copied text, code snippets, and images with privacy wipe.
+- Layout: Compact popover window (360x460px) anchored near mouse cursor or system tray.
+- Major Components: Search field, clipboard item cards with type icons (Text, Code, Image), "Clear" button.
+- Actions: Primary: Click item to paste into active window; Secondary: Delete item, Pin item.
+- States: Empty: "Clipboard history is empty"; Filtered: Shows matching snippets.
+- Keyboard: Super+V opens clipboard manager; Arrow keys select item; Enter pastes; Delete removes.
+- Accessibility: Clipboard snippet text vocalized with character and line count.
+
+SCR-46: Device & Hardware Manager
+- Purpose: Hardware component inspection (PCI, USB, Audio, Storage) and driver diagnostics.
+- Layout: Categorized hardware device tree on left; Detailed device property table on right.
+- Major Components: Device tree (Processor, GPU, Storage, Audio, Network), driver status badge.
+- Actions: Primary: Inspect device details; Secondary: Reload driver module, benchmark drive.
+- States: Normal: Clean device tree; Warning: Yellow icon on devices lacking firmware.
+- Keyboard: Up/Down arrow navigates hardware tree; Right arrow expands categories.
+- Accessibility: Hardware specifications exposed in standard accessible table format.
+
+SCR-47: Power & Session Controller
+- Purpose: System shutdown, restart, sleep, hibernate, logout, and session lock modal.
+- Layout: Centered translucent modal card (500x320px) with 5 distinct power action tiles.
+- Major Components: 5 Action buttons: Lock, Log Out, Sleep, Restart, Shut Down, countdown timer.
+- Actions: Primary: Execute selected power action; Secondary: Cancel (Esc).
+- States: Warning: Shows prompt if unsaved applications are active before shutting down.
+- Keyboard: L locks; S sleeps; R restarts; U shuts down; Esc cancels; Enter confirms.
+- Accessibility: Countdown timer vocalized: "System shutting down in 30 seconds. Press Esc to cancel".
+
+================================================================================
+3. RECONCILED THEME TOKENS TABLE (CSS & QML COMPATIBLE)
+================================================================================
+The table below provides clean, non-compressed columns with explicit spacing between
+all values across all six supernatural anime themes:
+
+Token Name            Limitless Void         Malevolent Shrine      Ten Shadows            Cursed Energy          Obsidian Cyan          Clean Studio
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+`--bg-base`           #0A0D18                #0F090A                #080A10                #081210                #101214                #F4F6F9
+`--bg-surface`        rgba(18, 24, 43, 0.85) rgba(26, 14, 16, 0.88) rgba(15, 20, 32, 0.85) rgba(14, 31, 28, 0.85) rgba(26, 29, 33, 0.90) rgba(255, 255, 255, 0.95)
+`--accent-primary`    #00E5FF                #FF1744                #2979FF                #00E676                #00BCD4                #0284C7
+`--accent-secondary`  #8A2BE2                #D50000                #448AFF                #00B0FF                #0288D1                #475569
+`--text-primary`      #F0F4FF                #FFF5F5                #EDF2FA                #F1FDF6                #ECEFF1                #0F172A
+`--text-muted`        #8A99B5                #A88688                #7586A1                #78998F                #90A4AE                #64748B
+`--border-card`       rgba(0, 229, 255, 0.25)rgba(255, 23, 68, 0.30)rgba(41, 121, 255, 0.22)rgba(0, 230, 118, 0.28)rgba(0, 188, 212, 0.20)rgba(2, 132, 199, 0.18)
+`--shadow-elevation`  0 8px 32px rgba(0,0,0,0.45) (Common across dark themes; soft slate shadow in Clean Studio)
+
+================================================================================
+4. 20 ORIGINAL XCURSOR DESIGNS
+================================================================================
+ID   Cursor Name            Visual Character & Description                           Animation & Scale
+---------------------------------------------------------------------------------------------------------
+C01  Kaatya_Pointer_Void    Sharp aerodynamic cyan plasma chevron with trailing apex Static 32px / 48px
+C02  Kaatya_Pointer_Shrine  Crimson blood-curved cursed blade arrow                  Static 32px / 48px
+C03  Kaatya_Pointer_Shadow  Deep midnight indigo kunai with subtle edge glow         Static 32px / 48px
+C04  Kaatya_Pointer_Cursed  Emerald spirit-energy needle with pulsing tip            Static 32px / 48px
+C05  Kaatya_Hand_Link       Open glowing palm with fingertip plasma spark            Hover state 32px
+C06  Kaatya_Hand_Grab       Closed claw fist gripping blue spatial distortion        Active drag state 32px
+C07  Kaatya_Hand_Grabbing   Tightly clenched fist with shockwave impact ring         Drop state 32px
+C08  Kaatya_Text_IBeam      Slender glowing energy beam with upper/lower serif caps  Text input 32px
+C09  Kaatya_Busy_Orb        Miniature spinning spatial sphere (Six Eyes pupil ring)  Animated 12-frame loop
+C10  Kaatya_Working_Bg      Pointer arrow with orbiting micro satellite particle     Animated 16-frame loop
+C11  Kaatya_Resize_Horiz    Bidirectional plasma arrows pointing East/West           Resize horizontal
+C12  Kaatya_Resize_Vert     Bidirectional plasma arrows pointing North/South         Resize vertical
+C13  Kaatya_Resize_Diag1    Diagonal arrows pointing North-East to South-West        Resize diagonal
+C14  Kaatya_Resize_Diag2    Diagonal arrows pointing North-West to South-East        Resize diagonal
+C15  Kaatya_Move_Omni       Four-way glowing crosshair star with central vortex      Pan / move state
+C16  Kaatya_Precision_Cross Fine 1px crosshair with hollow center targeting pip      Precision graphic tool
+C17  Kaatya_Forbidden_Deny  Crimson barrier circle with diagonal slash of cursed art Forbidden / blocked
+C18  Kaatya_Help_Context    Pointer arrow accompanied by pulsing question glyph      Context help state
+C19  Kaatya_Zoom_In         Circular magnifying lens with central glowing plus (+)   Zoom in tool
+C20  Kaatya_Zoom_Out        Circular magnifying lens with central glowing minus (-)  Zoom out tool
+
+================================================================================
+5. ELEVEN SOCIAL MEDIA SERVICES CLASSIFICATION & INTEGRATION
+================================================================================
+All 11 requested social platforms are categorized honestly by technical runtime:
+
+Service Name  Runtime Category       Primary Engine & Sandbox Wrapper              Isolation & Storage Policy
+-----------------------------------------------------------------------------------------------------------------------------
+1. Instagram  Web / PWA Application  Chromium Isolated Web Context (`--app=...`)   Isolated user data profile; sandbox jail
+2. Facebook   Web / PWA Application  Chromium Isolated Web Context (`--app=...`)   Isolated user data profile; sandbox jail
+3. Reddit     Web / Native Client    PWA in Chromium / Headline Qt client          Isolated storage; third-party FOSS client
+4. X (Twitter)Web / PWA Application  Chromium Isolated Web Context (`--app=...`)   Isolated cookie jar; private cache
+5. Snapchat   Web PWA / Android APK  Web PWA / Waydroid APK fallback               Gated camera/mic permissions
+6. LinkedIn   Web / PWA Application  Chromium Isolated Web Context (`--app=...`)   Standard web sandbox isolation
+7. Pinterest  Web / PWA Application  Chromium Isolated Web Context (`--app=...`)   Standard web sandbox isolation
+8. WhatsApp   Web PWA / Android APK  WhatsApp Web PWA / Waydroid APK fallback      Local sandbox; notification bridge
+9. Telegram   Native Linux Client    Qt 6 C++ Official Linux Desktop Binary        Bubblewrap sandbox; native Wayland
+10. Discord   Web PWA / Linux Client Chromium Web PWA / ArmCord Native Client      Electron/Chromium multi-process sandbox
+11. YouTube   Web PWA / FreeTube     Chromium Web PWA / FreeTube Privacy Player    Mesa VA-API hardware video acceleration
+================================================================================

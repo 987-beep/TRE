@@ -1,0 +1,124 @@
+================================================================================
+KAATYA OS 3.0 -- STAGE 2.2 HARDWARE AND PERFORMANCE REALISM (VERSION 5)
+Document ID: KAATYA-PERF-2.2-REALISM-v5
+Phase: PERFORMANCE BOUNDARY & REPRODUCIBLE BENCHMARK SPECIFICATION
+Authorized Root: T:\KAATYA\
+Date: 2026-11-14
+Status: RECONCILED PERFORMANCE REALISM REPORT (VERSION 5)
+================================================================================
+
+1. HARDWARE BASELINE AUDIT (HP SLIMLINE PC 270-P0XX)
+--------------------------------------------------------------------------------
+- System Model: HP Slimline Desktop PC 270-p0xx
+- Processor: Intel Core i3-6100T (Skylake 14nm, 2 Cores, 4 Threads @ 3.20 GHz, 3MB Cache)
+- Thermal Design Power (TDP): 35 Watts (Low-power desktop thermal ceiling)
+- Vector Extensions: MMX, SSE4.2, AVX2, FMA3 (AVX-512 is NOT supported on Skylake)
+- Integrated GPU: Intel HD Graphics 530 (Gen9 GT2, 24 Execution Units, 350-950 MHz)
+- System Memory: 16.0 GB DDR4-2133 MHz (Dual-channel configuration)
+- Target Reference Display: 1366 x 768 @ 60 Hz Landscape Baseline
+
+2. RECLASSIFIED PERFORMANCE TIERS: ESTIMATES & TARGETS
+--------------------------------------------------------------------------------
+Every performance figure in this section is an engineering ESTIMATE or design TARGET
+based on microarchitecture capabilities. Zero claims represent measured physical benchmarks
+until Stage 3 physical execution.
+
+TIER 1: BASIC DESKTOP RESPONSIVENESS
+- Scope: Cursor movement, 2D window dragging, text editing, static desktop rendering.
+- Classification: DESIGN TARGET: 60 FPS (Frame Time: 16.6 ms).
+- Technical Rationale: Mesa 24.x Iris driver provides hardware-accelerated 2D surface blitting;
+  Wayland hardware cursor plane operates independently of scene composition.
+
+TIER 2: DESKTOP WINDOW ANIMATIONS
+- Scope: Window maximize/minimize, taskbar flyout, launcher grid transitions.
+- Classification: DESIGN TARGET: 50 - 60 FPS (Subject to shader simplicity).
+- Technical Constraint: Achievable only with single-pass Kawase blur and linear opacity scales.
+  Multi-pass Gaussian blurs will saturate the 24 Execution Units and must be avoided.
+
+TIER 3: COMPLEX VISUAL EFFECTS & GLASS BLENDING
+- Scope: Multiple stacked translucent frosted-glass surfaces with live background updates.
+- Classification: ESTIMATED BOUNDARY: 30 - 45 FPS (Probable frame drops under load).
+- Technical Constraint: Intel HD 530 has 24 EUs sharing memory bandwidth with CPU. Fill-rate
+  limitations will cause stutter if more than 3 blended surfaces overlap.
+
+TIER 4: VIDEO PLAYBACK & MULTIMEDIA
+- Scope: 1080p 60fps video decoding in KAATYA Video Player and Chromium.
+- Classification: DESIGN TARGET: 60 FPS (Hardware-accelerated profiles).
+- Hardware Codec Split:
+  * H.264 (AVC) & H.265 (HEVC 8-bit/10-bit): Offloaded to Intel VA-API MFX hardware ASIC.
+    ESTIMATED CPU UTILIZATION: < 10% on Core i3-6100T.
+  * AV1 Decoding: Intel HD 530 lacks hardware AV1 decoding (AV1 added in Gen12/Xe).
+    AV1 will fall back to software decoding (`dav1d`), consuming 50% - 90% CPU and dropping frames at 1080p60.
+
+TIER 5: LOCAL AI INFERENCE (QWEN3-4B-Q4_K_M)
+- Scope: Daily driver token generation on `llama.cpp` using AVX2.
+- Classification: ESTIMATED THROUGHPUT: ~8 - 14 tokens/second.
+- Thread Allocation: 3 threads assigned to llama.cpp compute; 1 thread reserved for OS/UI.
+- Thermal Behavior: Sustained 4-thread CPU load on 35W TDP will cause clock degradation
+  after ~2 to 3 minutes, dropping throughput by approximately 20%.
+
+TIER 6: SPECIALIST AI INFERENCE (NEMOTRON 7.5B Q4_K_M)
+- Scope: Deep reasoning / coding assistant inference on on-demand Nemotron model.
+- Classification: ESTIMATED THROUGHPUT: ~3 - 6 tokens/second.
+- Constraint: High memory bandwidth demand across DDR4-2133 bus. Qwen3-4B must be evicted first.
+
+TIER 7: COMBINED HEAVY MULTITASKING
+- Scope: YouTube 1080p streaming + Browser (10 tabs) + Local LLM inference.
+- Classification: SYSTEM OVERLOAD RISK WITHOUT ADAPTIVE THROTTLING.
+- Enforcement: KAATYA system governor automatically demotes AI compute thread priority via
+  `nice` and cgroups v2 CPU weight when interactive user inputs or video playback occur.
+
+================================================================================
+3. EIGHT REPRODUCIBLE BENCHMARK SUITES & ACCEPTANCE PROTOCOLS
+================================================================================
+To replace estimates with empirical data during Stage 3 testing, the following
+reproducible benchmark protocols are established:
+
+BENCHMARK 1: DESKTOP FRAME TIME & COMPOSITOR LATENCY
+- Tool: `kwin_wayland --debug` overlay and `mangohud` (Wayland mode).
+- Command: `mangohud --dlsym kwin_wayland`
+- Metric: 99th percentile frame time (Target: < 16.67 ms). Max frame drop rate < 1.0%.
+
+BENCHMARK 2: ANIMATION SMOOTHNESS & FRAME DROPS
+- Tool: KWin frame-render diagnostic script (`kwin-bench.sh`).
+- Command: Automated script cycling 100 window maximize/minimize events via `ydotool`.
+- Metric: Dropped frame count recorded via KWin Compositor statistics D-Bus interface.
+
+BENCHMARK 3: GPU & CPU UTILIZATION
+- Tool: `intel_gpu_top` (part of `intel-gpu-tools`) and `perf top`.
+- Command: `sudo intel_gpu_top -J` logging Render/3D engine busy percentage.
+- Metric: Render/3D engine usage during idle desktop < 5%; during window dragging < 45%.
+
+BENCHMARK 4: HARDWARE VIDEO DECODE VALIDATION
+- Tool: `vainfo` and `mpv --hwdec=vaapi`.
+- Command:
+  `vainfo --display drm --device /dev/dri/renderD128`
+  `mpv --hwdec=vaapi --vo=gpu --profile=fast --log-file=mpv.log test_1080p60_h264.mp4`
+- Metric: Confirm `VAProfileH264High` and `VAProfileHEVCMain` show `VAEntrypointVLD`.
+  Mpv log must confirm zero dropped frames across 5-minute continuous playback.
+
+BENCHMARK 5: LOCAL LLM TOKEN THROUGHPUT & LATENCY
+- Tool: `llama-bench` (from compiled `llama.cpp` tools).
+- Commands:
+  `llama-bench -m T:\KAATYA\Qwen3-4B-Q4_K_M.gguf -p 512 -n 128 -t 3 -ngl 0`
+  `llama-bench -m T:\KAATYA\Nemotron-3.5-Bolt-E4B-Q4_K_M.gguf -p 512 -n 128 -t 3 -ngl 0`
+- Metric: Prompt processing speed (pp512 in t/s) and text generation speed (tg128 in t/s).
+  Report exact measured t/s and time-to-first-token (TTFT) latency.
+
+BENCHMARK 6: MODEL LOAD & UNLOAD LATENCY
+- Tool: Custom POSIX shell timer measuring process initialization and mmap fault-in.
+- Command: `/usr/bin/time -v kaatya-aid --load-model qwen3-4b`
+- Metric: Model readiness time (Target: < 2.5 seconds on SSD via mmap; record HDD time).
+
+BENCHMARK 7: THERMAL CEILING & CLOCK STABILITY
+- Tool: `sensors` (`lm-sensors`) and `turbostat` / `/sys/devices/system/cpu/cpu*/cpufreq`.
+- Command: `sudo turbostat --interval 1 --quiet --show PkgWatt,CorWatt,CoreTmp,Bzy_MHz`
+- Protocol: Run continuous 10-minute LLM generation. Record thermal throttling onset,
+  maximum package temperature (Tjunction limit: 100°C), and sustained frequency floor.
+
+BENCHMARK 8: MEMORY PRESSURE & SWAP ENGAGEMENT
+- Tool: Linux PSI (`/proc/pressure/memory`) and `vmstat 1`.
+- Command: `tail -f /proc/pressure/memory` during Heavy Multitasking Profile 5.
+- Metric: `some avg10` memory pressure must remain below 20.0; zero pages written to
+  physical disk swap (only zram compressed swap permitted).
+================================================================================

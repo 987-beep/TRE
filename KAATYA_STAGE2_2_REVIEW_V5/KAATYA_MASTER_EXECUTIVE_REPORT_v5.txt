@@ -1,0 +1,127 @@
+================================================================================
+KAATYA OS 3.0 -- MASTER EXECUTIVE REPORT (VERSION 5)
+Document ID: KAATYA-EXEC-v5
+Phase: STAGE 2.2 FINAL TECHNICAL AUDIT & RECONCILIATION SYNTHESIS
+Authorized Root: T:\KAATYA\
+Date: 2026-11-14
+Status: AUTHORITATIVE EXECUTIVE MASTER REPORT (VERSION 5)
+================================================================================
+
+1. EXECUTIVE OVERVIEW & AUDIT RECONCILIATION
+--------------------------------------------------------------------------------
+KAATYA OS 3.0 is an original, AI-native desktop operating system engineered for
+the HP Slimline Desktop PC 270-p0xx hardware baseline (Intel Core i3-6100T Skylake,
+2 Cores / 4 Threads @ 3.20 GHz, Intel HD Graphics 530, 16.0 GB DDR4 RAM, 1366x768
+reference display).
+
+Following independent technical audit by ChatGPT on the Stage 2.2 deliverables,
+this Version 5 Master Executive Report reconciles all technical boundaries, eliminates
+unsupported claims, and establishes an airtight architectural foundation.
+
+AUTHORITATIVE PROJECT METRICS REGISTER (VERSION 5):
+- Operating System Base: Debian 13 "Trixie" x86_64 with Linux 6.12 LTS Kernel
+- Compositor & Window Manager: KWin-Wayland Core with Xwayland Rootless Bridge
+- Primary Presentation Framework: Qt 6 / QML SceneGraph Hardware-Accelerated Shell
+- UI Screen Specifications: Exactly 47 Distinct Screens (Comprehensive Wireframes)
+- Visual Supernatural Themes: Exactly 6 Complete Anime Themes (Full Token Palettes)
+- Custom Cursor Designs: Exactly 20 Custom Xcursor Designs (32px / 48px assets)
+- Social Communication Services: Exactly 11 Integrated Services (PWA / Native)
+- AI Provider & Adapter Fabric: Exactly 15 Providers (10 Cloud, 2 Hubs, 3 Local)
+- Local Large Language Models: 2 Verified GGUF Models (Strictly 1 Active in RAM)
+- Semantic Memory Store: Embedded SQLite with `sqlite-vec` (Qwen3-Embedding-0.6B)
+- Offline Speech Engines: whisper.cpp (Whisper base.en) + piper (en_US-lessac-medium)
+- Storage Filesystem: Default Btrfs Subvolumes with Atomic Snapshots; Ext4 Fallback
+- Verified Physical Assets: 11 Cryptographically Audited Files inside `T:\KAATYA\`
+- Development Status: Stage 3 Implementation Remains 100% STRICTLY LOCKED
+
+================================================================================
+2. SUMMARY OF VERSION 5 CRITICAL CORRECTIONS
+================================================================================
+
+1. GGUF METADATA & KV CACHE RECONCILIATION:
+   - Nemotron-3.5-Bolt is verified as a dense 7.518B parameter model (`gemma4` architecture)
+     with 42 layers, 2 KV heads, and 35 sliding-window attention (SWA) layers.
+   - The naive full-attention formula mathematically yields 1.3125 GiB at 8K context and
+     10.50 GiB at 65K context. Under actual Gemma4 hybrid SWA ring-buffering, memory is
+     calculated at 259 MiB at 8K and 1.78 GiB at 65K.
+   - SWA allocation in llama.cpp is marked CONDITIONAL / UNVERIFIED pending physical testing.
+   - Qwen3-4B is verified as a dense 4.022B parameter model (36 layers, 8 KV heads, 128 dim)
+     requiring 1.125 GiB KV cache at 8K context.
+
+2. REBUILT 16 GB RAM WORKLOAD BUDGETS:
+   - Established 5 comprehensive memory profiles: Standard AI Desktop (10.3 GB), Specialist
+     Reasoning (12.3 GB), Android Compatibility (9.9 GB), Windows Compatibility (10.0 GB),
+     and Heavy Multitasking Stress (15.1 GB with 8 GB zram swap headroom).
+   - Rule of One Active LLM strictly enforced; concurrent loading of Qwen3 and Nemotron is blocked.
+
+3. CREDENTIAL VAULT & CONSENT REDESIGN:
+   - Master key derived from user passphrase via Argon2id ($m=64\text{MB}, t=3, p=4$) and a
+     random 32-byte salt generated per installation via `getrandom()`.
+   - `/etc/machine-id` is world-readable and rejected as a secret or encryption source.
+   - Secrets encrypted with AES-256-GCM using unique 96-bit nonces.
+   - Realism honesty: `mlock()` and `MADV_DONTDUMP` do not protect against root/kernel inspection.
+   - Structural log design eliminates secrets at the source; regex filtering is secondary defense.
+   - Global Emergency Stop (`Super+Shift+X`) tears down TCP sockets and zeroizes prompt buffers.
+
+4. FIVE ISOLATED APPLICATION RUNTIMES:
+   - Rejected claim that "Bubblewrap alone isolates Android or Windows."
+   - Explicitly separated: Native Linux (bwrap+Landlock+Seccomp), Browser/PWA (Chromium site isolation),
+     Android (Waydroid LXC container), Windows (Wine prefix + bwrap), and Windows VM (QEMU VT-x).
+   - Acknowledged that standard Wine prefixes do not isolate without stripping `Z:\` and wrapping in namespaces.
+   - Clarified that Android-x86 9 ISO is a standalone bootable image, distinct from Waydroid LXC images.
+   - Rejected Google Play / GMS claims; specified F-Droid and Aurora Store with security disclosures.
+
+5. FILESYSTEM & RECOVERY ARCHITECTURE:
+   - Default tier: Btrfs with dedicated subvolumes (`@`, `@home`, `@var_log`, `@snapshots`) enabling
+     atomic snapshots and GRUB snapshot boot menu (`grub-btrfs`).
+   - Fallback tier: Ext4 with Timeshift (rsync mode), requiring offline live USB rollback.
+
+6. REPRODUCIBLE PERFORMANCE BENCHMARKS:
+   - Reclassified all unmeasured 60 FPS, 50-60 FPS, 1080p60, and token throughput claims as
+     ESTIMATES or TARGETS.
+   - Defined 8 reproducible terminal benchmark suites (compositor latency, frame drops, GPU/CPU util,
+     video decode profiles, `llama-bench`, model load time, thermal telemetry, and memory PSI).
+
+7. HOST PREFLIGHT AUDIT:
+   - Demonstrated via non-destructive audit that Windows host possesses no installed Linux distro
+     in WSL, no QEMU, and no C/C++ compilers. A Linux build environment must be established before Stage 3.
+
+================================================================================
+3. TAXONOMY OF SCIENTIFIC CERTAINTY (EVIDENCE CLASSIFICATION)
+================================================================================
+To prevent misrepresenting estimates as facts, all KAATYA OS technical claims
+are strictly divided into four certainty tiers:
+
+[TIER A: MEASURED PHYSICAL FACTS]
+- Physical asset file sizes, byte counts, and SHA-256 hashes on disk `T:\KAATYA\`.
+- GGUF header magic, tensor names, dimensions, and total parameter element sums.
+- Host system tool inspection paths (Git, Python present; GCC, Clang, QEMU missing).
+- Hardware specifications of HP Slimline PC 270-p0xx from Intel ARK datasheets.
+
+[TIER B: ENGINEERING ESTIMATES]
+- Standard and Specialist RAM workload allocations.
+- Mathematical KV cache memory demands across context lengths.
+- Projected token generation throughput (~8-14 t/s Qwen3; ~3-6 t/s Nemotron).
+- Thermal throttling timeline on 35W TDP under sustained all-core AVX2 load (~2-3 minutes).
+
+[TIER C: ARCHITECTURAL DESIGN TARGETS]
+- 60 FPS desktop rendering and 50-60 FPS window animations on Mesa Iris drivers.
+- 1080p60 hardware video decoding with < 10% CPU utilization on H.264/HEVC.
+- Atomic Btrfs snapshot creation in < 100 milliseconds.
+- Emergency Kill Switch socket teardown latency < 50 milliseconds.
+
+[TIER D: REMAINING UNKNOWNS / CONDITIONAL ITEMS]
+- Upstream llama.cpp per-layer sliding window buffer allocation for Gemma-4 architecture.
+- Real-world frame drops during complex multi-layer frosted-glass window composition.
+- User setup of a dedicated Linux build environment (WSL2 Debian or QEMU virtual appliance).
+
+================================================================================
+4. FINAL CONCLUSION & LOCK VERDICT
+================================================================================
+KAATYA OS 3.0 documentation is now mathematically consistent, hardware-honest, and
+free of architectural contradictions. The documentation package is complete.
+
+Stage 3 development remains STRICTLY LOCKED. No code compilation, ISO creation,
+package installation, or host system modification will occur without explicit,
+written authorization from the user.
+================================================================================

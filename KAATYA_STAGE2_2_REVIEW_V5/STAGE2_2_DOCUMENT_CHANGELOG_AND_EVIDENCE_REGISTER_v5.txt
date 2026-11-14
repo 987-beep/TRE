@@ -1,0 +1,133 @@
+================================================================================
+KAATYA OS 3.0 -- STAGE 2.2 DOCUMENT CHANGELOG & EVIDENCE REGISTER (VERSION 5)
+Document ID: KAATYA-AUDIT-2.2-CHANGELOG-v5
+Phase: VERSION 5 COMPREHENSIVE CHANGELOG & EVIDENCE CITATION REGISTER
+Authorized Root: T:\KAATYA\
+Date: 2026-11-14
+Status: RECONCILED CHANGELOG & EVIDENCE REGISTER (VERSION 5)
+================================================================================
+
+1. COMPLETE VERSION 4 TO VERSION 5 DOCUMENT CHANGELOG
+--------------------------------------------------------------------------------
+The following changelog documents all architectural, mathematical, and structural
+modifications executed across the KAATYA OS 3.0 documentation suite for Version 5:
+
+1. `KAATYA_STAGE2_2_FINAL_TECHNICAL_AUDIT_v5.txt`:
+   - Corrected Nemotron parameter count from "E4B active slice" to dense 7.518B elements
+     based on the exact sum of all 720 stored tensor dimensions.
+   - Formulated both the Naive Full-Attention KV cache calculation (1.3125 GiB at 8K,
+     10.50 GiB at 65K) and the actual Gemma-4 Hybrid SWA calculation (259 MiB at 8K,
+     1.78 GiB at 65K). Explicitly marked runtime SWA allocation as UNVERIFIED in llama.cpp.
+   - Reconciled Qwen3-4B KV cache to 1.152 GiB at 8K context (36 layers, 8 heads, 128 dim).
+   - Rebuilt physical 16 GB RAM budget across 5 detailed profiles with zram and PSI rules.
+
+2. `KAATYA_STAGE2_2_FINAL_ARCHITECTURE_SPECIFICATION_v5.txt`:
+   - Established five distinct application runtime isolation architectures: Native Linux,
+     Browser/PWA, Android Waydroid/LXC, Windows Wine/Bottles, and Windows VM.
+   - Reconciled AI provider architecture to exactly 15 providers (10 Commercial, 2 Universal Hubs,
+     3 Local Adapters); eliminated the erroneous "4th local adapter".
+   - Resolved storage architecture: Btrfs subvolumes (`@`, `@home`, `@var_log`, `@snapshots`)
+     as the default snapshot tier; Ext4 with Timeshift as the legacy fallback tier.
+   - Recorded Debian 13 "Trixie" release lifecycle and Windows 10 22H2 EOS (Oct 14, 2025).
+
+3. `KAATYA_STAGE2_2_HARDWARE_AND_PERFORMANCE_REALISM_v5.txt`:
+   - Reclassified all unmeasured 60 FPS, 50-60 FPS, 1080p60, and token throughput statements
+     as DESIGN TARGETS or ENGINEERING ESTIMATES.
+   - Defined 8 reproducible terminal benchmark suites (latency, frame drops, GPU/CPU util,
+     video decode via VA-API, `llama-bench`, model load time, thermals, memory PSI).
+
+4. `KAATYA_STAGE2_2_AI_SECURITY_PRIVACY_AND_PROVIDER_SPECIFICATION_v5.txt`:
+   - Reconstructed credential vault: user master passphrase + random 32-byte salt per install
+     + Argon2id ($m=64\text{MB}, t=3, p=4$) + AES-256-GCM with unique 96-bit nonces.
+   - Explicitly rejected `/etc/machine-id` as a secret or sole key source.
+   - Disclosed memory security realism: `mlock()` and `MADV_DONTDUMP` do not stop root/kernel inspection.
+   - Defined structural log omission over fallible regex sanitizers.
+   - Fully articulated the Global Emergency Kill Switch (`Super+Shift+X`) mechanics.
+   - Established granular per-request consent for documents, screens, and clipboard data.
+
+5. `KAATYA_STAGE2_2_MASTER_REQUIREMENTS_TRACEABILITY_MATRIX_v5.txt`:
+   - Rebuilt matrix with an 8-stage verification taxonomy (Documented, Selected, Metadata Inspected,
+     Hash Verified, Code Implemented, Functional Test, VM Test, Hardware Test).
+   - Clarified that inspecting an asset on disk satisfies Stages 1-4 only; Stages 5-8 remain pending.
+   - Updated all 35 requirements with remaining work and empirical acceptance criteria.
+
+6. `KAATYA_STAGE2_2_STITCH_AND_UI_COMPLETENESS_AUDIT_v5.txt`:
+   - Clarified that the 47-screen list is an architectural specification, not proof of generated UI.
+   - Added comprehensive structured specifications for all 47 screens (geometry, components,
+     actions, 8 interaction states, keyboard navigation, AT-SPI/ARIA accessibility).
+   - Rebuilt theme token table with wide, non-compressed columns across all 6 themes.
+   - Integrated 11 social services classified honestly by technical runtime.
+
+7. `KAATYA_STAGE2_2_STAGE3_IMPLEMENTATION_READINESS_REVIEW_v5.txt`:
+   - Recorded empirical preflight audit showing Windows host lacks Linux build tools (WSL uninitialized,
+     QEMU missing, GCC/Clang/CMake/Meson missing).
+   - Stated requirement for establishing an isolated Linux build environment prior to Milestone 1.
+   - Updated Milestone 1-7 roadmaps with Btrfs default subvolumes and verified test gates.
+
+8. `KAATYA_MASTER_EXECUTIVE_REPORT_v5.txt`:
+   - Reconciled all master numbers (15 providers, 47 screens, 6 themes, 20 cursors, 11 social services).
+   - Classified all technical statements into four certainty tiers (Measured Facts, Estimates, Targets, Unknowns).
+
+9. `KAATYA_FINAL_REQUIREMENTS_AND_CONSISTENCY_MATRIX_v5.txt`:
+   - Reconciled cross-document consistency across all 60+ physical documents.
+
+10. `31_STITCH_COMPLETE_DESIGN_MASTER_PROMPT_v5.txt`:
+    - Updated world-class Stitch Master Prompt with clean theme table, 11 social services, and 8 states.
+
+11. `32_FUTURE_ANTIGRAVITY_IMPLEMENTATION_MASTER_PROMPT_v5.txt`:
+    - Updated future Stage 3 developer prompt with preflight requirements and Btrfs subvolumes.
+
+================================================================================
+2. AUTHORITATIVE EVIDENCE & CITATION REGISTER
+================================================================================
+The following official documentation sources, standards, and specifications were
+consulted and verified on 2026-11-14 to support Version 5:
+
+1. CRYPTOGRAPHY & SECURITY STANDARDS:
+   - RFC 9106: "Argon2 Memory-Hard Function for Password Hashing and Proof-of-Work Applications"
+     URL: https://www.rfc-editor.org/rfc/rfc9106.html (Accessed 2026-11-14)
+   - NIST SP 800-38D: "Recommendation for Block Cipher Modes of Operation: Galois/Counter Mode (GCM)"
+     URL: https://csrc.nist.gov/publications/detail/sp/800-38d/final (Accessed 2026-11-14)
+   - Linux Kernel Documentation: "Kernel Key Retention Service (Keyrings)"
+     URL: https://docs.kernel.org/security/keys/core.html (Accessed 2026-11-14)
+
+2. SYSTEM SANDBOXING & LINUX RUNTIME:
+   - Bubblewrap Sandboxing Documentation (Project Atomic / GNOME)
+     URL: https://github.com/containers/bubblewrap (Accessed 2026-11-14)
+   - Linux Kernel Documentation: "Landlock LSM: unprivileged access control"
+     URL: https://docs.kernel.org/userspace-api/landlock.html (Accessed 2026-11-14)
+   - Linux Kernel Documentation: "Pressure Stall Information (PSI)"
+     URL: https://docs.kernel.org/accounting/psi.html (Accessed 2026-11-14)
+   - Waydroid Project: "Waydroid Container Architecture & Binder Setup"
+     URL: https://docs.waydro.id/ (Accessed 2026-11-14)
+
+3. HARDWARE & GRAPHICS ARCHITECTURE:
+   - Intel ARK Product Specifications: "Intel Core i3-6100T Processor (3M Cache, 3.20 GHz)"
+     URL: https://ark.intel.com/content/www/us/en/ark/products/90730/intel-core-i3-6100t-processor-3m-cache-3-20-ghz.html (Accessed 2026-11-14)
+   - Mesa 3D Graphics Library: "Intel Iris OpenGL and Vulkan Driver Documentation"
+     URL: https://docs.mesa3d.org/drivers/iris.html (Accessed 2026-11-14)
+
+4. OPERATING SYSTEM & LIFECYCLE:
+   - Debian Release Information: "Debian 13 'Trixie' Release & Lifecycle Planning"
+     URL: https://www.debian.org/releases/trixie/ (Accessed 2026-11-14)
+   - Microsoft Lifecycle: "Windows 10 Home and Pro Lifecycle Policy (EOS October 14, 2025)"
+     URL: https://learn.microsoft.com/en-us/lifecycle/products/windows-10-home-and-pro (Accessed 2026-11-14)
+
+5. AI RUNTIME & MODEL SPECIFICATIONS:
+   - GGUF File Format Specification (llama.cpp upstream)
+     URL: https://github.com/ggerganov/ggml/blob/master/docs/gguf.md (Accessed 2026-11-14)
+   - OpenAI API Documentation: "Models Discovery Endpoint (`GET /v1/models`)"
+     URL: https://platform.openai.com/docs/api-reference/models/list (Accessed 2026-11-14)
+   - Anthropic API Documentation: "Messages API & Models Endpoint"
+     URL: https://docs.anthropic.com/en/api/getting-started (Accessed 2026-11-14)
+   - Google Gemini API Documentation: "Gemini REST API Reference (`GET /v1beta/models`)"
+     URL: https://ai.google.dev/api/rest (Accessed 2026-11-14)
+   - OpenRouter Documentation: "OpenRouter Unified API Schema & Discovery"
+     URL: https://openrouter.ai/docs (Accessed 2026-11-14)
+
+6. ACCESSIBILITY & DESKTOP STANDARDS:
+   - FreeDesktop.org: "Accessibility Toolkit (AT-SPI2) Protocol Architecture"
+     URL: https://www.freedesktop.org/wiki/Accessibility/AT-SPI2/ (Accessed 2026-11-14)
+   - W3C: "Accessible Rich Internet Applications (WAI-ARIA) 1.2 Specification"
+     URL: https://www.w3.org/TR/wai-aria-1.2/ (Accessed 2026-11-14)
+================================================================================

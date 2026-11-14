@@ -1,0 +1,210 @@
+================================================================================
+KAATYA OS 3.0 -- STAGE 2.2 FINAL ARCHITECTURE SPECIFICATION (VERSION 5)
+Document ID: KAATYA-ARCH-2.2-FINAL-v5
+Phase: AUTHORITATIVE ARCHITECTURAL SPECIFICATION & SUBSYSTEM RECONCILIATION
+Authorized Root: T:\KAATYA\
+Date: 2026-11-14
+Status: RECONCILED ARCHITECTURE SPECIFICATION (VERSION 5)
+================================================================================
+
+1. SUBSYSTEM INTERACTION TOPOLOGY
+--------------------------------------------------------------------------------
++------------------------------------------------------------------------------+
+|                          PRESENTATION LAYER (Qt 6 / QML)                     |
+|  +--------------------+  +--------------------+  +-------------------------+ |
+|  |   kaatya-shell     |  |   Unified Launcher |  |    Control Centre       | |
+|  +--------------------+  +--------------------+  +-------------------------+ |
+|  |   47 UI Specs      |  |   6 Anime Themes   |  |    20 Custom Cursors    | |
+|  +--------------------+  +--------------------+  +-------------------------+ |
++------------------------------------------------------------------------------+
+                                       | D-Bus / Wayland Protocol
+                                       v
++------------------------------------------------------------------------------+
+|                          COMPOSITOR & WINDOW MANAGER                         |
+|  KWin-Wayland Core + Xwayland Rootless Bridge                                |
+|  DRM / KMS Driver | Mesa 24.x Iris OpenGL 4.6 / Vulkan 1.2 | Intel HD 530    |
++------------------------------------------------------------------------------+
+                                       |
+                                       v
++------------------------------------------------------------------------------+
+|                   APPLICATION RUNTIME FABRIC (5 ISOLATED RUNTIMES)          |
+|  +--------------------+  +--------------------+  +-------------------------+ |
+|  | 1. Native Linux    |  | 2. Browser / PWA   |  | 3. Android (Waydroid)   | |
+|  | Bubblewrap+Landlock|  | Chromium Sandbox   |  | LXC Container Isolation | |
+|  +--------------------+  +--------------------+  +-------------------------+ |
+|  | 4. Windows (Wine)  |  | 5. Windows (VM)    |  | Packaging Formats       | |
+|  | Sandboxed Bottles  |  | QEMU/KVM Hardware  |  | Flatpak / APT Debs      | |
+|  +--------------------+  +--------------------+  +-------------------------+ |
++------------------------------------------------------------------------------+
+                                       |
+                                       v
++------------------------------------------------------------------------------+
+|                        PERMANENT AI SUBSYSTEM (kaatya-aid)                   |
+|  +-------------------------------------+  +--------------------------------+ |
+|  | Local Inference Engines (AVX2)      |  | Cloud AI & Gateway Adapters    | |
+|  | - llama.cpp Engine (Qwen3 / Nemotron|  | - 10 Commercial Cloud APIs     | |
+|  | - whisper.cpp STT (Speech-to-Text)  |  | - 2 Universal Gateways         | |
+|  | - piper TTS (Text-to-Speech)        |  |   (OpenRouter, Hugging Face)   | |
+|  +-------------------------------------+  +--------------------------------+ |
+|  | Semantic Memory (sqlite-vec)        |  | Audio Routing (PipeWire)       | |
+|  | - Qwen3-Embedding-0.6b (1024-dim)   |  | - WirePlumber session manager  | |
+|  +-------------------------------------+  +--------------------------------+ |
+|  | Credential Vault & Consent Engine   |  | Global Emergency Kill Switch   | |
+|  | - Argon2id + AES-256-GCM + Keyring  |  | - Super+Shift+X socket abort   | |
++------------------------------------------------------------------------------+
+                                       |
+                                       v
++------------------------------------------------------------------------------+
+|                          CORE OS BASE & STORAGE SUBSYSTEM                    |
+|  Debian 13 "Trixie" Base | Linux 6.12 LTS Standard Kernel                     |
+|  Default Tier: Btrfs (@, @home, @var_log, @snapshots) with subvolume rollback|
+|  Fallback Tier: Ext4 with Timeshift (rsync mode)                             |
+|  Intel Core i3-6100T (2C/4T @ 3.2GHz) | Intel HD 530 | 16 GB DDR4 RAM        |
++------------------------------------------------------------------------------+
+
+================================================================================
+2. FIVE APPLICATION RUNTIME ARCHITECTURES & SECURITY MODELS
+================================================================================
+
+A critical error in earlier planning claimed that "Bubblewrap alone provides complete
+Android or Windows application isolation." This is technically invalid. KAATYA OS 3.0
+deploys five distinct runtime isolation models:
+
+1. NATIVE LINUX APPLICATIONS:
+   - Primary Mechanism: Bubblewrap unprivileged user namespaces (`bwrap`) combined
+     with Landlock LSM rules and Seccomp-BPF system call filtering.
+   - Filesystem: Read-only mounts for `/usr`, `/lib`, `/bin`. Ephemeral `tmpfs` on `/tmp`.
+     Isolated per-app config directory in `~/.var/app/<app-id>/`.
+   - Network: Restricted via network namespaces (`--unshare-net`) unless network permission
+     is granted in manifest.
+   - Device Access: No direct `/dev` access; Wayland socket proxied through compositor.
+   - Limitations: Relies on Linux unprivileged user namespaces (`kernel.unprivileged_userns_clone=1`).
+
+2. BROWSER & PWA APPLICATIONS:
+   - Primary Mechanism: Chromium internal multi-process sandbox (Setuid sandbox,
+     seccomp-bpf, PID/Network/Mount namespaces, Site Isolation).
+   - Filesystem: Confined to user browser profile directory. PWAs run in separate
+     isolated browser contexts (`--app="https://..."` with isolated storage).
+   - Network: Standard HTTPS socket access via browser network service.
+   - Device Access: WebRTC audio/video gated behind browser per-origin permissions.
+   - Limitations: Renderer process memory attacks mitigated by site isolation and V8 cage.
+
+3. ANDROID APPLICATIONS (WAYDROID / LXC):
+   - Primary Mechanism: Linux Containers (LXC) running Android Open Source Project (AOSP).
+   - Filesystem: Distinct Android root filesystem (`system.img` and `vendor.img`) mounted
+     in dedicated container namespace. Host filesystem is completely invisible to Android
+     apps except for explicitly shared bind-mounts (`~/AndroidStorage/`).
+   - Network: Container bridged via virtual Ethernet (`waydroid0`) with iptables NAT.
+   - Device Access: Direct hardware rendering via Ashmem/memfd shared memory over Wayland.
+     Binder IPC confined entirely within container.
+   - Crucial Distinction: Android-x86 9 ISO (`android-x86_64-9.0-r2.iso`) in project root
+     is a bootable OS image for live testing/QEMU, NOT the container image used by Waydroid.
+   - App Stores: No official Google Play Store or Google Mobile Services (GMS). Supported
+     distribution: F-Droid (FOSS) and Aurora Store (unofficial FOSS client with disclaimer).
+
+4. WINDOWS APPLICATIONS VIA WINE / BOTTLES (LIGHTWEIGHT COMPATIBILITY):
+   - Primary Mechanism: Per-application Wine prefix managed via Bottles, executed inside
+     an outer Bubblewrap sandbox container.
+   - Wine Sandbox Limitation Disclosed: A standard Wine prefix is NOT a security boundary;
+     wineserver translates Win32 API calls into unconfined host syscalls, and default Wine
+     creates a `Z:\` drive mapping to `/`.
+   - KAATYA Hardening: The `Z:\` host drive mapping is stripped. The entire Wine process
+     and wineserver run inside Bubblewrap with `--unshare-all`, private `tmpfs`, and only
+     the dedicated prefix directory writable.
+   - Graphics: DXVK translates Direct3D 9/10/11 to Vulkan 1.2 on Intel HD 530.
+   - Supported Formats: Standalone Win32/Win64 PE executables (`.exe`) and MSI installers.
+
+5. WINDOWS APPLICATIONS REQUIRING COMPLETE VM ISOLATION (HEAVY COMPATIBILITY):
+   - Primary Mechanism: QEMU / KVM hardware-assisted virtual machine.
+   - Isolation: Hardware virtualization boundary (Intel VT-x / EPT). Host OS and guest OS
+     share zero kernel memory or syscall interfaces.
+   - Networking: Isolated host-only virtual bridge with optional packet inspection.
+   - Windows 10 22H2 Lifecycle Warning: Windows 10 22H2 reaches official End of Support (EOS)
+     on October 14, 2025. After EOS, unpatched Windows images are vulnerable. KAATYA treats
+     Windows 10 VMs as untrusted legacy environments with external network access disabled.
+
+================================================================================
+3. RECONCILED 15-PROVIDER AI TAXONOMY & ENGINE ARCHITECTURE
+================================================================================
+All earlier document contradictions (which alternately claimed 10, 12, 14, or 15 providers,
+or invented a "4th local adapter") are officially reconciled:
+
+KAATYA OS 3.0 integrates exactly 15 AI Providers and Local Adapters across 3 categories:
+
+CATEGORY 1: DIRECT COMMERCIAL CLOUD API PROVIDERS (10 PROVIDERS)
+1. OpenAI: Direct HTTPS REST (GPT-4o, o1, GPT-4o-mini). Bearer token.
+2. Anthropic: Anthropic Messages API (Claude 3.5 Sonnet, Claude 3.5 Haiku). x-api-key.
+3. Google Gemini: Gemini REST API v1beta (Gemini 2.0 Flash, Gemini 1.5 Pro). API Key query/header.
+4. Mistral AI: Mistral REST API (Mistral Large 2, Codestral, Mistral NeMo). Bearer token.
+5. Groq Cloud: Groq Ultra-fast LPU API (Llama 3.3 70B, Llama 3.1 8B). Bearer token.
+6. DeepSeek: DeepSeek OpenAI-compatible REST (DeepSeek-V3, DeepSeek-R1). Bearer token.
+7. Cohere: Cohere REST v2 API (Command R+, Command R, Embed v3). Bearer token.
+8. Perplexity AI: Perplexity Sonar API (Sonar Reasoning, Sonar Search). Bearer token.
+9. Together AI: Together Inference API (Open-source hosted clusters). Bearer token.
+10. xAI: xAI REST API (Grok-2, Grok-2-mini). Bearer token.
+
+CATEGORY 2: UNIVERSAL CLOUD MODEL GATEWAYS & HUBS (2 PROVIDERS)
+11. OpenRouter: Universal OpenAI-compatible proxy gateway routing to 200+ models.
+    Provides dynamic pricing discovery, fallback model failover, and single-key billing.
+12. Hugging Face Inference API: Serverless and dedicated inference endpoints for open
+    models hosted on Hugging Face Hub. HF user token authentication.
+
+CATEGORY 3: LOCAL ENGINE ADAPTERS (EXACTLY 3 LOCAL ADAPTERS - NO FOURTH ADAPTER)
+13. `llama.cpp` Engine Adapter: Native C++ library (`libllama.so`) / local HTTP engine
+    executing GGUF format LLMs on CPU via AVX2/FMA vector instructions.
+14. `whisper.cpp` STT Engine Adapter: Native C++ engine executing quantized Whisper
+    models (Whisper base.en) for low-latency offline speech-to-text.
+15. `piper` TTS Engine Adapter: Native C++ / ONNX runtime neural text-to-speech engine
+    synthesizing voice via local voice models (en_US-lessac-medium).
+*Clarification: Previous references to a "4th local adapter" erroneously counted either
+the embedding model (which runs inside the llama.cpp engine) or local Ollama instances.
+There are strictly THREE local engine adapters in KAATYA OS 3.0.*
+
+================================================================================
+4. STORAGE, FILESYSTEM & RECOVERY ARCHITECTURE
+================================================================================
+To eliminate contradictions between Ext4 default and Btrfs snapshots:
+
+1. DEFAULT TIER: BTRFS STORAGE WITH ATOMIC SUBVOLUME SNAPSHOTS
+   - Standard Installation File System: Btrfs.
+   - Subvolume Layout:
+     * `@`            -> Mounted at `/` (Root system image)
+     * `@home`        -> Mounted at `/home` (User data; excluded from OS rollbacks)
+     * `@var_log`     -> Mounted at `/var/log` (System logs preserved across rollbacks)
+     * `@snapshots`   -> Mounted at `/.snapshots` (Read-only atomic snapshot store)
+   - Snapshot Mechanism: `btrfs subvolume snapshot -r / /.snapshots/@_backup_<timestamp>`.
+     Execution time: Atomic (< 100 milliseconds via copy-on-write metadata tree pointers).
+   - Bootloader Integration: `grub-btrfs` automatically discovers snapshots in `/.snapshots`
+     and populates a "KAATYA OS Previous Snapshots" boot submenu in GRUB.
+   - Rollback Procedure: User selects previous snapshot from GRUB menu; system boots into
+     read-only snapshot; user runs `kaatya-rollback commit` to set snapshot as default `@`.
+
+2. FALLBACK TIER: EXT4 STORAGE WITH TIMESHIFT (RSYNC MODE)
+   - Fallback Installation File System: Ext4 (Used if user overrides Btrfs in installer).
+   - Snapshot Mechanism: Timeshift in `rsync` mode using hard-links on Ext4.
+   - Non-Atomic Reality: Ext4 snapshot creation requires scanning the filesystem and creating
+     hard-links (takes 1 to 5 minutes depending on disk I/O).
+   - Bootloader Rollback Limitation: Ext4 hard-link snapshots CANNOT be booted directly from
+     the GRUB menu. Rollback on Ext4 requires booting into KAATYA Live USB or maintenance mode.
+
+================================================================================
+5. SOFTWARE VERSIONS, REPOSITORIES & SUPPORT LIFECYCLE
+================================================================================
+1. Debian 13 "Trixie" Base:
+   - Status: Current testing distribution / next stable release.
+   - Support Lifecycle: 3 years standard Debian security support + 2 years Debian LTS.
+   - Kernel: Linux 6.12 LTS kernel (`linux-image-amd64`).
+
+2. Maintained Wine Version Policy:
+   - Policy: Rather than pinning a rigid "Wine 9.x", KAATYA adopts an active upstream
+     tracking policy tracking the Wine Stable branch (Wine 9.0+ / 10.x series) paired
+     with community Proton-GE / Wine-GE runners managed dynamically via Bottles.
+
+3. Dynamic Cloud AI Model Discovery:
+   - Policy: KAATYA AI daemon avoids hardcoding ephemeral model IDs. Upon initial connection,
+     `kaatya-aid` queries `/v1/models` (or provider discovery schema) to validate availability.
+
+4. Rule of One Active LLM Enforced:
+   - At any moment, strictly ONE large language model is loaded in memory.
+   - Loading Nemotron 7.5B automatically initiates graceful eviction of Qwen3-4B.
+================================================================================

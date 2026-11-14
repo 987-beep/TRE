@@ -1,0 +1,382 @@
+================================================================================
+KAATYA OS 3.0 -- STAGE 2.2 MASTER REQUIREMENTS TRACEABILITY MATRIX (VERSION 5)
+Document ID: KAATYA-REQ-2.2-TRACE-v5
+Phase: 8-STAGE EVIDENCE-BASED REQUIREMENTS TRACEABILITY AUDIT
+Authorized Root: T:\KAATYA\
+Date: 2026-11-14
+Status: RECONCILED REQUIREMENTS TRACEABILITY MATRIX (VERSION 5)
+================================================================================
+
+1. EIGHT-STAGE EVIDENCE & VERIFICATION TAXONOMY
+--------------------------------------------------------------------------------
+To eliminate ambiguous or premature "Verified" classifications, KAATYA OS 3.0
+enforces an 8-stage evidence hierarchy for every architectural requirement:
+
+[Stage 1] Requirement Documented: Written specification exists in master documentation.
+[Stage 2] Architecture Selected: Specific technical library, daemon, or standard defined.
+[Stage 3] Asset Metadata Inspected: Header or configuration metadata parsed and verified.
+[Stage 4] Asset Hash Verified: Cryptographic SHA-256 hash calculated and matched against disk.
+[Stage 5] Code Implemented: Handwritten source code, build scripts, or recipes created.
+[Stage 6] Functional Test Passed: Unit/integration test passed in local build harness.
+[Stage 7] Virtual-Machine Test Passed: Validated inside headless QEMU virtual machine.
+[Stage 8] Physical Hardware Test Passed: Validated on physical HP Slimline PC 270-p0xx.
+
+CRITICAL EVIDENCE AUDIT RULE:
+Inspecting a model file, voice asset, or ISO on disk satisfies ONLY Stages 1 through 4.
+It DOES NOT satisfy Stages 5 through 8. No requirement is marked "Complete" until
+all applicable stages pass.
+
+================================================================================
+2. AUTHORITATIVE 35-REQUIREMENT TRACEABILITY MATRIX
+================================================================================
+
+Req ID: RQ-01
+- Subsystem: OS Foundation & Base Distribution
+- Description: Debian 13 "Trixie" x86_64 base, systemd init, cgroups v2 resource control.
+- Authoritative Doc: ARCH-003, TECH-v5
+- Evidence Source: Debian 13 repository specifications, live-build recipe templates.
+- Verification Method: Live bootstrap build in QEMU test harness.
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Write `debootstrap` recipe and systemd unit configurations in Milestone 1.
+- Acceptance Criteria: Boots to multi-user target with systemd 256+ and cgroups v2 active.
+
+Req ID: RQ-02
+- Subsystem: Bootloader & Partitioning
+- Description: Dual BIOS (Syslinux/MBR) and UEFI (GRUB2) boot with Calamares graphical installer.
+- Authoritative Doc: BOOT-024, EXEC-v5
+- Evidence Source: Syslinux 6.04 and GRUB 2.12 EFI binaries in Debian repositories.
+- Verification Method: QEMU MBR boot test + QEMU OVMF UEFI boot test.
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Calamares branding modules and dual-boot partition configuration scripts.
+- Acceptance Criteria: Installer executes without errors and configures bootloader on target disk.
+
+Req ID: RQ-03
+- Subsystem: Desktop Shell & Presentation
+- Description: Qt 6 / QML SceneGraph hardware-accelerated desktop UI (kaatya-shell).
+- Authoritative Doc: SHELL-005, STITCH-v5
+- Evidence Source: Qt 6.7+ QML documentation and Stitch 47-screen design blueprints.
+- Verification Method: Wayland session launch and QML SceneGraph rendering benchmarks.
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Code QML shell components and KWin integration in Milestone 2.
+- Acceptance Criteria: Shell loads at 1366x768 reference resolution with 60 FPS target.
+
+Req ID: RQ-04
+- Subsystem: Window Management & Compositor
+- Description: KWin-Wayland compositor wrapper with window snapping and tiling logic.
+- Authoritative Doc: SHELL-005, ARCH-v5
+- Evidence Source: KDE KWin 6.x Wayland protocol interfaces and Mesa 24.x Iris drivers.
+- Verification Method: Compositor frame time logging and window dragging latency tests.
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: KWin configuration wrapper, keyboard shortcuts, and snap-assist scripts.
+- Acceptance Criteria: 99th percentile frame time < 16.6ms during standard window dragging.
+
+Req ID: RQ-05
+- Subsystem: Taskbar, Dock & System Tray
+- Description: 48px bottom taskbar, start menu, system tray, and persistent AI action orb.
+- Authoritative Doc: SHELL-005, STITCH-v5
+- Evidence Source: StatusNotifierItem D-Bus specifications and QML UI layout specs.
+- Verification Method: D-Bus tray icon registration and omnibox keyboard navigation.
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Implement taskbar QML widget and tray daemon bindings in Milestone 2.
+- Acceptance Criteria: Start menu opens via Super key; all system tray indicators display state.
+
+Req ID: RQ-06
+- Subsystem: Permanent AI Assistant Daemon
+- Description: Resident background C++ service (`kaatya-aid`) with D-Bus IPC interface.
+- Authoritative Doc: AI-008, ARCH-v5
+- Evidence Source: D-Bus interface definition files (`org.kaatya.AI.xml`).
+- Verification Method: D-Bus method call latency benchmarking (< 50ms IPC overhead).
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Implement `kaatya-aid` daemon in C++20 with systemd service unit.
+- Acceptance Criteria: Daemon starts at boot, manages model life cycles, and responds to IPC.
+
+Req ID: RQ-07
+- Subsystem: Local LLM Engine (Daily Driver)
+- Description: llama.cpp AVX2 engine executing Qwen3-4B-Q4_K_M within 16 GB RAM boundary.
+- Authoritative Doc: AI-009, TECH-v5
+- Evidence Source: Physical file `T:\KAATYA\Qwen3-4B-Q4_K_M.gguf` (SHA-256 verified).
+- Verification Method: `llama-bench` throughput test and live conversation inference.
+- Current Status: [Stages 1-4 Achieved (Asset verified)] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Compile `libllama.so` with AVX2/FMA flags and build daemon adapter.
+- Acceptance Criteria: Sustained generation >= 8 tokens/sec with KV cache capped at 8K tokens.
+
+Req ID: RQ-08
+- Subsystem: Specialist LLM Engine (On-Demand)
+- Description: llama.cpp engine executing Nemotron-3.5-Bolt 7.5B (Gemma4 arch) with LLM swapping.
+- Authoritative Doc: AI-009, TECH-v5
+- Evidence Source: Physical file `T:\KAATYA\Nemotron-3.5-Bolt-E4B-Q4_K_M.gguf` (SHA-256 verified).
+- Verification Method: Swapping verification: Qwen3 unloaded before Nemotron loads.
+- Current Status: [Stages 1-4 Achieved (Asset verified)] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Implement model memory eviction and dynamic loading controller in daemon.
+- Acceptance Criteria: Swapping succeeds without OOM; total RAM consumption remains < 13 GB.
+
+Req ID: RQ-09
+- Subsystem: Online AI Cloud Gateway
+- Description: 15-provider gateway (10 commercial APIs, 2 universal hubs, 3 local adapters).
+- Authoritative Doc: AI-010-v5, SEC-v5
+- Evidence Source: Official provider REST API specifications and OpenAPI schemas.
+- Verification Method: Automated zero-token connection test suite across all 12 cloud endpoints.
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Write HTTPS client adapters with streaming response parsers.
+- Acceptance Criteria: Zero-token connection test completes without incurring billing charges.
+
+Req ID: RQ-10
+- Subsystem: Semantic Memory & Embeddings
+- Description: sqlite-vec vector store with Qwen3-Embedding-0.6B (1024-dim vector embeddings).
+- Authoritative Doc: AI-013, ARCH-v5
+- Evidence Source: Physical file `T:\KAATYA\qwen3-embedding-0.6b-q8_0.gguf` (SHA-256 verified).
+- Verification Method: Vector similarity search latency test on 10,000 document chunks.
+- Current Status: [Stages 1-4 Achieved (Asset verified)] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Integrate `sqlite-vec` extension and embedding inference pipeline.
+- Acceptance Criteria: Cosine similarity query returns nearest semantic neighbors in < 100ms.
+
+Req ID: RQ-11
+- Subsystem: Offline Speech-to-Text (STT)
+- Description: whisper.cpp engine executing quantized Whisper base.en model for voice input.
+- Authoritative Doc: VOICE-014, TECH-v5
+- Evidence Source: `T:\KAATYA\KAATYA_ASSETS\whisper-base.en.bin` asset.
+- Verification Method: Word Error Rate (WER) test on clean audio sample in QEMU.
+- Current Status: [Stages 1-4 Achieved (Asset verified)] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Build `whisper.cpp` PipeWire audio capture stream consumer.
+- Acceptance Criteria: Audio transcribed with latency < 1.5x real-time on Core i3-6100T.
+
+Req ID: RQ-12
+- Subsystem: Offline Text-to-Speech (TTS)
+- Description: piper neural TTS engine executing en_US-lessac-medium ONNX voice models.
+- Authoritative Doc: VOICE-014, TECH-v5
+- Evidence Source: `T:\KAATYA\KAATYA_ASSETS\voices\en_US-lessac-medium.onnx` asset.
+- Verification Method: PipeWire audio playback test with synthesized speech buffers.
+- Current Status: [Stages 1-4 Achieved (Asset verified)] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Integrate Piper C++ library and link to PipeWire output sink.
+- Acceptance Criteria: Speech synthesis begins within 200ms of text submission.
+
+Req ID: RQ-13
+- Subsystem: Encrypted Credential Vault
+- Description: Argon2id KDF ($m=64\text{MB}, t=3, p=4$) + AES-256-GCM + Kernel Keyring.
+- Authoritative Doc: SEC-v5, AI-011
+- Evidence Source: Linux Kernel Keyring documentation and RFC 9106 Argon2 specification.
+- Verification Method: Cryptographic test vectors and memory-dump inspection test.
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Implement vault daemon with `mlock()` and `explicit_bzero()` sanitizers.
+- Acceptance Criteria: Vault fails decryption on tampered data; secrets absent from core dumps.
+
+Req ID: RQ-14
+- Subsystem: AI Emergency Stop & Privacy Guard
+- Description: Global hotkey (`Super+Shift+X`) socket termination, process kill, and PII redactor.
+- Authoritative Doc: SEC-v5, AI-015
+- Evidence Source: Linux socket API specifications and regex/structural filter designs.
+- Verification Method: Wireshark packet capture confirming zero outbound packets post-kill.
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Implement kernel socket teardown and hotkey listener daemon.
+- Acceptance Criteria: All active AI network connections terminate within 50ms of trigger.
+
+Req ID: RQ-15
+- Subsystem: Default Web Platform & Browser
+- Description: KAATYA Browser (Chromium engine, VA-API decode, isolated PWA contexts).
+- Authoritative Doc: WEB-020, BROWSER-036
+- Evidence Source: Chromium source build flags and Intel VA-API media drivers.
+- Verification Method: 1080p60 YouTube playback test with `vainfo` confirming hardware decode.
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Package Chromium with custom KAATYA configuration and AI side-panel.
+- Acceptance Criteria: 1080p60 video plays with < 10% CPU utilization on supported codecs.
+
+Req ID: RQ-16
+- Subsystem: Android Compatibility Runtime
+- Description: Waydroid LXC container running AOSP with Wayland buffer sharing and F-Droid.
+- Authoritative Doc: COMPAT-022, AND-038
+- Evidence Source: Waydroid upstream Debian packages and LXC container specs.
+- Verification Method: Launch test of standard FOSS Android APK (e.g. F-Droid, Aurora Store).
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Configure Waydroid system/vendor images and binder kernel nodes.
+- Acceptance Criteria: Android application launches and renders directly on Wayland desktop.
+
+Req ID: RQ-17
+- Subsystem: Windows Compatibility Runtime
+- Description: Bottles / Wine Stable prefix runner with DXVK and Bubblewrap sandbox wrapper.
+- Authoritative Doc: COMPAT-022, WIN-039
+- Evidence Source: Wine Stable 9.x+ and DXVK Vulkan translation layer documentation.
+- Verification Method: Launch test of standard 32-bit and 64-bit Windows productivity executables.
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Build Bottles prefix management UI and Bubblewrap isolation profiles.
+- Acceptance Criteria: Win32 application executes in isolated prefix with `Z:\` mapping stripped.
+
+Req ID: RQ-18
+- Subsystem: Native Application Sandboxing
+- Description: Bubblewrap unprivileged user namespaces + Landlock LSM + Seccomp-BPF.
+- Authoritative Doc: SEC-042, ARCH-v5
+- Evidence Source: Linux kernel unprivileged user namespace documentation.
+- Verification Method: Automated sandbox escape test attempting to read unauthorized `/home` files.
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Write standard Bubblewrap profile generator for installed applications.
+- Acceptance Criteria: Sandboxed process receives `EACCES` when attempting unauthorized file access.
+
+Req ID: RQ-19
+- Subsystem: Unified Software Centre
+- Description: Graphical app store managing APT debs, Flatpaks, Android APKs, and Wine EXEs.
+- Authoritative Doc: STORE-040, STITCH-v5
+- Evidence Source: PackageKit and Flatpak D-Bus API specifications.
+- Verification Method: Automated installation and removal of test packages across all formats.
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Implement Qt6 Software Centre frontend and PackageKit backend integration.
+- Acceptance Criteria: User can install, launch, update, and remove apps from a single interface.
+
+Req ID: RQ-20
+- Subsystem: Unified Application Launcher & MIME Router
+- Description: Single application menu abstracting runtime types and routing file intents.
+- Authoritative Doc: APPS-041, STITCH-v5
+- Evidence Source: XDG Desktop Entry Specification and XDG Shared MIME-info database.
+- Verification Method: Double-clicking `.apk`, `.exe`, `.deb`, `.pdf` launches correct runtime.
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Implement XDG desktop parser and MIME handler daemon in Milestone 5.
+- Acceptance Criteria: All installed applications appear in launcher regardless of runtime engine.
+
+Req ID: RQ-21
+- Subsystem: Download Verification & Package Security
+- Description: HTTPS TLS 1.3 enforcement, SHA-256 integrity validation, and static heuristic scanning.
+- Authoritative Doc: STORE-043
+- Evidence Source: GnuTLS / OpenSSL libraries and SHA-256 hash checking logic.
+- Verification Method: Sideloading corrupt/tampered test package and verifying rejection.
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Write pre-installation verification hook in Software Centre.
+- Acceptance Criteria: Packages failing SHA-256 or signature check are blocked from installation.
+
+Req ID: RQ-22
+- Subsystem: Desktop Notification Hub
+- Description: Freedesktop D-Bus notification server with Do Not Disturb (DND) mode.
+- Authoritative Doc: NOTIF-044, STITCH-v5
+- Evidence Source: Desktop Notifications Specification (`org.freedesktop.Notifications`).
+- Verification Method: `notify-send` integration test cycling priority levels and DND states.
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Implement notification server widget in Qt6 shell in Milestone 2.
+- Acceptance Criteria: Notifications appear in top-right screen area with smooth fade-in.
+
+Req ID: RQ-23
+- Subsystem: Security Centre & Host Firewall
+- Description: UFW (Uncomplicated Firewall) integration, hardware kill-switch status, and audit log.
+- Authoritative Doc: SEC-018, SEC-v5
+- Evidence Source: UFW Python API and iptables/nftables backend.
+- Verification Method: Nmap port scan from external machine verifying closed/stealth ports.
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Implement Qt6 Security Centre UI and Polkit authorization rules.
+- Acceptance Criteria: Inbound network traffic blocked by default; port scan reveals zero open ports.
+
+Req ID: RQ-24
+- Subsystem: File Explorer (KAATYA Files)
+- Description: Dual-pane Qt6 file manager with integrated AI document summarization side-panel.
+- Authoritative Doc: APPS-016, STITCH-v5
+- Evidence Source: KIO (KDE Input/Output) framework and Poppler PDF library.
+- Verification Method: Directory browsing latency test on folder with 10,000 files.
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Code file explorer UI and document preview generator in Milestone 5.
+- Acceptance Criteria: Folder loads in < 200ms; PDF documents display instant AI summary on request.
+
+Req ID: RQ-25
+- Subsystem: System Monitor & Hardware Telemetry
+- Description: Real-time CPU 4-thread telemetry, Intel HD 530 GPU usage, thermals, and zram monitor.
+- Authoritative Doc: APPS-016, PERF-v5
+- Evidence Source: Linux `/proc/stat`, `/sys/class/thermal`, and `intel-gpu-tools` APIs.
+- Verification Method: Compare UI telemetry readings against `turbostat` and `intel_gpu_top`.
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Build Qt6 telemetry graphs with low-overhead periodic polling.
+- Acceptance Criteria: System monitor CPU overhead remains < 1.0% during active graphing.
+
+Req ID: RQ-26
+- Subsystem: Task Manager & Process Controller
+- Description: Tree-view process manager with memory advisor and SIGTERM/SIGKILL controller.
+- Authoritative Doc: APPS-016, STITCH-v5
+- Evidence Source: Linux `/proc` filesystem and POSIX signal API.
+- Verification Method: Terminate unresponsive test process and confirm resource reclamation.
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Code process management UI and permission escalation prompts.
+- Acceptance Criteria: Force-kill immediately terminates target process and reclaims mapped RAM.
+
+Req ID: RQ-27
+- Subsystem: System Settings Hub
+- Description: Categorized system preference hub with instant search across all settings pages.
+- Authoritative Doc: APPS-016, STITCH-v5
+- Evidence Source: Qt 6 QSettings and systemd D-Bus configuration interfaces.
+- Verification Method: Automated configuration changes across display, sound, and network.
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Implement settings UI modules and backend configuration writers.
+- Acceptance Criteria: All system changes persist cleanly across system reboots.
+
+Req ID: RQ-28
+- Subsystem: Theme Studio & Visual Customizer
+- Description: 6 supernatural anime themes (Limitless Void, Malevolent Shrine, etc.) with live preview.
+- Authoritative Doc: THEME-007, STITCH-v5
+- Evidence Source: Theme token tables and QML style sheets.
+- Verification Method: Theme switching test validating live recoloring across all 47 screens.
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Implement QML theme engine and palette switching daemon in Milestone 2.
+- Acceptance Criteria: Switching themes applies instantaneously without requiring application restarts.
+
+Req ID: RQ-29
+- Subsystem: Cursor & Animation Engine
+- Description: 20 custom Xcursor themes and particle/blur governor with reduced motion mode.
+- Authoritative Doc: THEME-007, STITCH-v5
+- Evidence Source: Xcursor bitmap assets and KWin effects plugin architecture.
+- Verification Method: Wayland cursor rendering test and reduced-motion toggle validation.
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Compile Xcursor theme packages and configure KWin animation speeds.
+- Acceptance Criteria: Cursors scale crisply; reduced-motion mode replaces animations with 80ms fade.
+
+Req ID: RQ-30
+- Subsystem: Storage Snapshots & Recovery
+- Description: Btrfs subvolume snapshots (`@snapshots`) with GRUB integration (`grub-btrfs`).
+- Authoritative Doc: STOR-017, ARCH-v5
+- Evidence Source: Btrfs subvolume management tools (`btrfs-progs`) and `grub-btrfs`.
+- Verification Method: End-to-end rollback test: snapshot -> corrupt root -> reboot into snapshot -> commit.
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Write snapshot management scripts and pre-update hook triggers in Milestone 7.
+- Acceptance Criteria: System successfully recovers from broken root state via GRUB snapshot menu.
+
+Req ID: RQ-31
+- Subsystem: System Update Centre
+- Description: Atomic package updates with mandatory pre-update snapshot creation.
+- Authoritative Doc: MAINT-029, ARCH-v5
+- Evidence Source: APT package manager and Btrfs snapshot hooks.
+- Verification Method: Simulated package upgrade failure confirming automatic rollback prompt.
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Write update manager frontend with automatic snapshot creation wrapper.
+- Acceptance Criteria: Snapshots are generated automatically before any package modification.
+
+Req ID: RQ-32
+- Subsystem: Native Productivity Suite
+- Description: Notes, Document Centre, Calc, Clock, Calendar, Coding Studio, Research Centre.
+- Authoritative Doc: APPS-016, STITCH-v5
+- Evidence Source: Qt 6 C++ application frameworks and standard POSIX libraries.
+- Verification Method: Smoke test launching all 7 native productivity applications in QEMU.
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Implement native productivity applications in Milestone 5.
+- Acceptance Criteria: All applications launch, render correctly, and persist user state.
+
+Req ID: RQ-33
+- Subsystem: Accessibility & Multilingual Interface
+- Description: AT-SPI2 screen reader hooks, high-contrast mode, Hindi transliteration (Fcitx5).
+- Authoritative Doc: ACC-027, STITCH-v5
+- Evidence Source: Orca screen reader and Fcitx5 input method engine documentation.
+- Verification Method: Orca speech output verification and Hindi phonetic typing test.
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Configure AT-SPI accessibility properties in QML and integrate Fcitx5.
+- Acceptance Criteria: Screen reader speaks UI element roles; Hindi input works across all text fields.
+
+Req ID: RQ-34
+- Subsystem: Multi-Monitor Display Management
+- Description: Adaptive layout with secondary display taskbar and independent resolution scaling.
+- Authoritative Doc: STITCH-v5, ARCH-v5
+- Evidence Source: Wayland `xdg-output-unstable-v1` protocol and KWin display configuration.
+- Verification Method: QEMU dual-monitor virtual hardware test (1366x768 primary + 1920x1080 secondary).
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Implement multi-monitor window placement and taskbar spawning in shell.
+- Acceptance Criteria: Connecting secondary monitor displays desktop wallpaper and taskbar immediately.
+
+Req ID: RQ-35
+- Subsystem: Hardware Optimization & Performance Governor
+- Description: `schedutil` CPU frequency governor, Intel HD 530 Mesa Iris driver, and 8 GB zram swap.
+- Authoritative Doc: PERF-v5, TECH-v5
+- Evidence Source: Linux kernel CPUfreq subsystem and `zram-tools` documentation.
+- Verification Method: Physical benchmark execution measuring CPU scaling and zram compression.
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Remaining Work: Write kernel parameter tuning file (`/etc/sysctl.d/99-kaatya.conf`) in Milestone 1.
+- Acceptance Criteria: CPU scales dynamically from 800MHz idle to 3.2GHz boost; zram active.
+================================================================================

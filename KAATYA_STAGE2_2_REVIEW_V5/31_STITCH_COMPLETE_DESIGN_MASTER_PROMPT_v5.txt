@@ -1,0 +1,121 @@
+================================================================================
+KAATYA OS 3.0 -- STITCH COMPLETE DESIGN MASTER PROMPT (VERSION 5)
+Document ID: KAATYA-STITCH-031-v5
+Status: AUTHORITATIVE STITCH GENERATION SPECIFICATION (VERSION 5)
+Authorized Root: T:\KAATYA\
+Primary Reference Display: 1366 x 768 Landscape (Dynamic Responsive Baseline)
+================================================================================
+
+1. COMPLETE DESIGN SYSTEM SPECIFICATION FOR STITCH
+--------------------------------------------------------------------------------
+You are Stitch, the premier AI UI/UX design engine. Your mandate is to generate
+the complete, high-fidelity visual design for KAATYA OS 3.0, an original AI-native
+desktop operating system designed for the HP Slimline Desktop PC 270-p0xx baseline.
+
+A. GEOMETRY & RESPONSIVE RULES:
+- Primary Reference Resolution: 1366 x 768 Landscape (Reference Baseline).
+- Viewport Adaptation: The interface must NOT be hardcoded as an immutable fixed box;
+  it must fluidly adapt to 1366x768, 1920x1080 (FHD), 2560x1440 (2K), and 4K displays.
+- Window Management & Snapping:
+  * Floating windows support free resizing with a minimum geometry of 640x480.
+  * Window Snapping: Half-screen (50% split), Quarter-screen (25% corner snap), Fullscreen.
+  * Window Titlebar: 36px height with consistent controls: Minimize, Maximize/Restore, Close.
+- Multi-Monitor Support: Secondary displays feature an independent, auto-dimming taskbar.
+- Taskbar Geometry: Docked at bottom edge (48px height on reference display, 56px on Hi-DPI).
+
+B. ACCESSIBILITY & ERGONOMICS:
+- Contrast Ratios: WCAG 2.1 AA compliance (minimum 4.5:1 text-to-background contrast).
+- Accessibility Semantics:
+  * Native Qt6 / Linux Applications: Map explicitly to Linux AT-SPI2 accessibility roles.
+  * Web / PWA Content: Map to W3C WAI-ARIA roles (`role="dialog"`, `aria-live="assertive"`).
+- Keyboard Navigation: Full focus ring (`2px solid var(--accent-primary)`) navigable via
+  `Tab`, `Shift+Tab`, `Arrow Keys`, `Enter`, and `Escape`.
+- Reduced Motion Mode: Replaces scale/slide/particle transitions with a clean 80ms cross-fade.
+- Text & Display Scaling: Fractional scaling (1.0x, 1.25x, 1.5x) with integer pixel rounding.
+
+C. RECONCILED THEME TOKENS TABLE (CSS & QML COMPATIBLE):
+The table below features cleanly spaced columns with zero value compression across all six themes:
+
+Token Name            Limitless Void         Malevolent Shrine      Ten Shadows            Cursed Energy          Obsidian Cyan          Clean Studio
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+`--bg-base`           #0A0D18                #0F090A                #080A10                #081210                #101214                #F4F6F9
+`--bg-surface`        rgba(18, 24, 43, 0.85) rgba(26, 14, 16, 0.88) rgba(15, 20, 32, 0.85) rgba(14, 31, 28, 0.85) rgba(26, 29, 33, 0.90) rgba(255, 255, 255, 0.95)
+`--accent-primary`    #00E5FF                #FF1744                #2979FF                #00E676                #00BCD4                #0284C7
+`--accent-secondary`  #8A2BE2                #D50000                #448AFF                #00B0FF                #0288D1                #475569
+`--text-primary`      #F0F4FF                #FFF5F5                #EDF2FA                #F1FDF6                #ECEFF1                #0F172A
+`--text-muted`        #8A99B5                #A88688                #7586A1                #78998F                #90A4AE                #64748B
+`--border-card`       rgba(0, 229, 255, 0.25)rgba(255, 23, 68, 0.30)rgba(41, 121, 255, 0.22)rgba(0, 230, 118, 0.28)rgba(0, 188, 212, 0.20)rgba(2, 132, 199, 0.18)
+`--shadow-elevation`  0 8px 32px rgba(0,0,0,0.45) (Common across dark themes; soft slate shadow in Clean Studio)
+
+================================================================================
+2. 20 ORIGINAL XCURSOR DESIGNS (XCURSOR SPECIFICATION)
+================================================================================
+ID   Cursor Name            Visual Character & Asset Description                     Animation & Scale
+---------------------------------------------------------------------------------------------------------
+C01  Kaatya_Pointer_Void    Sharp aerodynamic cyan plasma chevron with trailing apex Static 32px / 48px
+C02  Kaatya_Pointer_Shrine  Crimson blood-curved cursed blade arrow                  Static 32px / 48px
+C03  Kaatya_Pointer_Shadow  Deep midnight indigo kunai with subtle edge glow         Static 32px / 48px
+C04  Kaatya_Pointer_Cursed  Emerald spirit-energy needle with pulsing tip            Static 32px / 48px
+C05  Kaatya_Hand_Link       Open glowing palm with fingertip plasma spark            Hover state 32px
+C06  Kaatya_Hand_Grab       Closed claw fist gripping blue spatial distortion        Active drag state 32px
+C07  Kaatya_Hand_Grabbing   Tightly clenched fist with shockwave impact ring         Drop state 32px
+C08  Kaatya_Text_IBeam      Slender glowing energy beam with upper/lower serif caps  Text input 32px
+C09  Kaatya_Busy_Orb        Miniature spinning spatial sphere (Six Eyes pupil ring)  Animated 12-frame loop
+C10  Kaatya_Working_Bg      Pointer arrow with orbiting micro satellite particle     Animated 16-frame loop
+C11  Kaatya_Resize_Horiz    Bidirectional plasma arrows pointing East/West           Resize horizontal
+C12  Kaatya_Resize_Vert     Bidirectional plasma arrows pointing North/South         Resize vertical
+C13  Kaatya_Resize_Diag1    Diagonal arrows pointing North-East to South-West        Resize diagonal
+C14  Kaatya_Resize_Diag2    Diagonal arrows pointing North-West to South-East        Resize diagonal
+C15  Kaatya_Move_Omni       Four-way glowing crosshair star with central vortex      Pan / move state
+C16  Kaatya_Precision_Cross Fine 1px crosshair with hollow center targeting pip      Precision graphic tool
+C17  Kaatya_Forbidden_Deny  Crimson barrier circle with diagonal slash of cursed art Forbidden / blocked
+C18  Kaatya_Help_Context    Pointer arrow accompanied by pulsing question glyph      Context help state
+C19  Kaatya_Zoom_In         Circular magnifying lens with central glowing plus (+)   Zoom in tool
+C20  Kaatya_Zoom_Out        Circular magnifying lens with central glowing minus (-)  Zoom out tool
+
+================================================================================
+3. 11 SOCIAL SERVICES DESKTOP INTEGRATION SPECIFICATION
+================================================================================
+1. Instagram: Web/PWA container; isolated cookie jar; 500px phone layout or responsive web.
+2. Facebook: Web/PWA container; isolated profile; messaging notifications via D-Bus.
+3. Reddit: Web PWA or native Qt client (Headline); dark theme styling matching active palette.
+4. X (Twitter): Web/PWA container; real-time feed with media hardware acceleration.
+5. Snapchat: Web PWA / Waydroid APK fallback; camera permission modal before activation.
+6. LinkedIn: Web/PWA container; standard desktop browser view in dedicated window.
+7. Pinterest: Web/PWA container; multi-column masonry layout with image caching.
+8. WhatsApp: WhatsApp Web PWA with local audio notification chime via PipeWire.
+9. Telegram: Native Qt 6 C++ Linux desktop app; native Wayland client window.
+10. Discord: Web PWA or ArmCord native client; voice channel routing via PipeWire.
+11. YouTube: Web PWA or FreeTube privacy client; VA-API hardware decoding on Intel HD 530.
+
+================================================================================
+4. 47-SCREEN GENERATION DIRECTIVES & INTERACTION STATES
+================================================================================
+When generating UI screens, Stitch must explicitly model the 8 core interaction states:
+1. Idle / Default State: Standard clean presentation.
+2. Hover State: Subtle cyan glow (`2px rgba(0, 229, 255, 0.4)`).
+3. Active / Pressed State: 0.98x scale compression and increased border luminescence.
+4. Disabled State: 50% opacity, monochromatic desaturation, cursor `Kaatya_Forbidden_Deny`.
+5. Loading State: Shimmering gradient skeleton wave across text and card placeholders.
+6. Error State: Soft crimson ambient border glow (`rgba(255, 23, 68, 0.3)`) and alert banner.
+7. Empty State: Original vector line-art graphic with contextual action callout.
+8. Permission / Consent State: Prominent modal dialog detailing exact request parameters.
+
+SCREEN INVENTORY REFERENCE:
+- Batch 1 (Shell): SCR-01 (Plymouth), SCR-02 (Login), SCR-03 (Greeter), SCR-04 (Desktop),
+  SCR-05 (Taskbar), SCR-06 (Start Menu), SCR-07 (Omnibox).
+- Batch 2 (AI Subsystems): SCR-08 (AI HUD), SCR-09 (Conversation Studio), SCR-10 (Provider Centre),
+  SCR-11 (Model Centre), SCR-12 (Memory Centre), SCR-13 (Voice Centre).
+- Batch 3 (Customization): SCR-14 (Settings), SCR-15 (Theme Studio), SCR-16 (Cursor Studio),
+  SCR-17 (Wallpaper Studio).
+- Batch 4 (Productivity): SCR-18 (Files), SCR-19 (Task Manager), SCR-20 (System Monitor),
+  SCR-33 (Docs), SCR-34 (Notes), SCR-35 (Calendar), SCR-36 (Clock), SCR-37 (Calc),
+  SCR-38 (Coding Studio), SCR-39 (Research Centre).
+- Batch 5 (Compatibility & Utilities): SCR-21 (Software Centre), SCR-22 (Browser),
+  SCR-23 (Social Media Hub), SCR-24 (Android Centre), SCR-25 (APK Inspector),
+  SCR-26 (Windows Centre), SCR-27 (EXE Inspector), SCR-28 (Notifications),
+  SCR-29 (Security Centre), SCR-30 (Network), SCR-31 (Backup & Recovery),
+  SCR-32 (Update Centre), SCR-40 (Media Centre), SCR-41 (Video Player),
+  SCR-42 (Image Viewer), SCR-43 (Screenshot), SCR-44 (Archive Manager),
+  SCR-45 (Clipboard Manager), SCR-46 (Device Manager), SCR-47 (Power/Session).
+================================================================================

@@ -1,0 +1,82 @@
+================================================================================
+KAATYA OS 3.0 -- FUTURE ANTIGRAVITY IMPLEMENTATION MASTER PROMPT (VERSION 5)
+Document ID: KAATYA-DEV-032-v5
+Status: AUTHORITATIVE STAGE 3 EXECUTION SPECIFICATION (STRICTLY LOCKED)
+Authorized Workspace: T:\KAATYA\
+================================================================================
+
+1. STAGE 3 MANDATE & HOST-PROJECT SEPARATION POLICY
+--------------------------------------------------------------------------------
+To Antigravity IDE:
+This specification governs future Stage 3 implementation. It remains 100% INACTIVE
+and LOCKED until the user explicitly issues written authorization.
+
+STRICT OPERATING BOUNDARIES:
+1. Workspace Containment: All handwritten code, build files, build outputs, downloaded
+   vendor dependencies, and generated ISO images MUST be created inside `T:\KAATYA\`.
+   Zero project files outside this directory.
+2. Build Tool Environment: Windows host tools cannot natively compile Debian live-build
+   ISOs. Stage 3 requires executing build commands inside an isolated Linux environment
+   (such as an initialized Debian 13 WSL2 container or a QEMU virtual appliance).
+3. Read-Only Asset Preservation: The 11 audited asset files (GGUF, ONNX, ISO) inside
+   `T:\KAATYA\` are permanent read-only resources. Never rename, overwrite, or delete them.
+4. Non-Concurrent Milestones: Build sequentially through Milestones 1 to 7. Each milestone
+   must pass its independent verification test before the next milestone begins.
+
+2. RIGID DIRECTORY SEPARATION SCHEME (INSIDE T:\KAATYA\)
+--------------------------------------------------------------------------------
+Directory Path                  Purpose & Contents
+---------------------------------------------------------------------------------------------
+`T:\KAATYA\src\`                All handwritten source code (C++20, QML, Python, shell scripts)
+`T:\KAATYA\build\config\`       CMakePresets, Meson cross-files, Debian live-build configurations
+`T:\KAATYA\build\out\`          Intermediate object files, binaries, build caches
+`T:\KAATYA\deps\`               Downloaded third-party libraries, submodules (all inside root)
+`T:\KAATYA\dist\`               Generated installation media, live-build outputs, SquashFS images
+`T:\KAATYA\KAATYA_ASSETS\`      Extracted icons, wallpapers, fonts, sound files
+`T:\KAATYA\KAATYA_MASTER_PLAN_REPORTS\ Authoritative specifications and documentation
+`T:\KAATYA\KAATYA_LOGS\`         Compiler logs, test outputs, execution traces
+`T:\KAATYA\KAATYA_AUDIT\`        Containment audits, manifests, and milestone certificates
+
+3. SEVEN STRUCTURED IMPLEMENTATION MILESTONES & ACCEPTANCE GATES
+--------------------------------------------------------------------------------
+
+MILESTONE 1: BASE OS & BOOT INFRASTRUCTURE
+- Task: Debian 13 base bootstrap (`debootstrap`), standard Debian LTS kernel (`linux-image-amd64`),
+  Syslinux (MBR) and GRUB2 (UEFI) live boot configuration.
+- Filesystem Setup: Btrfs default layout with dedicated subvolumes (`@`, `@home`, `@var_log`, `@snapshots`).
+- Test Gate: Headless QEMU virtual machine boots cleanly to multi-user target with systemd active.
+
+MILESTONE 2: DESKTOP SHELL & WINDOW MANAGEMENT
+- Task: Qt 6 / QML Shell (`kaatya-shell`), KWin-Wayland wrapper, 6 visual themes, 20 cursors,
+  and 1366x768 primary layout baseline with responsive scaling.
+- Test Gate: Wayland session launches; 1366x768 reference UI renders cleanly at steady target frame rates.
+
+MILESTONE 3: CORE SYSTEM SERVICES & SECURITY CONTAINMENT
+- Task: Bubblewrap sandboxing profiles (`bwrap`), Landlock LSM rules, UFW firewall integration,
+  Polkit authorization policies, and hardware kill switches.
+- Test Gate: Automated sandbox escape test confirms unprivileged processes cannot read `/home`.
+
+MILESTONE 4: AI DAEMON, LOCAL INFERENCE & PROVIDER GATEWAY
+- Task: `kaatya-aid` C++20 daemon, D-Bus service, `llama.cpp` Qwen3-4B loader, Piper TTS,
+  Whisper STT, 15-provider gateway, Argon2id credential vault, and Super+Shift+X Emergency Kill Switch.
+- Test Gate: D-Bus round-trip latency < 50ms; verify model unloads after 15m idle; Wireshark confirms kill switch socket termination.
+
+MILESTONE 5: NATIVE CORE APPLICATIONS & PRODUCTIVITY SUITE
+- Task: KAATYA Files (with AI summary), Settings, Task Manager, Notes, Document Centre, Coding Studio IDE.
+- Test Gate: All 7 native productivity apps launch, display without clipping, and pass smoke tests.
+
+MILESTONE 6: BROWSER, ANDROID & WINDOWS COMPATIBILITY RUNTIMES
+- Task: KAATYA Browser (Chromium core with VA-API hardware video), Waydroid LXC container runner,
+  Bottles Wine prefix manager with Bubblewrap wrapper.
+- Test Gate: Chromium video playback via VA-API; test FOSS APK launch in Waydroid; test standard Win32 EXE launch in isolated prefix.
+
+MILESTONE 7: SOFTWARE CENTRE, INSTALLER, RECOVERY & FINAL VERIFICATION
+- Task: KAATYA Software Centre, Calamares installer branding, `grub-btrfs` rollback hooks.
+- Test Gate: End-to-end dry-run installation into virtual disk; create snapshot; corrupt root;
+  reboot into GRUB snapshot menu and successfully rollback system.
+
+4. STAGE 3 LOCK CONFIRMATION
+--------------------------------------------------------------------------------
+Stage 3 development remains 100% LOCKED. No build tasks will commence without
+explicit written instruction from the user.
+================================================================================

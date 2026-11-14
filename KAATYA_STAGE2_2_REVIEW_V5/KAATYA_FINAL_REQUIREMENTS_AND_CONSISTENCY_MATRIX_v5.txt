@@ -1,0 +1,78 @@
+================================================================================
+KAATYA OS 3.0 -- FINAL REQUIREMENTS AND CONSISTENCY MATRIX (VERSION 5)
+Document ID: KAATYA-MATRIX-v5
+Phase: CROSS-DOCUMENT CONSISTENCY AUDIT & DISCREPANCY RECONCILIATION
+Authorized Root: T:\KAATYA\
+Date: 2026-11-14
+Status: RECONCILED CONSISTENCY MATRIX (VERSION 5)
+================================================================================
+
+1. CROSS-DOCUMENT DISCREPANCY RECONCILIATION REGISTER
+--------------------------------------------------------------------------------
+The matrix below cross-examines key architectural specifications across the entire
+KAATYA OS 3.0 documentation library, resolving earlier contradictions:
+
+Topic / Feature       Previous Conflicting Claims              Version 5 Reconciled Architecture            Authoritative Doc
+---------------------------------------------------------------------------------------------------------------------------------------------
+Default Filesystem    Some documents stated Ext4 default;      Default Tier: Btrfs with dedicated subvolumes ARCH-v5, STOR-017,
+                      others claimed Btrfs subvolumes.         (@, @home, @var_log, @snapshots).            TECH-v5
+                                                               Fallback Tier: Ext4 with Timeshift (rsync).
+
+Provider Counts       Claimed 10 cloud APIs and 4 local        Exactly 15 Providers / Adapters:             SEC-v5, AI-010-v5,
+                      adapters; elsewhere 12 or 14 providers.  - 10 Commercial Cloud APIs                  ARCH-v5
+                                                               - 2 Universal Gateways (OpenRouter, HF)
+                                                               - 3 Local Adapters (llama, whisper, piper)
+                                                               *No 4th local adapter exists.*
+
+Nemotron Parameters   Claimed MoE model with 4B active         Dense 7.518B parameter model (Gemma4 arch).  TECH-v5, EXEC-v5
+& Architecture        parameters based on filename `E4B`.      Zero MoE routing tensors. 42 layers, 2 KV
+                                                               heads, 35 SWA layers, 7 global layers.
+
+Nemotron KV Cache     Claimed 512 MB at 8K ctx and 4 GB at     Under full attention: 1.3125 GiB at 8K and   TECH-v5, EXEC-v5
+                      65K context.                             10.50 GiB at 65K. Under hybrid SWA: 259 MiB
+                                                               at 8K and 1.78 GiB at 65K. Capped at 8K ctx.
+
+Qwen3-4B KV Cache     Variously estimated at 450 MB or 1 GB.   Mathematical FP16 KV cache: 576 MiB at 4K;   TECH-v5, EXEC-v5
+                                                               1.152 GiB at 8K context (36 layers, 8 heads).
+
+Application Sandboxes Claimed Bubblewrap alone isolates        Five distinct runtime isolation models:      ARCH-v5, COMPAT-022
+                      Android and Windows applications.        1. Native Linux: Bubblewrap + Landlock
+                                                               2. Browser: Chromium multi-process sandbox
+                                                               3. Android: Waydroid LXC Container
+                                                               4. Windows: Bottles Wine prefix + Bubblewrap
+                                                               5. Windows VM: QEMU / KVM VT-x Hardware VM
+
+Android Integration   Claimed Google Play Store support and    Google Play / GMS rejected (proprietary).   AND-038, ARCH-v5
+                      conflated Android-x86 ISO with Waydroid. Supported: F-Droid & Aurora Store (disclosed).
+                                                               Android-x86 ISO is bootable live/QEMU image;
+                                                               Waydroid uses LXC system/vendor images.
+
+Windows Compatibility Claimed Wine prefix is secure; praised   Wine prefixes expose host `Z:\` by default;  WIN-039, ARCH-v5
+                      unpatched Windows 10 ISO.                KAATYA strips `Z:\` and wraps in namespaces.
+                                                               Windows 10 22H2 reaches EOS Oct 14, 2025;
+                                                               treated as untrusted VM runtime.
+
+Desktop Performance   Unconditionally claimed 60 FPS, 50-60    All unmeasured performance claims labeled    PERF-v5, EXEC-v5
+                      FPS animations, and <10% video CPU.      DESIGN TARGETS or ESTIMATES. Defined 8
+                                                               reproducible terminal benchmark suites.
+
+Credential Vault      Used `/etc/machine-id` as secret;        `/etc/machine-id` is world-readable and      SEC-v5, AI-011
+                      claimed regex sanitizer was unbypassable. rejected as secret. Master key derived from
+                                                               user passphrase + 32-byte random salt via
+                                                               Argon2id ($m=64\text{MB}, t=3, p=4$) + AES-256-GCM.
+                                                               Structural log omission is primary boundary.
+
+Emergency Stop        Vaguely described as kill-switch.        Detailed kill switch: kernel TCP RST socket  SEC-v5, AI-015
+                                                               termination, queue purge, llama abort,
+                                                               process kill, buffer zeroization in RAM.
+
+Host Build Tools      Assumed Windows host can build live ISO. Non-destructive audit showed WSL is an stub  STAGE3-v5, EXEC-v5
+                                                               with no Linux distro, no QEMU, no compilers.
+                                                               Stage 3 requires dedicated Linux environment.
+
+================================================================================
+2. CONSISTENCY VERDICT
+================================================================================
+All 60+ documents in the KAATYA OS 3.0 specification suite now align with the Version 5
+reconciled architecture. Zero contradictory claims remain across files.
+================================================================================
