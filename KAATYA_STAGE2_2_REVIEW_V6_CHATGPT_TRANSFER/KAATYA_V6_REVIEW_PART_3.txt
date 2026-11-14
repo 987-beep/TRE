@@ -1,0 +1,625 @@
+================================================================================
+KAATYA OS 3.0 — VERSION 6 INDEPENDENT REVIEW PACKAGE — PART 3 OF 3
+SCOPE: DOCUMENTS 11–15: ANTIGRAVITY PROMPT, CHANGELOG, INVENTORY AUDIT, CORRECTION REGISTER & MANIFEST
+STAGE: STAGE 2.2 INDEPENDENT TECHNICAL REVIEW BY CHATGPT
+STAGE 3 STATUS: STRICTLY LOCKED
+PROJECT ROOT: T:\KAATYA\
+================================================================================
+
+PART NAVIGATION & SOURCE INVENTORY:
+--------------------------------------------------------------------------------
+  [11] 32_FUTURE_ANTIGRAVITY_IMPLEMENTATION_MASTER_PROMPT_v6.txt (5,827 bytes | 85 lines)
+       Path: T:\KAATYA\KAATYA_MASTER_PLAN_REPORTS\32_FUTURE_ANTIGRAVITY_IMPLEMENTATION_MASTER_PROMPT_v6.txt
+       SHA-256: e30a9464974c62ccffa7dcf7d3b7a5d67c955cb561c759b945ea1ffa21c4f31d
+  [12] STAGE2_2_DOCUMENT_CHANGELOG_AND_EVIDENCE_REGISTER_v6.txt (8,271 bytes | 124 lines)
+       Path: T:\KAATYA\KAATYA_AUDIT\STAGE2_2_DOCUMENT_CHANGELOG_AND_EVIDENCE_REGISTER_v6.txt
+       SHA-256: d7647e01db85262b99fcbf8e97490859778dc3910ca118b9ffc2009b9e7187cf
+  [13] STAGE2_2_FINAL_INVENTORY_AND_CONTAINMENT_AUDIT_v6.txt (6,705 bytes | 71 lines)
+       Path: T:\KAATYA\KAATYA_AUDIT\STAGE2_2_FINAL_INVENTORY_AND_CONTAINMENT_AUDIT_v6.txt
+       SHA-256: 075a114a959ac79df5c3afe72bc4d2c51f20960db2aac88b435d5a99550e2fdc
+  [14] KAATYA_STAGE2_2_INDEPENDENT_REVIEW_CORRECTION_REGISTER_v6.txt (11,285 bytes | 155 lines)
+       Path: T:\KAATYA\KAATYA_AUDIT\KAATYA_STAGE2_2_INDEPENDENT_REVIEW_CORRECTION_REGISTER_v6.txt
+       SHA-256: ad2d8df0468e1f1c5ab57cb25c554bc377fc733a9a3880219416754274120e47
+  [15] UPLOAD_MANIFEST_V6.txt (4,330 bytes | 92 lines)
+       Path: T:\KAATYA\KAATYA_AUDIT\UPLOAD_MANIFEST_V6.txt
+       SHA-256: ed046c1ae85c13a9794374ea16434c6af66d3b12ae74210a00af0c46f036ddef
+
+================================================================================
+COMPLETE VERBATIM SOURCE CONTENTS
+================================================================================
+
+================================================================================
+DOCUMENT [11/15]: 32_FUTURE_ANTIGRAVITY_IMPLEMENTATION_MASTER_PROMPT_v6.txt
+SOURCE PATH: T:\KAATYA\KAATYA_MASTER_PLAN_REPORTS\32_FUTURE_ANTIGRAVITY_IMPLEMENTATION_MASTER_PROMPT_v6.txt
+EXACT SIZE: 5,827 bytes | LINES: 85
+SHA-256 HASH: e30a9464974c62ccffa7dcf7d3b7a5d67c955cb561c759b945ea1ffa21c4f31d
+================================================================================
+
+================================================================================
+KAATYA OS 3.0 -- FUTURE ANTIGRAVITY IMPLEMENTATION MASTER PROMPT (VERSION 6)
+Document ID: KAATYA-DEV-032-v6
+Status: AUTHORITATIVE STAGE 3 EXECUTION SPECIFICATION (STRICTLY LOCKED)
+Authorized Workspace: T:\KAATYA\
+================================================================================
+
+1. STAGE 3 MANDATE & HOST-PROJECT SEPARATION POLICY
+--------------------------------------------------------------------------------
+To Antigravity IDE:
+This specification governs future Stage 3 implementation. It remains 100% INACTIVE
+and LOCKED until the user explicitly issues written authorization.
+
+STRICT OPERATING BOUNDARIES:
+1. Workspace Containment: All handwritten code, build configurations, intermediate outputs,
+   downloaded vendor dependencies, and generated ISO images MUST be created inside `T:\KAATYA\`.
+   Zero project files outside this directory.
+2. Build Tool Environment & WSL Storage Boundary: Windows PowerShell cannot natively compile
+   Debian live-build ISOs or Wayland compositors. Furthermore, standard WSL installs virtual
+   disks to `C:\` outside `T:\KAATYA\`. Therefore, Stage 3 requires explicit user approval
+   to import a custom Debian 13 build rootfs directly into `T:\KAATYA\build\wsl_distro`
+   using `wsl --import`, or provisioning an isolated QEMU build appliance inside `T:\KAATYA\`.
+3. Read-Only Asset Preservation: The 11 audited asset files (GGUF, ONNX, ISO) inside
+   `T:\KAATYA\` are permanent read-only resources. Never rename, overwrite, or delete them.
+4. Non-Concurrent Milestones: Build sequentially through Milestones 1 to 7. Each milestone
+   must pass its independent verification test before the next milestone begins.
+
+2. RIGID DIRECTORY SEPARATION SCHEME (INSIDE T:\KAATYA\)
+--------------------------------------------------------------------------------
+Directory Path                  Purpose & Contents
+---------------------------------------------------------------------------------------------
+`T:\KAATYA\src\`                All handwritten source code (C++20, QML, Python, shell scripts)
+`T:\KAATYA\build\config\`       CMakePresets, Meson cross-files, Debian live-build configurations
+`T:\KAATYA\build\out\`          Intermediate object files, binaries, build caches
+`T:\KAATYA\deps\`               Downloaded third-party libraries, submodules (all inside root)
+`T:\KAATYA\dist\`               Generated installation media, live-build outputs, SquashFS images
+`T:\KAATYA\KAATYA_ASSETS\`      Extracted icons, wallpapers, fonts, sound files
+`T:\KAATYA\KAATYA_MASTER_PLAN_REPORTS\ Authoritative specifications and documentation
+`T:\KAATYA\KAATYA_LOGS\`         Compiler logs, test outputs, execution traces
+`T:\KAATYA\KAATYA_AUDIT\`        Containment audits, manifests, and milestone certificates
+
+3. SEVEN STRUCTURED IMPLEMENTATION MILESTONES & ACCEPTANCE GATES
+--------------------------------------------------------------------------------
+
+MILESTONE 1: BASE OS & BOOT INFRASTRUCTURE
+- Task: Debian 13 "Trixie" base bootstrap (`debootstrap`), standard Debian LTS kernel (`linux-image-amd64`),
+  Syslinux (MBR) and GRUB2 (UEFI) live boot configuration.
+- Filesystem Setup: Provisional Btrfs default layout with dedicated subvolumes (`@`, `@home`, `@var_log`, `@snapshots`).
+- Test Gate: Headless QEMU virtual machine boots cleanly to multi-user target with systemd active.
+
+MILESTONE 2: DESKTOP SHELL & WINDOW MANAGEMENT
+- Task: Qt 6 / QML Shell (`kaatya-shell`), KWin-Wayland wrapper, 6 visual themes, 20 cursors,
+  and 1366x768 primary layout baseline with tiled snap geometry overrides.
+- Test Gate: Wayland session launches; 1366x768 reference UI renders cleanly at steady target frame rates.
+
+MILESTONE 3: CORE SYSTEM SERVICES & SECURITY CONTAINMENT
+- Task: Bubblewrap sandboxing profiles (`bwrap`), Landlock LSM rules, UFW firewall integration,
+  Polkit authorization policies, and hardware kill switches.
+- Test Gate: Automated sandbox escape test confirms unprivileged processes cannot read `/home`.
+
+MILESTONE 4: AI DAEMON, LOCAL INFERENCE, PROVIDER GATEWAY & MEMORYD
+- Task: `kaatya-aid` C++20 daemon, D-Bus service, `llama.cpp` Qwen3-4B loader with `llama_set_abort_callback`,
+  Piper TTS, Whisper STT, 15-provider gateway (Fireworks restored), Argon2id credential vault,
+  and `kaatya-memoryd` userspace PSI governor.
+- Test Gate: D-Bus round-trip latency < 50ms; abort callback halts inference within 1 cycle; memoryd sheds idle tabs under PSI pressure.
+
+MILESTONE 5: NATIVE CORE APPLICATIONS & PRODUCTIVITY SUITE
+- Task: Exactly 7 native productivity apps (Notes, Document Centre, Calculator, Clock, Calendar, Coding Studio, Research Centre) + Files, Settings, Task Manager.
+- Test Gate: All 7 native productivity apps launch, display without clipping, and pass smoke tests.
+
+MILESTONE 6: BROWSER, ANDROID & WINDOWS COMPATIBILITY RUNTIMES
+- Task: KAATYA Browser (Chromium core with VA-API hardware video), Waydroid LXC container runner,
+  Bottles Wine prefix manager with Bubblewrap wrapper.
+- Test Gate: Chromium video playback via VA-API; test FOSS APK launch in Waydroid; test standard Win32 EXE launch in isolated prefix.
+
+MILESTONE 7: SOFTWARE CENTRE, INSTALLER, RECOVERY & FINAL VERIFICATION
+- Task: KAATYA Software Centre, Calamares installer branding, `grub-btrfs` rollback hooks.
+- Test Gate: End-to-end dry-run installation into virtual disk; create snapshot; corrupt root;
+  reboot into GRUB snapshot menu and successfully rollback system.
+
+4. STAGE 3 LOCK CONFIRMATION
+--------------------------------------------------------------------------------
+Stage 3 development remains 100% LOCKED. No build tasks will commence without
+explicit written instruction from the user.
+================================================================================
+
+--------------------------------------------------------------------------------
+END OF DOCUMENT [11/15]: 32_FUTURE_ANTIGRAVITY_IMPLEMENTATION_MASTER_PROMPT_v6.txt
+--------------------------------------------------------------------------------
+
+
+================================================================================
+DOCUMENT [12/15]: STAGE2_2_DOCUMENT_CHANGELOG_AND_EVIDENCE_REGISTER_v6.txt
+SOURCE PATH: T:\KAATYA\KAATYA_AUDIT\STAGE2_2_DOCUMENT_CHANGELOG_AND_EVIDENCE_REGISTER_v6.txt
+EXACT SIZE: 8,271 bytes | LINES: 124
+SHA-256 HASH: d7647e01db85262b99fcbf8e97490859778dc3910ca118b9ffc2009b9e7187cf
+================================================================================
+
+================================================================================
+KAATYA OS 3.0 -- STAGE 2.2 DOCUMENT CHANGELOG & EVIDENCE REGISTER (VERSION 6)
+Document ID: KAATYA-AUDIT-2.2-CHANGELOG-v6
+Phase: VERSION 6 COMPREHENSIVE CHANGELOG & EVIDENCE CITATION REGISTER
+Authorized Root: T:\KAATYA\
+Date: 2026-11-14
+Status: RECONCILED CHANGELOG & EVIDENCE REGISTER (VERSION 6)
+================================================================================
+
+1. COMPLETE VERSION 5 TO VERSION 6 DOCUMENT CHANGELOG
+--------------------------------------------------------------------------------
+The following changelog documents all architectural, mathematical, and structural
+modifications executed across the KAATYA OS 3.0 documentation suite for Version 6:
+
+1. `KAATYA_STAGE2_2_FINAL_TECHNICAL_AUDIT_v6.txt`:
+   - Reconciled Profile 1 (Standard AI Desktop) component summation: corrected exact sum
+     from 10,314 MiB to 9,314 MiB (56.85% utilization), accurately reporting 7,070 MiB
+     (6.904 GiB) of unallocated physical RAM.
+   - Re-verified all component sums across all 5 profiles using 1,024 MiB per GiB.
+   - Clarified distinction between stored tensor elements (7,518,069,290) and unique parameters.
+   - Formulated both Scenario A (Uniform 512 allocation) and Scenario B (Heterogeneous SWA)
+     KV cache calculations for Nemotron-3.5-Bolt, capping context at 8,192 tokens.
+   - Designed userspace memory pressure governor (`kaatya-memoryd`) monitoring Linux PSI.
+
+2. `KAATYA_STAGE2_2_FINAL_ARCHITECTURE_SPECIFICATION_v6.txt`:
+   - Restored Fireworks AI as a core commercial provider (Total: 10 Commercial, 2 Hubs, 3 Local).
+   - Documented Microsoft Store and MSIX package compatibility research and winget/direct alternatives.
+   - Made Btrfs subvolume filesystem choice provisional pending Stage 3 physical hardware tests.
+   - Detailed Btrfs subvolume boundaries (`@`, `@home`, `@var_log`, `@snapshots`) and snapshot rollback flow.
+   - Recorded Debian 13 "Trixie" as current STABLE release (5-year lifecycle).
+
+3. `KAATYA_STAGE2_2_HARDWARE_AND_PERFORMANCE_REALISM_v6.txt`:
+   - Corrected CPU clock architecture: Intel Core i3-6100T has a 3.20 GHz fixed BASE clock
+     and DOES NOT support Intel Turbo Boost. Scales down to 800 MHz via SpeedStep.
+   - Documented 35W TDP as a cooling dissipation design metric, not a hard electrical cutoff.
+   - Replaced all Windows drive-letter paths in benchmark commands with native Linux paths.
+   - Kept all UI frame rates, video decode, and token throughput figures labeled as ESTIMATES or TARGETS.
+
+4. `KAATYA_STAGE2_2_AI_SECURITY_PRIVACY_AND_PROVIDER_SPECIFICATION_v6.txt`:
+   - Replaced unsupported `llama_cancel_eval()` with official `llama_set_abort_callback()` API.
+   - Detailed thread-safe atomic flag and CPU loop check during active decoding.
+   - Disclosed cloud cancellation realism: local TCP RST terminates client sockets, but cannot
+     retract already delivered data or guarantee remote cloud billing halts.
+   - Fully documented base URLs, authentication headers, and discovery endpoints for all 15 providers.
+   - Corrected Hugging Face model discovery to use Inference Router endpoints (`router.huggingface.co/models`).
+   - Detailed `kaatya-memoryd` PSI monitoring, cgroup thresholds, and tiered memory shedding.
+
+5. `KAATYA_STAGE2_2_MASTER_REQUIREMENTS_TRACEABILITY_MATRIX_v6.txt`:
+   - Rebuilt matrix with 37 requirements (RQ-01 to RQ-37) adding explicit entries for Fireworks AI
+     (RQ-10) and Microsoft Store & MSIX research (RQ-20).
+   - Standardized productivity applications count to exactly 7 native apps.
+   - Strictly enforced 8-stage verification taxonomy (Stages 1-4 verified; Stages 5-8 pending).
+
+6. `KAATYA_STAGE2_2_STITCH_AND_UI_COMPLETENESS_AUDIT_v6.txt`:
+   - Resolved quarter-screen snap geometry conflict on 1366x768 display: tiled snap mode
+     overrides floating 640x480 minimum size, allowing windows to adapt to 683x360px.
+   - Formatted theme token table in proper GitHub Flavored Markdown table format across all 6 themes.
+   - Specified that LUKS full-disk encryption is an optional installation choice; SCR-01 only
+     displays the passphrase prompt if LUKS is enabled.
+   - Confirmed all 47 screen specifications, 20 cursors, and 11 social services.
+
+7. `KAATYA_STAGE2_2_STAGE3_IMPLEMENTATION_READINESS_REVIEW_v6.txt`:
+   - Disclosed that standard WSL installs virtual hard disks to `C:\` outside `T:\KAATYA\`.
+   - Stated mandatory rule that any future Linux build environment must be imported into
+     `T:\KAATYA\` using `wsl --import` with explicit user authorization.
+   - Maintained Stage 3 development strictly locked.
+
+8. `KAATYA_MASTER_EXECUTIVE_REPORT_v6.txt`:
+   - Synthesized all Version 6 corrections into high-level executive report.
+   - Reconciled all numbers (15 providers, 47 screens, 6 themes, 20 cursors, 11 social services, 7 apps).
+
+9. `KAATYA_FINAL_REQUIREMENTS_AND_CONSISTENCY_MATRIX_v6.txt`:
+   - Cross-reconciled consistency across all documents in the project library.
+
+10. `31_STITCH_COMPLETE_DESIGN_MASTER_PROMPT_v6.txt`:
+    - Updated Stitch prompt with sequential batch generation directive, markdown theme table, and snap rule.
+
+11. `32_FUTURE_ANTIGRAVITY_IMPLEMENTATION_MASTER_PROMPT_v6.txt`:
+    - Updated Antigravity prompt with WSL storage boundary disclosure and provisional Btrfs layout.
+
+================================================================================
+2. AUTHORITATIVE EVIDENCE & CITATION REGISTER
+================================================================================
+The following official documentation sources, standards, and specifications were
+consulted and verified on 2026-11-14 to support Version 6:
+
+1. CRYPTOGRAPHY & SECURITY STANDARDS:
+   - RFC 9106: "Argon2 Memory-Hard Function for Password Hashing and Proof-of-Work Applications"
+     URL: https://www.rfc-editor.org/rfc/rfc9106.html (Accessed 2026-11-14)
+   - NIST SP 800-38D: "Recommendation for Block Cipher Modes of Operation: Galois/Counter Mode (GCM)"
+     URL: https://csrc.nist.gov/publications/detail/sp/800-38d/final (Accessed 2026-11-14)
+   - Linux Kernel Documentation: "Kernel Key Retention Service (Keyrings)"
+     URL: https://docs.kernel.org/security/keys/core.html (Accessed 2026-11-14)
+
+2. SYSTEM SANDBOXING & LINUX RUNTIME:
+   - Bubblewrap Sandboxing Documentation (Project Atomic / GNOME)
+     URL: https://github.com/containers/bubblewrap (Accessed 2026-11-14)
+   - Linux Kernel Documentation: "Pressure Stall Information (PSI)"
+     URL: https://docs.kernel.org/accounting/psi.html (Accessed 2026-11-14)
+   - Waydroid Project: "Waydroid Container Architecture & Binder Setup"
+     URL: https://docs.waydro.id/ (Accessed 2026-11-14)
+
+3. HARDWARE & GRAPHICS ARCHITECTURE:
+   - Intel ARK Product Specifications: "Intel Core i3-6100T Processor (3M Cache, 3.20 GHz)"
+     URL: https://ark.intel.com/content/www/us/en/ark/products/90730/intel-core-i3-6100t-processor-3m-cache-3-20-ghz.html (Accessed 2026-11-14)
+   - Mesa 3D Graphics Library: "Intel Iris OpenGL and Vulkan Driver Documentation"
+     URL: https://docs.mesa3d.org/drivers/iris.html (Accessed 2026-11-14)
+
+4. OPERATING SYSTEM & LIFECYCLE:
+   - Debian Release Information: "Debian 13 'Trixie' Release & Lifecycle Information"
+     URL: https://www.debian.org/releases/trixie/ (Accessed 2026-11-14)
+   - Microsoft Lifecycle: "Windows 10 Home and Pro Lifecycle Policy (EOS October 14, 2025)"
+     URL: https://learn.microsoft.com/en-us/lifecycle/products/windows-10-home-and-pro (Accessed 2026-11-14)
+
+5. AI RUNTIME & MODEL SPECIFICATIONS:
+   - llama.cpp C/C++ Header API (`llama.h` - `llama_set_abort_callback`)
+     URL: https://github.com/ggerganov/llama.cpp/blob/master/include/llama.h (Accessed 2026-11-14)
+   - GGUF File Format Specification (llama.cpp upstream)
+     URL: https://github.com/ggerganov/ggml/blob/master/docs/gguf.md (Accessed 2026-11-14)
+   - Fireworks AI API Documentation: "Fireworks Serverless Inference Endpoints"
+     URL: https://docs.fireworks.ai/ (Accessed 2026-11-14)
+   - Hugging Face Inference Providers Documentation: "Router API & Warm Endpoints"
+     URL: https://huggingface.co/docs/inference-endpoints/index (Accessed 2026-11-14)
+================================================================================
+
+--------------------------------------------------------------------------------
+END OF DOCUMENT [12/15]: STAGE2_2_DOCUMENT_CHANGELOG_AND_EVIDENCE_REGISTER_v6.txt
+--------------------------------------------------------------------------------
+
+
+================================================================================
+DOCUMENT [13/15]: STAGE2_2_FINAL_INVENTORY_AND_CONTAINMENT_AUDIT_v6.txt
+SOURCE PATH: T:\KAATYA\KAATYA_AUDIT\STAGE2_2_FINAL_INVENTORY_AND_CONTAINMENT_AUDIT_v6.txt
+EXACT SIZE: 6,705 bytes | LINES: 71
+SHA-256 HASH: 075a114a959ac79df5c3afe72bc4d2c51f20960db2aac88b435d5a99550e2fdc
+================================================================================
+
+================================================================================
+KAATYA OS 3.0 -- STAGE 2.2 FINAL INVENTORY & CONTAINMENT AUDIT (VERSION 6)
+Document ID: KAATYA-AUDIT-2.2-INVENTORY-v6
+Phase: COMPLETE LOCAL INVENTORY & CRYPTOGRAPHIC CONTAINMENT AUDIT (VERSION 6)
+Authorized Root: T:\KAATYA\
+Date: 2026-11-14
+Status: RECONCILED INVENTORY & CONTAINMENT AUDIT (VERSION 6)
+================================================================================
+
+1. COMPLETE INVENTORY OF ALL 14 NEW VERSION 6 DELIVERABLES
+--------------------------------------------------------------------------------
+All 14 Version 6 deliverables were created strictly inside `T:\KAATYA\` without
+modifying, overwriting, or deleting any pre-existing Version 5, Version 4, or historical documents:
+
+Filename                                                    Folder                       Size (Bytes) SHA-256 Cryptographic Hash
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+1.  KAATYA_STAGE2_2_FINAL_TECHNICAL_AUDIT_v6.txt            KAATYA_MASTER_PLAN_REPORTS   18,914 bytes 60960ff2af0e34fc94ad50bb3598c34271eda498b84a35d3d52fcdd4e33b31da
+2.  KAATYA_STAGE2_2_FINAL_ARCHITECTURE_SPECIFICATION_v6.txt KAATYA_MASTER_PLAN_REPORTS   13,811 bytes 8d43a6c3b50245c73ba0485dd8f157587a08c470fd38ed32486a14612bf3d369
+3.  KAATYA_STAGE2_2_HARDWARE_AND_PERFORMANCE_REALISM_v6.txt KAATYA_MASTER_PLAN_REPORTS    8,120 bytes 524e5ce6bd8ba7ae456df88d87ccf3ce4e6d334a6a1b52c6b8cf1a6119e8cef2
+4.  KAATYA_STAGE2_2_AI_SECURITY_PRIVACY_AND_PROVIDER_SPECIFICATION_v6.txt KAATYA_MASTER_PLAN_REPORTS 12,281 bytes a2dba8e0c9420c55214f6097c96dd65fd8f485de71fed5524325faecf3a09306
+5.  KAATYA_STAGE2_2_MASTER_REQUIREMENTS_TRACEABILITY_MATRIX_v6.txt KAATYA_MASTER_PLAN_REPORTS 16,008 bytes 4a2c1f871c4c70b21ee9ea776340259b59b3976c84c71953b72d75bc9cdd303a
+6.  KAATYA_STAGE2_2_STITCH_AND_UI_COMPLETENESS_AUDIT_v6.txt KAATYA_MASTER_PLAN_REPORTS   41,532 bytes 21ae4a34ed7ee45e3c3d89b7c3b31c82b4c9539e243b1915276f4da95eae79b7
+7.  KAATYA_STAGE2_2_STAGE3_IMPLEMENTATION_READINESS_REVIEW_v6.txt KAATYA_MASTER_PLAN_REPORTS 5,942 bytes 54e4cf2c82b96c95dff734744f639c33bc0c54f10612a24163fdf5ca0137a4d0
+8.  KAATYA_MASTER_EXECUTIVE_REPORT_v6.txt                   KAATYA_MASTER_PLAN_REPORTS    8,097 bytes d9ee13fa0df3d8662034ae4b5850135f26aecc6c88a17cf4ddc2eac6198b520a
+9.  KAATYA_FINAL_REQUIREMENTS_AND_CONSISTENCY_MATRIX_v6.txt KAATYA_MASTER_PLAN_REPORTS    5,437 bytes 27ef5e43ed2eadda35cc29c4d5de32fc1f1547a9a4b33d13ff33b2bde22243d5
+10. 31_STITCH_COMPLETE_DESIGN_MASTER_PROMPT_v6.txt         KAATYA_MASTER_PLAN_REPORTS    9,264 bytes 7dd94bc275a497664b4afc0ccf9ff401bed001ae26987a0a1eb0911b330d4959
+11. 32_FUTURE_ANTIGRAVITY_IMPLEMENTATION_MASTER_PROMPT_v6.txt KAATYA_MASTER_PLAN_REPORTS  5,827 bytes e30a9464974c62ccffa7dcf7d3b7a5d67c955cb561c759b945ea1ffa21c4f31d
+12. STAGE2_2_DOCUMENT_CHANGELOG_AND_EVIDENCE_REGISTER_v6.txt KAATYA_AUDIT                 8,271 bytes d7647e01db85262b99fcbf8e97490859778dc3910ca118b9ffc2009b9e7187cf
+13. STAGE2_2_FINAL_INVENTORY_AND_CONTAINMENT_AUDIT_v6.txt   KAATYA_AUDIT                 (This File)  Self-Referential Audit Record
+14. KAATYA_STAGE2_2_INDEPENDENT_REVIEW_CORRECTION_REGISTER_v6.txt KAATYA_AUDIT              11,285 bytes ad2d8df0468e1f1c5ab57cb25c554bc377fc733a9a3880219416754274120e47
+
+================================================================================
+2. RE-VERIFICATION OF 11 PHYSICAL ASSETS (UNTOUCHED & PRESERVED)
+================================================================================
+All 11 audited asset files inside `T:\KAATYA\` were re-verified against their known
+cryptographic baseline. Zero assets have been renamed, modified, moved, or deleted:
+
+Asset Name                                 Size (Bytes)  SHA-256 Hash Verification Status
+---------------------------------------------------------------------------------------------------------------------------------
+1.  Nemotron-3.5-Bolt-E4B-Q4_K_M.gguf      6,180,446,208 c8af2b8aea10a690a1d9491db744a9446660173cb38fc489612b556615a69612 (VERIFIED INTACT)
+2.  Qwen3-4B-Q4_K_M.gguf                   2,497,280,256 7485fe6f11af29433bc51cab58009521f205840f5b4ae3a32fa7f92e8534fdf5 (VERIFIED INTACT)
+3.  qwen3-embedding-0.6b-q8_0.gguf           639,150,592 ee029816fb9615e361d9e444abc0059827322e665c3ed9e6bc0531efe20cddda (VERIFIED INTACT)
+4.  android-x86_64-9.0-r2.iso                967,835,648 83bf1f00880197eece59092476536bb33a1e1e9b2518e95bb3baad72c8ef8560 (VERIFIED INTACT)
+5.  Win10_22H2_EnglishInternational_x64.iso 6,112,686,080 344b58e7bbef60f47e2524d7c865fe7b3a2ea1297eefb3b1e3e7f67be6ff1a05 (VERIFIED INTACT)
+6.  whisper-base.en.bin                      147,964,211 a305016c68e3fceea893da7e49c95d8205f0b7e289bfad1d0e1b12ce0bc27a97 (VERIFIED INTACT)
+7.  en_US-lessac-medium.onnx                  63,227,645 4e7436dd583764b85994fbcff3b8d601b0f5c94291884439c2982d54e41cf7cf (VERIFIED INTACT)
+8.  en_US-lessac-medium.onnx.json                  5,038 274291c9441a77ae3835e580e60655075d9e5a1b327b876a47a1772390f77b7f (VERIFIED INTACT)
+9.  hi_IN-rohan-medium.onnx                   62,891,421 d24f5a89476722bc13d8e578165aa5ff8676bf0cb2d9f676451675ce23eeff61 (VERIFIED INTACT)
+10. hi_IN-rohan-medium.onnx.json                  4,892 d354a86f78816c21490212aaeeaa9945df891c953a812df934f82855146c6b3c (VERIFIED INTACT)
+11. KAATYA.rar                               126,368 a9cb2327572dca6c2a498b58498871eb7436a5369bb4ec90b218eb8a40bb5fa2 (VERIFIED INTACT)
+
+================================================================================
+3. STRICT PROJECT DIRECTORY CONTAINMENT CONFIRMATION
+================================================================================
+1. Authorized Operating Boundary: `T:\KAATYA\`.
+2. Directory Scanning Compliance:
+   - Zero parent directory scans executed.
+   - Zero external drives (C:, D:, E:) inspected or accessed.
+   - Zero Windows user directories, Desktop, Downloads, or AppData accessed.
+   - Zero temporary files written outside `T:\KAATYA\`.
+3. GitHub Operating Policy Compliance:
+   - Zero Git commits executed on the remote repository.
+   - Zero Git pushes executed to GitHub.
+   - Zero deletions, reversions, or modifications to remote files.
+   - Root `.gitattributes`, Version 4 review directory, and Version 5 review directory remain strictly untouched.
+4. Stage 3 Development Isolation:
+   - Zero source code compiled.
+   - Zero OS components, ISOs, or installers built.
+   - Zero background development processes initiated.
+   - Stage 3 remains 100% STRICTLY LOCKED.
+================================================================================
+
+--------------------------------------------------------------------------------
+END OF DOCUMENT [13/15]: STAGE2_2_FINAL_INVENTORY_AND_CONTAINMENT_AUDIT_v6.txt
+--------------------------------------------------------------------------------
+
+
+================================================================================
+DOCUMENT [14/15]: KAATYA_STAGE2_2_INDEPENDENT_REVIEW_CORRECTION_REGISTER_v6.txt
+SOURCE PATH: T:\KAATYA\KAATYA_AUDIT\KAATYA_STAGE2_2_INDEPENDENT_REVIEW_CORRECTION_REGISTER_v6.txt
+EXACT SIZE: 11,285 bytes | LINES: 155
+SHA-256 HASH: ad2d8df0468e1f1c5ab57cb25c554bc377fc733a9a3880219416754274120e47
+================================================================================
+
+================================================================================
+KAATYA OS 3.0 -- STAGE 2.2 INDEPENDENT REVIEW CORRECTION REGISTER (VERSION 6)
+Document ID: KAATYA-AUDIT-2.2-REVIEW-CORRECTIONS-v6
+Phase: INDEPENDENT AUDIT CORRECTIONS & TECHNICAL DEFECT RESOLUTION (VERSION 6)
+Authorized Root: T:\KAATYA\
+Date: 2026-11-14
+Status: AUTHORITATIVE AUDIT RESOLUTION REGISTER (VERSION 6)
+================================================================================
+
+1. POINT-BY-POINT RESOLUTION OF AUDIT FINDINGS (ITEMS A THROUGH L)
+--------------------------------------------------------------------------------
+
+ITEM A: RAM BUDGET — RECOMPUTED WORKLOAD PROFILES
+- Version 5 Defect: Profile 1 component rows (Base OS 450 + Shell 400 + Services 180
+  + Qwen3 2450 + KV 1152 + Scratch 300 + Embed 610 + Whisper 180 + Piper 80 + Browser 1800
+  + GPU 512 + Cache 1200) totaled 9,314 MiB, but the total was erroneously reported as 10,314 MiB.
+- Version 6 Correction:
+  1. Corrected the arithmetic row sum to exactly 9,314 MiB (9.096 GiB, using 1,024 MiB/GiB).
+  2. Corrected remaining unallocated physical RAM to 7,070 MiB (6.904 GiB | 43.15% free headroom).
+  3. Re-calculated and verified exact component sums and percentages across all 5 profiles:
+     * Profile 1 (Standard): 9,314 MiB (56.85% utilized | 7,070 MiB free headroom).
+     * Profile 2 (Specialist): 12,290 MiB (75.01% utilized | 4,094 MiB free headroom).
+     * Profile 3 (Android): 9,896 MiB (60.40% utilized | 6,488 MiB free headroom).
+     * Profile 4 (Windows): 9,992 MiB (60.99% utilized | 6,392 MiB free headroom).
+     * Profile 5 (Stress): 15,052 MiB (91.87% utilized | 1,332 MiB free headroom).
+  4. Explicitly documented that 8 GB zram is compressed swap backed by physical RAM (not free RAM),
+     and compression ratios vary dynamically (2:1 to 3:1 typical).
+- Target Documents: `KAATYA_STAGE2_2_FINAL_TECHNICAL_AUDIT_v6.txt`, `KAATYA_MASTER_EXECUTIVE_REPORT_v6.txt`.
+
+ITEM B: GEMMA 4 AND NEMOTRON MODEL AUDIT
+- Version 5 Defect: Did not distinguish stored tensor elements from unique model parameters;
+  simplified SWA vs Global KV cache calculations; did not detail shared KV metadata.
+- Version 6 Correction:
+  1. Distinguish Stored Elements: Iterating all 720 tensors yields 7,518,069,290 stored elements.
+     Clarified that tied embeddings or shared weights mean unique parameter count may differ.
+  2. Architecture: Absence of standard MoE tensors does not alone prove dense architecture in
+     custom GGUFs, but GGUF keys explicitly declare `gemma4` with dense FFN (10,240).
+  3. Detailed Layers: 42 layers total, 2 KV heads, `sliding_window = 512`, comprising 35 SWA layers
+     (dim 256) and 7 Global layers (dim 512), with `gemma4.attention.shared_kv_layers = 18`.
+  4. llama.cpp Revision & Cache Calculations: Identified upstream revision `b4400`. Formulated
+     Scenario A (Uniform 512 allocation: 1.3125 GiB at 8K, 10.50 GiB at 65K) and Scenario B
+     (Heterogeneous SWA: 259 MiB at 8K, 1.78 GiB at 65K). Marked heterogeneous SWA support
+     as CONDITIONAL / UNVERIFIED in llama.cpp, keeping a safe 8,192 context cap.
+- Target Documents: `KAATYA_STAGE2_2_FINAL_TECHNICAL_AUDIT_v6.txt`, `KAATYA_MASTER_EXECUTIVE_REPORT_v6.txt`.
+
+ITEM C: AI EMERGENCY STOP AND CANCELLATION
+- Version 5 Defect: Referenced non-existent hypothetical function `llama_cancel_eval()`.
+- Version 6 Correction:
+  1. Replaced with official upstream API: `llama_set_abort_callback(ctx, abort_callback, user_data)`.
+  2. Registered callback checks an atomic thread-safe flag (`std::atomic<bool>`) between decode cycles.
+  3. When signaled, active CPU decoding halts immediately and returns control to the daemon loop.
+  4. Local HTTP streams are closed via `SO_LINGER(0)` socket abort; helper processes killed via SIGTERM/SIGKILL.
+  5. Realism Disclosure: Local TCP reset aborts client data streams, but CANNOT retract data already
+     transmitted or guarantee remote cloud providers will not bill for in-flight requests.
+  6. Memory buffers are zeroized using `explicit_bzero()`.
+- Target Documents: `KAATYA_STAGE2_2_AI_SECURITY_PRIVACY_AND_PROVIDER_SPECIFICATION_v6.txt`.
+
+ITEM D: MEMORY PRESSURE AND ZRAM GOVERNANCE
+- Version 5 Defect: Stated that Linux PSI directly discards tabs and manages Waydroid memory.
+- Version 6 Correction:
+  1. Clarified that PSI (`/proc/pressure/memory`) is an accounting interface, not a daemon.
+  2. Designed userspace memory governor `kaatya-memoryd` to poll PSI metrics via `epoll`.
+  3. Defined 3 tiered thresholds (Level 1: avg10 > 15; Level 2: avg10 > 30; Level 3: avg10 > 50).
+  4. Defined actions: Level 1 signals Chromium to discard background tabs; Level 2 freezes
+     Waydroid via cgroups v2; Level 3 sends D-Bus signal to unload local LLM weights.
+  5. System survival under stress profile is an engineering TARGET until physical testing.
+- Target Documents: `KAATYA_STAGE2_2_FINAL_TECHNICAL_AUDIT_v6.txt`, `KAATYA_STAGE2_2_AI_SECURITY_PRIVACY_AND_PROVIDER_SPECIFICATION_v6.txt`.
+
+ITEM E: AI PROVIDER CENTRE — RESTORATION OF FIREWORKS AI
+- Version 5 Defect: Omitted Fireworks AI in favor of Perplexity AI; treated Hugging Face as a generic
+  model list without distinguishing the router from general Hub repositories.
+- Version 6 Correction:
+  1. Restored Fireworks AI (`https://api.fireworks.ai/inference/v1`) as a core Commercial API.
+  2. Documented complete 15-provider directory (10 Commercial, 2 Gateways, 3 Local Adapters).
+  3. Perplexity AI documented as an optional add-on provider.
+  4. Documented specific base URLs, auth headers, discovery routes, and streaming support for every provider.
+  5. Corrected Hugging Face discovery to use Inference Router (`router.huggingface.co/models`).
+  6. Zero-token connection testing enforced across all providers.
+- Target Documents: `KAATYA_STAGE2_2_AI_SECURITY_PRIVACY_AND_PROVIDER_SPECIFICATION_v6.txt`, `KAATYA_STAGE2_2_FINAL_ARCHITECTURE_SPECIFICATION_v6.txt`.
+
+ITEM F: DEBIAN AND SOFTWARE LIFECYCLE
+- Version 5 Defect: Described Debian 13 "Trixie" as testing; included rigid example versions for Wine.
+- Version 6 Correction:
+  1. Recorded Debian 13 "Trixie" as the current STABLE release (5-year lifecycle: 3 standard + 2 LTS).
+  2. Clarified that Debian 14 "Forky" is the current testing distribution.
+  3. Adopted dynamic Wine Stable tracking policy without rigid example version numbers.
+  4. Recorded Windows 10 22H2 official End of Support (October 14, 2025).
+- Target Documents: `KAATYA_STAGE2_2_FINAL_ARCHITECTURE_SPECIFICATION_v6.txt`, `KAATYA_MASTER_EXECUTIVE_REPORT_v6.txt`.
+
+ITEM G: BTRFS AND EXT4 RECOVERY
+- Version 5 Defect: Did not clarify subvolume boundaries, snapshot isolation, or GRUB failure recovery.
+- Version 6 Correction:
+  1. Filesystem decision declared PROVISIONAL pending physical storage benchmarks in Stage 3.
+  2. Detailed subvolume boundaries: `@` (root), `@home` (user data), `@var_log` (logs), `@snapshots`.
+     A snapshot of `@` strictly captures root and excludes `@home` and `@var_log`.
+  3. Defined writable rollback candidate generation and `btrfs subvolume set-default` flow.
+  4. Defined GRUB failure recovery via live USB chroot and Ext4 fallback path via Timeshift rsync.
+  5. Emphasized that Btrfs snapshots are NOT backups (disk hardware failure destroys both).
+- Target Documents: `KAATYA_STAGE2_2_FINAL_ARCHITECTURE_SPECIFICATION_v6.txt`.
+
+ITEM H: HARDWARE AND PERFORMANCE REALISM
+- Version 5 Defect: Described 3.20 GHz as turbo boost; treated 35W TDP as a hard ceiling; used
+  Windows drive letters in benchmark commands.
+- Version 6 Correction:
+  1. Corrected CPU clock architecture: Intel Core i3-6100T has a 3.20 GHz fixed BASE frequency
+     and DOES NOT support Intel Turbo Boost. Scales down to 800 MHz via SpeedStep.
+  2. Documented 35W TDP as a cooling dissipation design metric, not an instantaneous electrical ceiling.
+  3. Formatted all benchmark commands using standard Linux filesystem paths (`/opt/kaatya/...`).
+  4. Reclassified all 7 performance tiers as DESIGN TARGETS or ESTIMATES.
+- Target Documents: `KAATYA_STAGE2_2_HARDWARE_AND_PERFORMANCE_REALISM_v6.txt`.
+
+ITEM I: APPLICATION ECOSYSTEM COMPLETENESS
+- Version 5 Defect: Lacked detailed Microsoft Store / MSIX analysis; lacked browser feature enumeration.
+- Version 6 Correction:
+  1. Enumerated complete KAATYA Browser feature suite (tabs, groups, bookmarks, history, profiles, PWA).
+  2. Detailed all 11 social services with honest runtime classifications.
+  3. Disclosed Waydroid shared-kernel security implications and lack of Google Play / GMS.
+  4. Disclosed Wine prefix vulnerabilities and sandbox hardening (stripping `Z:\`).
+  5. Researched Microsoft Store / MSIX: Store requires proprietary Windows framework and UWP APIs
+     unsupported in Wine; MSIX extraction alternatives and winget documented.
+- Target Documents: `KAATYA_STAGE2_2_FINAL_ARCHITECTURE_SPECIFICATION_v6.txt`, `KAATYA_STAGE2_2_STITCH_AND_UI_COMPLETENESS_AUDIT_v6.txt`.
+
+ITEM J: STITCH UI COMPLETENESS & GEOMETRY RECONCILIATION
+- Version 5 Defect: Quarter-screen snap geometry (683x360) conflicted with 640x480 minimum window size;
+  theme table was fixed text rather than Markdown; prompt was not explicitly sequential.
+- Version 6 Correction:
+  1. Resolved geometry conflict: tiled snap mode overrides floating 640x480 minimum size, allowing
+     windows to adapt to 683x360px with compact 28px titlebar and internal vertical scrolling.
+  2. Rebuilt theme token table in proper GitHub Flavored Markdown table format.
+  3. Specified LUKS full-disk encryption as an optional installation choice; SCR-01 only shows
+     password prompt if LUKS is enabled.
+  4. Instructed Stitch to generate all 5 batches sequentially without asking the user.
+  5. Confirmed all 47 screens are wireframe specifications, not yet visually rendered.
+- Target Documents: `31_STITCH_COMPLETE_DESIGN_MASTER_PROMPT_v6.txt`, `KAATYA_STAGE2_2_STITCH_AND_UI_COMPLETENESS_AUDIT_v6.txt`.
+
+ITEM K: REQUIREMENTS TRACEABILITY
+- Version 5 Defect: Inconsistent productivity app counts; lacked Fireworks AI and Microsoft Store entries.
+- Version 6 Correction:
+  1. Rebuilt matrix with 37 requirements (RQ-01 to RQ-37) adding Fireworks AI (RQ-10) and
+     Microsoft Store & MSIX research (RQ-20).
+  2. Standardized productivity applications count to exactly 7 native apps.
+  3. Maintained strict 8-stage verification taxonomy (Stages 1-4 verified; Stages 5-8 pending).
+- Target Documents: `KAATYA_STAGE2_2_MASTER_REQUIREMENTS_TRACEABILITY_MATRIX_v6.txt`.
+
+ITEM L: STAGE 3 ENVIRONMENT AND WSL STORAGE BOUNDARY
+- Version 5 Defect: Did not disclose that standard WSL installs outside `T:\KAATYA\`.
+- Version 6 Correction:
+  1. Disclosed that standard WSL distributions install virtual hard disks (`ext4.vhdx`) to
+     `C:\Users\<User>\AppData\Local\Packages\...` outside `T:\KAATYA\`.
+  2. Established mandatory rule: any future WSL installation must be imported into `T:\KAATYA\`
+     using `wsl --import` with explicit user authorization.
+  3. Recorded non-destructive preflight audit showing host lacks Linux build toolchain.
+  4. Kept Stage 3 development strictly locked.
+- Target Documents: `KAATYA_STAGE2_2_STAGE3_IMPLEMENTATION_READINESS_REVIEW_v6.txt`.
+================================================================================
+
+--------------------------------------------------------------------------------
+END OF DOCUMENT [14/15]: KAATYA_STAGE2_2_INDEPENDENT_REVIEW_CORRECTION_REGISTER_v6.txt
+--------------------------------------------------------------------------------
+
+
+================================================================================
+DOCUMENT [15/15]: UPLOAD_MANIFEST_V6.txt
+SOURCE PATH: T:\KAATYA\KAATYA_AUDIT\UPLOAD_MANIFEST_V6.txt
+EXACT SIZE: 4,330 bytes | LINES: 92
+SHA-256 HASH: ed046c1ae85c13a9794374ea16434c6af66d3b12ae74210a00af0c46f036ddef
+================================================================================
+
+================================================================================
+KAATYA OS 3.0 -- VERSION 6 LOCAL DELIVERABLES AUDIT MANIFEST
+================================================================================
+Project Name: KAATYA OS 3.0
+Manifest Type: Authoritative Version 6 Local Deliverables Inventory & Hashes
+Creation Date/Time: 2026-11-14T18:40:00
+Target Environment: Antigravity IDE
+Authorized Project Root: T:\KAATYA\
+Stage 3 Development Status: STRICTLY LOCKED (DOCUMENTATION AUDIT ONLY)
+================================================================================
+
+1. COMPLETE 14 VERSION 6 DELIVERABLES INVENTORY
+--------------------------------------------------------------------------------
+
+Filename: KAATYA_STAGE2_2_FINAL_TECHNICAL_AUDIT_v6.txt
+  Folder: T:\KAATYA\KAATYA_MASTER_PLAN_REPORTS\
+  Exact Size: 18,914 bytes
+  SHA-256 Hash: 60960ff2af0e34fc94ad50bb3598c34271eda498b84a35d3d52fcdd4e33b31da
+
+Filename: KAATYA_STAGE2_2_FINAL_ARCHITECTURE_SPECIFICATION_v6.txt
+  Folder: T:\KAATYA\KAATYA_MASTER_PLAN_REPORTS\
+  Exact Size: 13,811 bytes
+  SHA-256 Hash: 8d43a6c3b50245c73ba0485dd8f157587a08c470fd38ed32486a14612bf3d369
+
+Filename: KAATYA_STAGE2_2_HARDWARE_AND_PERFORMANCE_REALISM_v6.txt
+  Folder: T:\KAATYA\KAATYA_MASTER_PLAN_REPORTS\
+  Exact Size: 8,120 bytes
+  SHA-256 Hash: 524e5ce6bd8ba7ae456df88d87ccf3ce4e6d334a6a1b52c6b8cf1a6119e8cef2
+
+Filename: KAATYA_STAGE2_2_AI_SECURITY_PRIVACY_AND_PROVIDER_SPECIFICATION_v6.txt
+  Folder: T:\KAATYA\KAATYA_MASTER_PLAN_REPORTS\
+  Exact Size: 12,281 bytes
+  SHA-256 Hash: a2dba8e0c9420c55214f6097c96dd65fd8f485de71fed5524325faecf3a09306
+
+Filename: KAATYA_STAGE2_2_MASTER_REQUIREMENTS_TRACEABILITY_MATRIX_v6.txt
+  Folder: T:\KAATYA\KAATYA_MASTER_PLAN_REPORTS\
+  Exact Size: 16,008 bytes
+  SHA-256 Hash: 4a2c1f871c4c70b21ee9ea776340259b59b3976c84c71953b72d75bc9cdd303a
+
+Filename: KAATYA_STAGE2_2_STITCH_AND_UI_COMPLETENESS_AUDIT_v6.txt
+  Folder: T:\KAATYA\KAATYA_MASTER_PLAN_REPORTS\
+  Exact Size: 41,532 bytes
+  SHA-256 Hash: 21ae4a34ed7ee45e3c3d89b7c3b31c82b4c9539e243b1915276f4da95eae79b7
+
+Filename: KAATYA_STAGE2_2_STAGE3_IMPLEMENTATION_READINESS_REVIEW_v6.txt
+  Folder: T:\KAATYA\KAATYA_MASTER_PLAN_REPORTS\
+  Exact Size: 5,942 bytes
+  SHA-256 Hash: 54e4cf2c82b96c95dff734744f639c33bc0c54f10612a24163fdf5ca0137a4d0
+
+Filename: KAATYA_MASTER_EXECUTIVE_REPORT_v6.txt
+  Folder: T:\KAATYA\KAATYA_MASTER_PLAN_REPORTS\
+  Exact Size: 8,097 bytes
+  SHA-256 Hash: d9ee13fa0df3d8662034ae4b5850135f26aecc6c88a17cf4ddc2eac6198b520a
+
+Filename: KAATYA_FINAL_REQUIREMENTS_AND_CONSISTENCY_MATRIX_v6.txt
+  Folder: T:\KAATYA\KAATYA_MASTER_PLAN_REPORTS\
+  Exact Size: 5,437 bytes
+  SHA-256 Hash: 27ef5e43ed2eadda35cc29c4d5de32fc1f1547a9a4b33d13ff33b2bde22243d5
+
+Filename: 31_STITCH_COMPLETE_DESIGN_MASTER_PROMPT_v6.txt
+  Folder: T:\KAATYA\KAATYA_MASTER_PLAN_REPORTS\
+  Exact Size: 9,264 bytes
+  SHA-256 Hash: 7dd94bc275a497664b4afc0ccf9ff401bed001ae26987a0a1eb0911b330d4959
+
+Filename: 32_FUTURE_ANTIGRAVITY_IMPLEMENTATION_MASTER_PROMPT_v6.txt
+  Folder: T:\KAATYA\KAATYA_MASTER_PLAN_REPORTS\
+  Exact Size: 5,827 bytes
+  SHA-256 Hash: e30a9464974c62ccffa7dcf7d3b7a5d67c955cb561c759b945ea1ffa21c4f31d
+
+Filename: STAGE2_2_DOCUMENT_CHANGELOG_AND_EVIDENCE_REGISTER_v6.txt
+  Folder: T:\KAATYA\KAATYA_AUDIT\
+  Exact Size: 8,271 bytes
+  SHA-256 Hash: d7647e01db85262b99fcbf8e97490859778dc3910ca118b9ffc2009b9e7187cf
+
+Filename: STAGE2_2_FINAL_INVENTORY_AND_CONTAINMENT_AUDIT_v6.txt
+  Folder: T:\KAATYA\KAATYA_AUDIT\
+  Exact Size: 6,705 bytes
+  SHA-256 Hash: 075a114a959ac79df5c3afe72bc4d2c51f20960db2aac88b435d5a99550e2fdc
+
+Filename: KAATYA_STAGE2_2_INDEPENDENT_REVIEW_CORRECTION_REGISTER_v6.txt
+  Folder: T:\KAATYA\KAATYA_AUDIT\
+  Exact Size: 11,285 bytes
+  SHA-256 Hash: ad2d8df0468e1f1c5ab57cb25c554bc377fc733a9a3880219416754274120e47
+
+================================================================================
+2. MANDATORY CONTAINMENT & ZERO-OPERATION ATTESTATION
+================================================================================
+1. All files generated remain strictly inside T:\KAATYA\.
+2. Zero GitHub operations, commits, pushes, or modifications executed.
+3. Zero code compiled, zero packages installed, zero ISOs built.
+4. Stage 3 development remains STRICTLY LOCKED.
+================================================================================
+
+--------------------------------------------------------------------------------
+END OF DOCUMENT [15/15]: UPLOAD_MANIFEST_V6.txt
+--------------------------------------------------------------------------------
+
+
+================================================================================
+END OF KAATYA_V6_REVIEW_PART_3.txt
+================================================================================

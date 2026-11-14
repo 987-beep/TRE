@@ -1,0 +1,1204 @@
+================================================================================
+KAATYA OS 3.0 — VERSION 6 INDEPENDENT REVIEW PACKAGE — PART 1 OF 3
+SCOPE: DOCUMENTS 1–5: TECHNICAL AUDIT, ARCHITECTURE, HARDWARE REALISM, SECURITY & TRACEABILITY MATRIX
+STAGE: STAGE 2.2 INDEPENDENT TECHNICAL REVIEW BY CHATGPT
+STAGE 3 STATUS: STRICTLY LOCKED
+PROJECT ROOT: T:\KAATYA\
+================================================================================
+
+PART NAVIGATION & SOURCE INVENTORY:
+--------------------------------------------------------------------------------
+  [01] KAATYA_STAGE2_2_FINAL_TECHNICAL_AUDIT_v6.txt (18,914 bytes | 259 lines)
+       Path: T:\KAATYA\KAATYA_MASTER_PLAN_REPORTS\KAATYA_STAGE2_2_FINAL_TECHNICAL_AUDIT_v6.txt
+       SHA-256: 60960ff2af0e34fc94ad50bb3598c34271eda498b84a35d3d52fcdd4e33b31da
+  [02] KAATYA_STAGE2_2_FINAL_ARCHITECTURE_SPECIFICATION_v6.txt (13,811 bytes | 199 lines)
+       Path: T:\KAATYA\KAATYA_MASTER_PLAN_REPORTS\KAATYA_STAGE2_2_FINAL_ARCHITECTURE_SPECIFICATION_v6.txt
+       SHA-256: 8d43a6c3b50245c73ba0485dd8f157587a08c470fd38ed32486a14612bf3d369
+  [03] KAATYA_STAGE2_2_HARDWARE_AND_PERFORMANCE_REALISM_v6.txt (8,120 bytes | 133 lines)
+       Path: T:\KAATYA\KAATYA_MASTER_PLAN_REPORTS\KAATYA_STAGE2_2_HARDWARE_AND_PERFORMANCE_REALISM_v6.txt
+       SHA-256: 524e5ce6bd8ba7ae456df88d87ccf3ce4e6d334a6a1b52c6b8cf1a6119e8cef2
+  [04] KAATYA_STAGE2_2_AI_SECURITY_PRIVACY_AND_PROVIDER_SPECIFICATION_v6.txt (12,281 bytes | 220 lines)
+       Path: T:\KAATYA\KAATYA_MASTER_PLAN_REPORTS\KAATYA_STAGE2_2_AI_SECURITY_PRIVACY_AND_PROVIDER_SPECIFICATION_v6.txt
+       SHA-256: a2dba8e0c9420c55214f6097c96dd65fd8f485de71fed5524325faecf3a09306
+  [05] KAATYA_STAGE2_2_MASTER_REQUIREMENTS_TRACEABILITY_MATRIX_v6.txt (16,008 bytes | 295 lines)
+       Path: T:\KAATYA\KAATYA_MASTER_PLAN_REPORTS\KAATYA_STAGE2_2_MASTER_REQUIREMENTS_TRACEABILITY_MATRIX_v6.txt
+       SHA-256: 4a2c1f871c4c70b21ee9ea776340259b59b3976c84c71953b72d75bc9cdd303a
+
+================================================================================
+COMPLETE VERBATIM SOURCE CONTENTS
+================================================================================
+
+================================================================================
+DOCUMENT [01/15]: KAATYA_STAGE2_2_FINAL_TECHNICAL_AUDIT_v6.txt
+SOURCE PATH: T:\KAATYA\KAATYA_MASTER_PLAN_REPORTS\KAATYA_STAGE2_2_FINAL_TECHNICAL_AUDIT_v6.txt
+EXACT SIZE: 18,914 bytes | LINES: 259
+SHA-256 HASH: 60960ff2af0e34fc94ad50bb3598c34271eda498b84a35d3d52fcdd4e33b31da
+================================================================================
+
+================================================================================
+KAATYA OS 3.0 -- STAGE 2.2 FINAL TECHNICAL AUDIT (VERSION 6)
+Document ID: KAATYA-AUDIT-2.2-TECH-v6
+Phase: STAGE 2.2 TECHNICAL EVIDENCE & AUDIT CORRECTIONS (VERSION 6)
+Authorized Root: T:\KAATYA\
+Execution Date: 2026-11-14
+Status: RECONCILED TECHNICAL AUDIT REPORT (VERSION 6)
+================================================================================
+
+1. EXECUTIVE AUDIT SUMMARY & PURPOSE
+--------------------------------------------------------------------------------
+This document establishes the authoritative Version 6 technical audit of the entire
+KAATYA OS 3.0 specification suite. Following independent review of Version 5, this
+document reconciles mathematical discrepancies in the physical RAM budgets, expands
+the technical audit of model parameters and KV cache structures, resolves llama.cpp
+cancellation API definitions, and establishes an airtight userspace memory governor
+design (`kaatya-memoryd`).
+
+Core Audit Findings Resolved in Version 6:
+1. RAM Budget Mathematical Reconciliation: Identified and corrected the exact
+   component row summations across all 5 operational profiles. Eliminated the
+   1,000 MiB arithmetic discrepancy found in Version 5 Profile 1.
+2. Parameter Count vs. Stored Elements: Distinguished raw stored tensor elements
+   (7,518,069,290) from unique model parameters, taking into account potential
+   tied embeddings and layer-sharing structures.
+3. Gemma-4 / Nemotron Architecture Deep-Dive: Detailed the 42-layer structure,
+   35 sliding-window attention (SWA) layers, 7 global attention layers, and the
+   18 shared KV layer metadata keys (`gemma4.attention.shared_kv_layers`).
+4. llama.cpp Cancellation API: Replaced unsupported hypothetical functions with
+   the official `llama_set_abort_callback()` API from upstream `llama.h`.
+5. Userspace Memory Management: Designed `kaatya-memoryd` to monitor Linux PSI
+   interfaces and enforce graceful tiered shedding of non-critical workloads.
+6. Development Status: Stage 3 implementation remains STRICTLY LOCKED.
+
+================================================================================
+2. GGUF MODEL ARCHITECTURE, PARAMETERS & KV CACHE AUDIT
+================================================================================
+
+A. NEMOTRON-3.5-BOLT-E4B-Q4_K_M.GGUF ARCHITECTURAL EVIDENCE
+--------------------------------------------------------------------------------
+Direct inspection of physical file `T:\KAATYA\Nemotron-3.5-Bolt-E4B-Q4_K_M.gguf`:
+- Physical File Size: 6,180,446,208 bytes (5.756 GiB)
+- SHA-256 Hash: `c8af2b8aea10a690a1d9491db744a9446660173cb38fc489612b556615a69612`
+- GGUF Magic Header: `GGUF` (Version 3)
+- GGUF File Type: 15 (`Q4_K_M` - medium k-quantization with mixed block precision)
+- Stored Tensor Count: 720 tensors
+- KV Metadata Key-Value Count: 46 pairs
+- Architecture (`general.architecture`): `gemma4`
+- Model Name (`general.name`): `Nemotron 3.5 Bolt E4B`
+- Model Size Label (`general.size_label`): `7.5B`
+- Transformer Layer Count (`gemma4.block_count`): 42 layers
+- Embedding Length (`gemma4.embedding_length`): 2,560
+- Feed-Forward Length (`gemma4.feed_forward_length`): 10,240
+- Head Count Query (`gemma4.attention.head_count`): 8 heads
+- Head Count Key/Value (`gemma4.attention.head_count_kv`): 2 heads (GQA)
+- Context Window Length (`gemma4.context_length`): 65,536 tokens
+- Sliding Window Size (`gemma4.attention.sliding_window`): 512 tokens
+- Sliding Window Pattern (`gemma4.attention.sliding_window_pattern`):
+  42 elements repeating `[True, True, True, True, True, False]` across 7 cycles:
+  * Sliding Window Attention (SWA) Layers: 35 layers (dim_swa = 256)
+  * Full Global Attention Layers: 7 layers (dim_global = 512)
+- Shared KV Layers Metadata: `gemma4.attention.shared_kv_layers = 18`
+
+B. STORED TENSOR ELEMENTS VS. UNIQUE MODEL PARAMETERS
+--------------------------------------------------------------------------------
+1. Stored Tensor Elements Sum:
+   Iterating over all 720 stored tensors and calculating the exact product of dimensions:
+   $\sum \prod \text{dims} = 7,518,069,290\text{ stored elements}$ (~7.518 Billion).
+2. Distinction Between Elements and Active Parameters:
+   - Stored Elements vs. Weight Sharing: In architectures with tied embeddings or shared
+     feed-forward / projection weights, stored tensor element count can differ from
+     distinct parameter counts.
+   - MoE vs. Dense Architecture Analysis:
+     * While the file name contains `E4B`, standard MoE gating tensors (`ffn_gate_exps`,
+       `ffn_down_exps`, `expert_count`) are absent from the GGUF metadata.
+     * Technical Honesty: Absence of standard MoE tensor names alone does not conclusively
+       prove a conventional dense architecture in custom community conversions, but the
+       metadata explicitly specifies `gemma4` with dense FFN dimensions (`10,240`).
+     * Until verified by an empirical load test, Nemotron-3.5-Bolt is treated as a dense
+       ~7.5B parameter Gemma-4 derivative.
+
+C. KV CACHE FORMULAS, LAYER STRUCTURE & UPSTREAM LLAMA.CPP IMPLEMENTATION
+--------------------------------------------------------------------------------
+1. Upstream llama.cpp Revision Baseline:
+   - Target llama.cpp Revision: Upstream release `b4400` (or commit tagged post-b4200).
+   - In llama.cpp, KV cache management is implemented in `src/llama-kv-cache.cpp`.
+   - Heterogeneous Layer & SWA Support Status:
+     * Upstream llama.cpp historically allocated uniform KV cache buffers based on the
+       maximum key/value head dimension across all layers.
+     * In architectures mixing SWA (dim 256) and Global Attention (dim 512), if llama.cpp
+       allocates uniform buffers, it allocates for 42 layers at dim 512!
+     * Furthermore, `gemma4.attention.shared_kv_layers = 18` indicates cross-layer KV
+       sharing, which is only supported if specific layer-sharing graph nodes are compiled.
+
+2. Scenario A: Uniform Allocation Fallback (Conservative Worst-Case):
+   - Formula: $\text{Bytes/token} = 2 \times n_{\text{layers}} \times n_{\text{kv}} \times d_{\text{max}} \times \text{sizeof(fp16)}$
+   - Bytes/token: $2 \times 42 \times 2 \times 512 \times 2 = 172,032\text{ bytes} = 168.0\text{ KiB/token}$
+   - At Context 4,096:  $4,096 \times 172,032 = 704,643,072\text{ bytes} = 672.00\text{ MiB}$ (0.6562 GiB)
+   - At Context 8,192:  $8,192 \times 172,032 = 1,409,286,144\text{ bytes} = 1,344.00\text{ MiB}$ (1.3125 GiB)
+   - At Context 16,384: $16,384 \times 172,032 = 2,818,572,288\text{ bytes} = 2,688.00\text{ MiB}$ (2.6250 GiB)
+   - At Context 32,768: $32,768 \times 172,032 = 5,637,144,576\text{ bytes} = 5,376.00\text{ MiB}$ (5.2500 GiB)
+   - At Context 65,536: $65,536 \times 172,032 = 11,274,289,152\text{ bytes} = 10,752.00\text{ MiB}$ (10.5000 GiB)
+
+3. Scenario B: Heterogeneous Ring-Buffer SWA Allocation (Theoretical Optimal):
+   - SWA Layers (35 layers, dim 256, capped at window $W = 512$):
+     $\text{Max SWA Cache} = 512 \times (2 \times 35 \times 2 \times 256 \times 2) = 512 \times 71,680 = 36,700,160\text{ bytes} = 35.00\text{ MiB}$
+   - Global Layers (7 layers, dim 512, scaling with context $C$):
+     $\text{Global Cache} = C \times (2 \times 7 \times 2 \times 512 \times 2) = C \times 28,672\text{ bytes} = C \times 28.0\text{ KiB/token}$
+   - At Context 4,096:  $35.0\text{ MiB} + 112.0\text{ MiB} = 147.00\text{ MiB}$ (0.1436 GiB)
+   - At Context 8,192:  $35.0\text{ MiB} + 224.0\text{ MiB} = 259.00\text{ MiB}$ (0.2529 GiB)
+   - At Context 16,384: $35.0\text{ MiB} + 448.0\text{ MiB} = 483.00\text{ MiB}$ (0.4717 GiB)
+   - At Context 32,768: $35.0\text{ MiB} + 896.0\text{ MiB} = 931.00\text{ MiB}$ (0.9092 GiB)
+   - At Context 65,536: $35.0\text{ MiB} + 1,792.0\text{ MiB} = 1,827.00\text{ MiB}$ (1.7842 GiB)
+
+4. Architectural Verdict & Context Cap:
+   - Because upstream llama.cpp support for Gemma-4 heterogeneous ring-buffers and shared KV
+     layers is CONDITIONAL / UNVERIFIED, KAATYA OS 3.0 adopts the conservative Scenario A
+     allocation boundary for safety on the 16 GB baseline.
+   - Nemotron-3.5-Bolt context length is strictly capped at 8,192 tokens (1.3125 GiB KV cache).
+
+D. QWEN3-4B-Q4_K_M.GGUF METADATA & RECONCILED KV CACHE
+--------------------------------------------------------------------------------
+Direct inspection of physical file `T:\KAATYA\Qwen3-4B-Q4_K_M.gguf`:
+- Physical File Size: 2,497,280,256 bytes (2.325 GiB)
+- SHA-256 Hash: `7485fe6f11af29433bc51cab58009521f205840f5b4ae3a32fa7f92e8534fdf5`
+- Total Stored Elements: 4,022,468,096 elements (~4.022B parameters)
+- Architecture: `qwen3` | Layers: 36 | Query Heads: 32 | KV Heads: 8 | Head Dim: 128
+- Context Window: 40,960 tokens (Full Attention across all layers, no SWA)
+- FP16 KV Cache Formula:
+  $\text{Bytes/token} = 2 \times 36 \times 8 \times 128 \times 2 = 147,456\text{ bytes} = 144.0\text{ KiB/token}$
+  * At Context 2,048:  $2,048 \times 147,456 = 301,989,888\text{ bytes} = 288.00\text{ MiB}$ (0.2813 GiB)
+  * At Context 4,096:  $4,096 \times 147,456 = 603,979,776\text{ bytes} = 576.00\text{ MiB}$ (0.5625 GiB)
+  * At Context 8,192:  $8,192 \times 147,456 = 1,207,959,552\text{ bytes} = 1,152.00\text{ MiB}$ (1.1250 GiB)
+  * At Context 16,384: $16,384 \times 147,456 = 2,415,919,104\text{ bytes} = 2,304.00\text{ MiB}$ (2.2500 GiB)
+  * At Context 32,768: $32,768 \times 147,456 = 4,831,838,208\text{ bytes} = 4,608.00\text{ MiB}$ (4.5000 GiB)
+  * At Context 40,960: $40,960 \times 147,456 = 6,039,797,760\text{ bytes} = 5,760.00\text{ MiB}$ (5.6250 GiB)
+*Default Operational Profile Context: 8,192 tokens (KV Cache = 1,152 MiB).*
+
+================================================================================
+3. RECOMPUTED 16 GB PHYSICAL RAM WORKLOAD BUDGETS (ALL 5 PROFILES)
+================================================================================
+Target Hardware: Intel Core i3-6100T | 16.0 GB DDR4-2133 MHz RAM
+Total Physical RAM: 16,384 MiB (16.00 GiB, using 1,024 MiB = 1 GiB).
+Swap Configuration: 8,192 MiB zram (zstd compressed RAM swap).
+Critical Fact: zram is compressed swap backed by physical RAM; it does NOT increase
+physical RAM capacity, and compression ratios vary dynamically (typically 2:1 to 3:1).
+
+Memory Accounting Categories:
+- Anonymous RSS (Dirty): Unshared process heap and stack that cannot be dropped.
+- Mapped File Pages (Clean mmap): File-backed pages (e.g. model weights) discardable under pressure.
+- Reclaimable Page Cache: Kernel disk cache dropped immediately upon memory demand.
+- GPU Shared Memory: System RAM dynamically allocated by Intel i915 / Mesa Iris driver.
+- Kernel Memory: Slab, pagetables, and network buffers.
+
+--------------------------------------------------------------------------------
+PROFILE 1: STANDARD AI DESKTOP (DAILY DRIVER)
+Component Allocation Row Breakdown:
+1. Base OS (Linux kernel, systemd, D-Bus, PipeWire):             450 MiB  (0.439 GiB)
+2. Desktop Shell (KWin Wayland, kaatya-shell QML scene):         400 MiB  (0.391 GiB)
+3. Background Services (NetworkManager, Polkit, UFW):            180 MiB  (0.176 GiB)
+4. Primary LLM: Qwen3-4B-Q4_K_M (Weights resident via mmap):   2,450 MiB  (2.393 GiB)
+5. Primary LLM KV Cache (8,192 tokens @ FP16):                 1,152 MiB  (1.125 GiB)
+6. Primary LLM Compute Scratch Buffer (llama.cpp context):       300 MiB  (0.293 GiB)
+7. Semantic Embedding: Qwen3-Embedding-0.6B (mmap):              610 MiB  (0.596 GiB)
+8. Offline Voice STT: Whisper base.en (resident):                180 MiB  (0.176 GiB)
+9. Offline Voice TTS: Piper ONNX medium (resident):               80 MiB  (0.078 GiB)
+10. KAATYA Browser (Chromium core, 5 active tabs, V8 heap):    1,800 MiB  (1.758 GiB)
+11. GPU Shared Memory (Intel HD 530 Mesa 2D/3D buffers):         512 MiB  (0.500 GiB)
+12. Reclaimable Page Cache & Kernel Buffers:                   1,200 MiB  (1.172 GiB)
+--------------------------------------------------------------------------------
+EXACT ARITHMETIC ROW SUM:                                      9,314 MiB  (9.096 GiB)
+PHYSICAL RAM UTILIZATION:                                      56.85% of 16,384 MiB
+REMAINING FREE PHYSICAL RAM:                                   7,070 MiB  (6.904 GiB)
+Audit Resolution: In Version 5, this sum was incorrectly reported as 10,314 MiB. The exact
+sum of the components is 9,314 MiB, leaving 7,070 MiB of unallocated physical RAM.
+
+--------------------------------------------------------------------------------
+PROFILE 2: SPECIALIST DEVELOPER / DEEP REASONING
+Workload: Qwen3 unloaded. Nemotron 7.5B loaded (8K ctx), Coding Studio IDE, Shell.
+1. Base OS (Kernel, systemd, D-Bus, PipeWire):                   450 MiB  (0.439 GiB)
+2. Desktop Shell & Compositor:                                   400 MiB  (0.391 GiB)
+3. Background Services:                                          180 MiB  (0.176 GiB)
+4. Specialist LLM: Nemotron-3.5-Bolt (Weights resident mmap):  5,894 MiB  (5.756 GiB)
+5. Specialist LLM KV Cache (8,192 tokens @ Scenario A FP16):   1,344 MiB  (1.313 GiB)
+6. Specialist LLM Compute Scratch Buffer:                        500 MiB  (0.488 GiB)
+7. Semantic Embedding: Qwen3-Embedding-0.6B:                     610 MiB  (0.596 GiB)
+8. Coding Studio IDE (Qt6 text editor, LSP language server):     450 MiB  (0.439 GiB)
+9. Terminal & Build Diagnostics:                                 150 MiB  (0.146 GiB)
+10. KAATYA Browser (Documentation, 2 tabs):                    1,000 MiB  (0.977 GiB)
+11. GPU Shared Memory (KWin + UI render buffers):                512 MiB  (0.500 GiB)
+12. Reclaimable Page Cache & Buffers:                            800 MiB  (0.781 GiB)
+--------------------------------------------------------------------------------
+EXACT ARITHMETIC ROW SUM:                                     12,290 MiB (12.002 GiB)
+PHYSICAL RAM UTILIZATION:                                      75.01% of 16,384 MiB
+REMAINING FREE PHYSICAL RAM:                                   4,094 MiB  (3.998 GiB)
+Rule of One LLM Enforced: Qwen3-4B is strictly unloaded. Concurrent loading is blocked.
+
+--------------------------------------------------------------------------------
+PROFILE 3: ANDROID APPLICATION COMPATIBILITY MODE
+Workload: Waydroid LXC container active; Qwen3 trimmed to 2K context.
+1. Base OS & Core Services:                                      630 MiB  (0.615 GiB)
+2. Desktop Shell & Compositor:                                   400 MiB  (0.391 GiB)
+3. Waydroid LXC Container (AOSP System Server, Zygote, Surface):1,800 MiB  (1.758 GiB)
+4. Active Android App (e.g. F-Droid / Aurora client):            650 MiB  (0.635 GiB)
+5. Primary LLM: Qwen3-4B Weights (mmap):                       2,450 MiB  (2.393 GiB)
+6. Primary LLM KV Cache (Trimmed to 2,048 tokens @ FP16):        288 MiB  (0.281 GiB)
+7. Primary LLM Compute Scratch Buffer:                           300 MiB  (0.293 GiB)
+8. Semantic Embedding: Qwen3-Embedding-0.6B:                     610 MiB  (0.596 GiB)
+9. KAATYA Browser (3 tabs):                                    1,200 MiB  (1.172 GiB)
+10. GPU Shared Memory (Waydroid buffer sharing):                 768 MiB  (0.750 GiB)
+11. Reclaimable Page Cache & Buffers:                            800 MiB  (0.781 GiB)
+--------------------------------------------------------------------------------
+EXACT ARITHMETIC ROW SUM:                                      9,896 MiB  (9.664 GiB)
+PHYSICAL RAM UTILIZATION:                                      60.40% of 16,384 MiB
+REMAINING FREE PHYSICAL RAM:                                   6,488 MiB  (6.336 GiB)
+
+--------------------------------------------------------------------------------
+PROFILE 4: WINDOWS APPLICATION COMPATIBILITY MODE
+Workload: Bottles Wine prefix running Win32 application; Qwen3 active at 8K context.
+1. Base OS & Core Services:                                      630 MiB  (0.615 GiB)
+2. Desktop Shell & Compositor:                                   400 MiB  (0.391 GiB)
+3. Wine Server, wineserver daemon & Windows Prefix Runtime:       450 MiB  (0.439 GiB)
+4. Active Windows Application (Win32 productivity utility):    1,200 MiB  (1.172 GiB)
+5. Primary LLM: Qwen3-4B Weights (mmap):                       2,450 MiB  (2.393 GiB)
+6. Primary LLM KV Cache (8,192 tokens @ FP16):                 1,152 MiB  (1.125 GiB)
+7. Primary LLM Compute Scratch Buffer:                           300 MiB  (0.293 GiB)
+8. Semantic Embedding: Qwen3-Embedding-0.6B:                     610 MiB  (0.596 GiB)
+9. KAATYA Browser (3 tabs):                                    1,200 MiB  (1.172 GiB)
+10. GPU Shared Memory (DXVK Vulkan translation buffers):         800 MiB  (0.781 GiB)
+11. Reclaimable Page Cache & Buffers:                            800 MiB  (0.781 GiB)
+--------------------------------------------------------------------------------
+EXACT ARITHMETIC ROW SUM:                                      9,992 MiB  (9.758 GiB)
+PHYSICAL RAM UTILIZATION:                                      60.99% of 16,384 MiB
+REMAINING FREE PHYSICAL RAM:                                   6,392 MiB  (6.242 GiB)
+
+--------------------------------------------------------------------------------
+PROFILE 5: HEAVY MULTITASKING STRESS PROFILE (WORST-CASE STRESS TEST)
+Workload: Browser (15 tabs), Waydroid backgrounded, Wine app active, Qwen3 active.
+1. Base OS & Core Services:                                      630 MiB  (0.615 GiB)
+2. Desktop Shell & Compositor:                                   450 MiB  (0.439 GiB)
+3. KAATYA Browser (15 heavy DOM/JS tabs):                      3,800 MiB  (3.711 GiB)
+4. Waydroid LXC Container (Idle backgrounded in cgroups):      1,500 MiB  (1.465 GiB)
+5. Active Wine Application:                                    1,200 MiB  (1.172 GiB)
+6. Primary LLM: Qwen3-4B Weights + 8K KV Cache + Scratch:      3,902 MiB  (3.811 GiB)
+7. Semantic Embedding + STT/TTS:                                 870 MiB  (0.850 GiB)
+8. GPU Shared Memory (Mesa composition & video buffers):       1,500 MiB  (1.465 GiB)
+9. Reclaimable Page Cache:                                     1,200 MiB  (1.172 GiB)
+--------------------------------------------------------------------------------
+EXACT ARITHMETIC ROW SUM:                                     15,052 MiB (14.699 GiB)
+PHYSICAL RAM UTILIZATION:                                      91.87% of 16,384 MiB
+REMAINING FREE PHYSICAL RAM:                                   1,332 MiB  (1.301 GiB)
+Pressure Shedding Architecture (`kaatya-memoryd`):
+When physical RAM availability falls below 10% (1,638 MiB), `kaatya-memoryd` activates:
+1. Inactive Chromium tabs discarded via DevTools memory API.
+2. Inactive Waydroid anonymous pages swapped into 8 GB zram pool.
+3. If pressure exceeds critical threshold, `kaatya-aid` unloads LLM weights.
+Verdict: Designed to survive heavy loads, but system survival is an engineering TARGET
+until physical stress testing is conducted in Stage 3.
+================================================================================
+
+--------------------------------------------------------------------------------
+END OF DOCUMENT [01/15]: KAATYA_STAGE2_2_FINAL_TECHNICAL_AUDIT_v6.txt
+--------------------------------------------------------------------------------
+
+
+================================================================================
+DOCUMENT [02/15]: KAATYA_STAGE2_2_FINAL_ARCHITECTURE_SPECIFICATION_v6.txt
+SOURCE PATH: T:\KAATYA\KAATYA_MASTER_PLAN_REPORTS\KAATYA_STAGE2_2_FINAL_ARCHITECTURE_SPECIFICATION_v6.txt
+EXACT SIZE: 13,811 bytes | LINES: 199
+SHA-256 HASH: 8d43a6c3b50245c73ba0485dd8f157587a08c470fd38ed32486a14612bf3d369
+================================================================================
+
+================================================================================
+KAATYA OS 3.0 -- STAGE 2.2 FINAL ARCHITECTURE SPECIFICATION (VERSION 6)
+Document ID: KAATYA-ARCH-2.2-FINAL-v6
+Phase: AUTHORITATIVE ARCHITECTURAL SPECIFICATION & SUBSYSTEM RECONCILIATION
+Authorized Root: T:\KAATYA\
+Date: 2026-11-14
+Status: RECONCILED ARCHITECTURE SPECIFICATION (VERSION 6)
+================================================================================
+
+1. SUBSYSTEM INTERACTION TOPOLOGY
+--------------------------------------------------------------------------------
++------------------------------------------------------------------------------+
+|                          PRESENTATION LAYER (Qt 6 / QML)                     |
+|  +--------------------+  +--------------------+  +-------------------------+ |
+|  |   kaatya-shell     |  |   Unified Launcher |  |    Control Centre       | |
+|  +--------------------+  +--------------------+  +-------------------------+ |
+|  |   47 UI Specs      |  |   6 Anime Themes   |  |    20 Custom Cursors    | |
+|  +--------------------+  +--------------------+  +-------------------------+ |
++------------------------------------------------------------------------------+
+                                       | D-Bus / Wayland Protocol
+                                       v
++------------------------------------------------------------------------------+
+|                          COMPOSITOR & WINDOW MANAGER                         |
+|  KWin-Wayland Core + Xwayland Rootless Bridge                                |
+|  DRM / KMS Driver | Mesa Iris OpenGL 4.6 / Vulkan 1.2 | Intel HD 530        |
++------------------------------------------------------------------------------+
+                                       |
+                                       v
++------------------------------------------------------------------------------+
+|                   APPLICATION RUNTIME FABRIC (5 ISOLATED RUNTIMES)          |
+|  +--------------------+  +--------------------+  +-------------------------+ |
+|  | 1. Native Linux    |  | 2. Browser / PWA   |  | 3. Android (Waydroid)   | |
+|  | Bubblewrap+Landlock|  | Chromium Sandbox   |  | LXC Container Isolation | |
+|  +--------------------+  +--------------------+  +-------------------------+ |
+|  | 4. Windows (Wine)  |  | 5. Windows (VM)    |  | Packaging Formats       | |
+|  | Sandboxed Bottles  |  | QEMU/KVM Hardware  |  | Flatpak / APT Debs      | |
+|  +--------------------+  +--------------------+  +-------------------------+ |
++------------------------------------------------------------------------------+
+                                       |
+                                       v
++------------------------------------------------------------------------------+
+|                        PERMANENT AI SUBSYSTEM (kaatya-aid)                   |
+|  +-------------------------------------+  +--------------------------------+ |
+|  | Local Inference Engines (AVX2)      |  | Cloud AI & Gateway Adapters    | |
+|  | - llama.cpp Engine (Qwen3 / Nemotron|  | - 10 Commercial Cloud APIs     | |
+|  | - whisper.cpp STT (Speech-to-Text)  |  |   (OpenAI, Anthropic, Gemini,  | |
+|  | - piper TTS (Text-to-Speech)        |  |    Mistral, Groq, DeepSeek,    | |
+|  +-------------------------------------+  |    Cohere, Together, Fireworks,| |
+|  | Semantic Memory (sqlite-vec)        |  |    xAI) + Optional Perplexity  | |
+|  | - Qwen3-Embedding-0.6b (1024-dim)   |  | - 2 Universal Gateways         | |
+|  +-------------------------------------+  |   (OpenRouter, Hugging Face)   | |
+|  | Credential Vault & Consent Engine   |  +--------------------------------+ |
+|  | - Argon2id + AES-256-GCM + Keyring  |  | Userspace Memory & Kill Switch | |
+|  | - Granular Per-Request Consent      |  | - kaatya-memoryd PSI governor  | |
+|  |                                     |  | - Super+Shift+X Abort Callback | |
++------------------------------------------------------------------------------+
+                                       |
+                                       v
++------------------------------------------------------------------------------+
+|                          CORE OS BASE & STORAGE SUBSYSTEM                    |
+|  Debian 13 "Trixie" Stable Release | Linux 6.12 LTS Kernel                   |
+|  Provisional Storage Tier: Btrfs (@, @home, @var_log, @snapshots)            |
+|  Fallback Storage Tier: Ext4 with Timeshift (rsync mode)                     |
+|  Intel Core i3-6100T (2C/4T @ 3.20GHz Base) | Intel HD 530 | 16 GB DDR4 RAM   |
++------------------------------------------------------------------------------+
+
+================================================================================
+2. FIVE APPLICATION RUNTIME ARCHITECTURES & COMPATIBILITY LIMITATIONS
+================================================================================
+
+1. NATIVE LINUX APPLICATIONS:
+   - Primary Mechanism: Bubblewrap (`bwrap`) unprivileged user namespaces combined
+     with Landlock LSM rules and Seccomp-BPF system call filtering.
+   - Filesystem: Read-only mounts for `/usr`, `/lib`, `/bin`. Ephemeral `tmpfs` on `/tmp`.
+     Isolated per-app data directory in `~/.var/app/<app-id>/`.
+   - Network: Gated via `--unshare-net` unless explicitly requested in manifest.
+
+2. BROWSER & PWA APPLICATIONS:
+   - Primary Mechanism: KAATYA Browser (Chromium core) with multi-process site isolation,
+     seccomp-bpf filters, and isolated user data directories per PWA context (`--app="URL"`).
+
+3. ANDROID APPLICATIONS (WAYDROID / LXC):
+   - Primary Mechanism: Linux Containers (LXC) running Android Open Source Project (AOSP).
+   - Shared-Kernel Security Implications: Waydroid shares the host Linux kernel. Any kernel
+     vulnerabilities (e.g. privilege escalation) can cross container boundaries.
+     SELinux / AppArmor profiles are enforced to restrict container syscalls.
+   - Filesystem & IPC: Android root (`system.img`) is isolated; host `/home` is hidden
+     except for an explicit shared folder (`~/AndroidStorage/`). Binder IPC is isolated.
+   - Store Ecosystem Realism: Google Play Store and Google Mobile Services (GMS) are
+     proprietary and CANNOT be officially bundled without Google CTS/GTS hardware certification.
+     Supported distribution: F-Droid (FOSS) and Aurora Store (with disclaimer).
+
+4. WINDOWS APPLICATIONS VIA WINE / BOTTLES (LIGHTWEIGHT RUNTIME):
+   - Primary Mechanism: Per-application Wine prefix managed via Bottles, executed inside
+     an outer Bubblewrap sandbox container.
+   - Wine Security Reality: A standard Wine prefix is NOT a security boundary; `wineserver`
+     translates Win32 calls into unconfined host syscalls, and default Wine exposes the
+     host root filesystem at `Z:\`.
+   - KAATYA Hardening: The `Z:\` drive mapping is stripped. Wine runs inside Bubblewrap
+     with `--unshare-all`, private `tmpfs`, and only the prefix directory writable.
+   - Limitations: Anti-cheat systems, kernel-mode drivers, and proprietary Windows subsystems
+     are unsupported.
+
+5. WINDOWS APPLICATIONS VIA HARDWARE VM (FULL ISOLATION):
+   - Primary Mechanism: QEMU / KVM virtual machine utilizing Intel VT-x hardware virtualization.
+   - Windows 10 22H2 Lifecycle Warning: Windows 10 22H2 reached official End of Support (EOS)
+     on October 14, 2025. After EOS, unpatched images are vulnerable to unpatched exploits.
+     KAATYA isolates Windows 10 VMs behind an internal host-only bridge with no direct LAN routing.
+
+6. MICROSOFT STORE & MSIX COMPATIBILITY RESEARCH:
+   - Microsoft Store Limitation: The official Microsoft Store requires the proprietary Windows
+     App Installer framework, Microsoft Account authentication, and UWP/WinRT APIs not implemented
+     in Wine. Universal Microsoft Store integration is NOT possible on Linux.
+   - MSIX Packages: MSIX packages are signed AppX zip containers. Unpackaged Win32 binaries inside
+     MSIX can sometimes be extracted via `msix-unpack` and launched in Wine, but UWP apps fail.
+   - Legitimate Alternatives: Direct Win32 installers (`.exe`/`.msi`), Bottles runner recipes,
+     and Flatpak / F-Droid alternatives.
+
+================================================================================
+3. RECONCILED AI PROVIDER TAXONOMY (FIREWORKS RESTORED)
+================================================================================
+The AI provider fabric integrates exactly 15 core providers across 3 categories,
+with Fireworks AI restored alongside OpenAI, Anthropic, Gemini, Mistral, Groq, DeepSeek,
+Cohere, Together, xAI, OpenRouter, Hugging Face, and the 3 local adapters:
+
+CATEGORY 1: DIRECT COMMERCIAL CLOUD API PROVIDERS (10 CORE PROVIDERS)
+1. OpenAI: Direct HTTPS REST (GPT-4o, o1, GPT-4o-mini). Endpoint: `https://api.openai.com/v1`.
+2. Anthropic: Messages REST API (Claude 3.5 Sonnet, Haiku). Endpoint: `https://api.anthropic.com/v1/messages`.
+3. Google Gemini: Gemini REST API v1beta (Gemini 2.0 Flash, 1.5 Pro). Endpoint: `https://generativelanguage.googleapis.com`.
+4. Mistral AI: Mistral REST API (Mistral Large 2, Codestral). Endpoint: `https://api.mistral.ai/v1`.
+5. Groq Cloud: Ultra-fast LPU API (Llama 3.3 70B). Endpoint: `https://api.groq.com/openai/v1`.
+6. DeepSeek: DeepSeek REST API (DeepSeek-V3, DeepSeek-R1). Endpoint: `https://api.deepseek.com/v1`.
+7. Cohere: Cohere REST v2 API (Command R+, Embed v3). Endpoint: `https://api.cohere.com/v2`.
+8. Together AI: Together Inference API (Open-weights cluster). Endpoint: `https://api.together.xyz/v1`.
+9. Fireworks AI: Fireworks Serverless API (Fast open models). Endpoint: `https://api.fireworks.ai/inference/v1`.
+10. xAI: xAI REST API (Grok-2, Grok-2-mini). Endpoint: `https://api.x.ai/v1`.
+*Optional Commercial Add-on: Perplexity AI (Sonar Search API, `https://api.perplexity.ai`).*
+
+CATEGORY 2: UNIVERSAL CLOUD GATEWAYS & HUBS (2 PROVIDERS)
+11. OpenRouter: Unified aggregator routing to 200+ models. Endpoint: `https://openrouter.ai/api/v1`.
+12. Hugging Face Inference Providers: Serverless inference via router (`https://router.huggingface.co/models`).
+
+CATEGORY 3: LOCAL ENGINE ADAPTERS (EXACTLY 3 LOCAL ADAPTERS - NO FOURTH ADAPTER)
+13. `llama.cpp` Engine Adapter: Native C++ library (`libllama.so`) / socket engine for GGUF LLMs.
+14. `whisper.cpp` STT Engine Adapter: Native C++ engine for offline speech recognition.
+15. `piper` TTS Engine Adapter: Native C++ / ONNX engine for neural speech synthesis.
+
+================================================================================
+4. PROVISIONAL STORAGE, FILESYSTEM & RECOVERY ARCHITECTURE
+================================================================================
+The choice between Btrfs and Ext4 remains PROVISIONAL pending physical storage
+benchmarks on the HP Slimline PC 270-p0xx hardware baseline in Stage 3.
+
+1. PROVISIONAL DEFAULT TIER: BTRFS STORAGE WITH SUBVOLUME ROLLBACK
+   - Subvolume Boundaries:
+     * `@`            -> Root filesystem image (Mounted at `/`)
+     * `@home`        -> User profile and personal files (Mounted at `/home`)
+     * `@var_log`     -> System logs (Mounted at `/var/log`)
+     * `@snapshots`   -> Storage location for read-only snapshots (Mounted at `/.snapshots`)
+   - Crucial Subvolume Isolation: Btrfs snapshots are subvolume-specific. A snapshot of `@`
+     strictly captures the root system tree; it does NOT include `@home` or `@var_log` because
+     subvolumes act as independent filesystem trees. User documents and logs are preserved.
+   - Writable Rollback Candidate Flow:
+     1. Read-only snapshot created: `btrfs subvolume snapshot -r / /.snapshots/@_snapshot_ID`.
+     2. To rollback, create a writable clone of the snapshot:
+        `btrfs subvolume snapshot /.snapshots/@_snapshot_ID /@_rollback_candidate`.
+     3. Update default subvolume pointer: `btrfs subvolume set-default <subvol_id> /`.
+     4. Update GRUB menu: `grub-btrfs` script auto-populates boot options.
+   - Failure Recovery:
+     * Failed Kernel/Update: Select previous snapshot from GRUB boot submenu.
+     * Failed GRUB Bootloader: Boot via live USB, chroot into system, reinstall GRUB (`grub-install`).
+   - Honest Backup Disclaimer: Btrfs snapshots are NOT backups. They reside on the same
+     physical disk blocks. Physical drive failure destroys both active data and snapshots.
+     True backups require offsite or secondary disk copies.
+
+2. FALLBACK TIER: EXT4 STORAGE WITH TIMESHIFT (RSYNC MODE)
+   - Fallback Installation File System: Ext4 (Used if user overrides Btrfs).
+   - Snapshot Mechanism: Timeshift in `rsync` mode using hard-links on Ext4.
+   - Recovery Limitation: Ext4 snapshots cannot be booted directly from the GRUB menu.
+     Rollback requires booting into a KAATYA Live USB and executing Timeshift restore.
+
+================================================================================
+5. DEBIAN & SOFTWARE LIFECYCLE AUDIT
+================================================================================
+1. Debian 13 "Trixie" Status:
+   - Status: Current STABLE release.
+   - Support Policy: 5-year lifecycle (3 years standard security support from Debian
+     Security Team + 2 years extended support from Debian LTS Project).
+   - Kernel: Standard Debian LTS kernel (`linux-image-amd64`, Linux 6.12 series).
+   - Distinction: Debian 14 "Forky" is the current testing distribution; Trixie is stable.
+
+2. Wine Stable Upstream Tracking Policy:
+   - Policy: Rather than pinning an obsolete version, KAATYA maintains an active tracking
+     policy targeting the upstream Wine Stable branch paired with community Proton-GE runners.
+
+3. Rule of One Active LLM Enforced:
+   - At any moment, strictly ONE large language model is loaded in RAM. Loading Nemotron
+     automatically initiates graceful eviction of Qwen3-4B.
+================================================================================
+
+--------------------------------------------------------------------------------
+END OF DOCUMENT [02/15]: KAATYA_STAGE2_2_FINAL_ARCHITECTURE_SPECIFICATION_v6.txt
+--------------------------------------------------------------------------------
+
+
+================================================================================
+DOCUMENT [03/15]: KAATYA_STAGE2_2_HARDWARE_AND_PERFORMANCE_REALISM_v6.txt
+SOURCE PATH: T:\KAATYA\KAATYA_MASTER_PLAN_REPORTS\KAATYA_STAGE2_2_HARDWARE_AND_PERFORMANCE_REALISM_v6.txt
+EXACT SIZE: 8,120 bytes | LINES: 133
+SHA-256 HASH: 524e5ce6bd8ba7ae456df88d87ccf3ce4e6d334a6a1b52c6b8cf1a6119e8cef2
+================================================================================
+
+================================================================================
+KAATYA OS 3.0 -- STAGE 2.2 HARDWARE AND PERFORMANCE REALISM (VERSION 6)
+Document ID: KAATYA-PERF-2.2-REALISM-v6
+Phase: PERFORMANCE BOUNDARY, HARDWARE REALISM & BENCHMARK SPECIFICATION
+Authorized Root: T:\KAATYA\
+Date: 2026-11-14
+Status: RECONCILED PERFORMANCE REALISM REPORT (VERSION 6)
+================================================================================
+
+1. HARDWARE BASELINE AUDIT (HP SLIMLINE PC 270-P0XX)
+--------------------------------------------------------------------------------
+- System Model: HP Slimline Desktop PC 270-p0xx
+- Processor: Intel Core i3-6100T (Skylake 14nm, 2 Cores, 4 Threads)
+- Clock Frequency Architecture:
+  * Base Frequency: 3.20 GHz (Fixed Maximum Base Clock).
+  * CRITICAL ARCHITECTURAL FACT: The Intel Core i3-6100T DOES NOT SUPPORT INTEL TURBO BOOST.
+    3.20 GHz is the non-turbo ceiling. The processor scales downward via Intel SpeedStep
+    (from 3.20 GHz down to 800 MHz idle) to save energy.
+- Thermal Design Power (TDP): 35 Watts.
+  * Technical Distinction: 35W TDP is an engineering dissipation specification for cooling
+    system design; it is NOT a hard electrical cutoff. Transient package power spikes can
+    exceed 35W briefly before thermal throttling engages.
+- Vector Instruction Sets: MMX, SSE4.2, AVX2, FMA3 (AVX-512 is NOT supported on Skylake).
+- Integrated GPU: Intel HD Graphics 530 (Gen9 GT2, 24 Execution Units, 350 MHz base, 950 MHz dynamic).
+- System Memory: 16.0 GB DDR4-2133 MHz (Dual-channel configuration).
+- Reference Display Target: 1366 x 768 @ 60 Hz Landscape Baseline.
+
+2. RECLASSIFIED PERFORMANCE TIERS: ESTIMATES & DESIGN TARGETS
+--------------------------------------------------------------------------------
+Every performance figure below represents an engineering ESTIMATE or design TARGET
+based on microarchitecture specifications. Zero claims represent verified physical benchmarks
+until Stage 3 physical testing is conducted.
+
+TIER 1: BASIC DESKTOP RESPONSIVENESS
+- Scope: Cursor movement, 2D window dragging, text editing, static desktop rendering.
+- Classification: DESIGN TARGET: 60 FPS (Frame Time: 16.67 ms).
+- Technical Rationale: Mesa Iris driver utilizes hardware-accelerated 2D surface blitting;
+  Wayland hardware cursor plane operates independently of scene composition.
+
+TIER 2: DESKTOP WINDOW ANIMATIONS
+- Scope: Window maximize/minimize, taskbar flyout, launcher grid transitions.
+- Classification: DESIGN TARGET: 50 - 60 FPS (Subject to shader simplicity).
+- Technical Constraint: Achievable only with single-pass Kawase blur and linear opacity scales.
+  Multi-pass Gaussian blurs will saturate the 24 Execution Units and cause stutter.
+
+TIER 3: COMPLEX VISUAL EFFECTS & BLENDING
+- Scope: Multiple stacked translucent frosted-glass surfaces with live background updates.
+- Classification: ESTIMATED BOUNDARY: 30 - 45 FPS (Probable frame drops under heavy load).
+- Technical Constraint: Intel HD 530 has 24 EUs sharing memory bandwidth with the CPU across
+  the DDR4-2133 bus. Memory bandwidth saturation will constrain multi-layer fill-rates.
+
+TIER 4: VIDEO PLAYBACK & MULTIMEDIA
+- Scope: 1080p 60fps video decoding in KAATYA Video Player and Chromium.
+- Classification: DESIGN TARGET: 60 FPS (Hardware-accelerated profiles).
+- Hardware Codec Split:
+  * H.264 (AVC) & H.265 (HEVC 8-bit/10-bit): Offloaded to Intel VA-API MFX hardware ASIC.
+    ESTIMATED CPU UTILIZATION: < 10% on Core i3-6100T.
+  * AV1 Decoding: Intel HD 530 lacks hardware AV1 decoding (AV1 added in Gen12/Xe).
+    AV1 will fall back to software decoding (`dav1d`), consuming 50% - 90% CPU and dropping frames at 1080p60.
+
+TIER 5: LOCAL AI INFERENCE (QWEN3-4B-Q4_K_M)
+- Scope: Daily driver token generation on `llama.cpp` using AVX2.
+- Classification: ESTIMATED THROUGHPUT: ~8 - 14 tokens/second.
+- Thread Allocation: 3 threads assigned to llama.cpp compute; 1 thread reserved for OS/UI.
+- Thermal Behavior: Sustained 4-thread CPU load on 35W TDP will cause thermal frequency
+  degradation (from 3.20 GHz toward ~2.6-2.8 GHz) after ~2 to 3 minutes, dropping throughput by ~15-20%.
+
+TIER 6: SPECIALIST AI INFERENCE (NEMOTRON 7.5B Q4_K_M)
+- Scope: Deep reasoning / coding assistant inference on on-demand Nemotron model.
+- Classification: ESTIMATED THROUGHPUT: ~3 - 6 tokens/second.
+- Constraint: High memory bandwidth demand across DDR4-2133 bus. Qwen3-4B must be evicted first.
+
+TIER 7: COMBINED HEAVY MULTITASKING
+- Scope: YouTube 1080p streaming + Browser (10 tabs) + Local LLM inference.
+- Classification: SYSTEM OVERLOAD RISK WITHOUT ADAPTIVE THROTTLING.
+- Enforcement: Userspace governor `kaatya-memoryd` deprioritizes AI compute thread priority
+  via `nice` and cgroups v2 CPU weight when interactive user inputs or video playback occur.
+
+================================================================================
+3. EIGHT REPRODUCIBLE BENCHMARK SUITES & LINUX COMMAND PROTOCOLS
+================================================================================
+To replace estimates with empirical data during Stage 3 testing, the following
+reproducible benchmark protocols are established. All file paths use standard Linux
+filesystem conventions (e.g. `/opt/kaatya/models/` or local build paths):
+
+BENCHMARK 1: DESKTOP FRAME TIME & COMPOSITOR LATENCY
+- Tool: `kwin_wayland --debug` overlay and `mangohud` (Wayland mode).
+- Linux Command: `mangohud --dlsym kwin_wayland`
+- Metric: 99th percentile frame time (Target: < 16.67 ms). Maximum frame drop rate < 1.0%.
+
+BENCHMARK 2: ANIMATION SMOOTHNESS & FRAME DROPS
+- Tool: KWin frame-render diagnostic script (`kwin-bench.sh`).
+- Linux Command: Automated script cycling 100 window maximize/minimize events via `ydotool`.
+- Metric: Dropped frame count recorded via KWin Compositor statistics D-Bus interface.
+
+BENCHMARK 3: GPU & CPU UTILIZATION
+- Tool: `intel_gpu_top` (part of `intel-gpu-tools`) and `perf top`.
+- Linux Command: `sudo intel_gpu_top -J -s 1000` logging Render/3D engine busy percentage.
+- Metric: Render/3D engine usage during idle desktop < 5%; during window dragging < 45%.
+
+BENCHMARK 4: HARDWARE VIDEO DECODE VALIDATION
+- Tool: `vainfo` and `mpv --hwdec=vaapi`.
+- Linux Commands:
+  `vainfo --display drm --device /dev/dri/renderD128`
+  `mpv --hwdec=vaapi --vo=gpu --profile=fast /opt/kaatya/test/test_1080p60_h264.mp4`
+- Metric: Confirm `VAProfileH264High` and `VAProfileHEVCMain` show `VAEntrypointVLD`.
+  Mpv log must confirm zero dropped frames across 5-minute continuous playback.
+
+BENCHMARK 5: LOCAL LLM TOKEN THROUGHPUT & LATENCY
+- Tool: `llama-bench` (from compiled `llama.cpp` tools).
+- Linux Commands:
+  `./bin/llama-bench -m /opt/kaatya/models/Qwen3-4B-Q4_K_M.gguf -p 512 -n 128 -t 3 -ngl 0`
+  `./bin/llama-bench -m /opt/kaatya/models/Nemotron-3.5-Bolt-E4B-Q4_K_M.gguf -p 512 -n 128 -t 3 -ngl 0`
+- Metric: Prompt processing speed (pp512 in t/s) and text generation speed (tg128 in t/s).
+  Report exact measured t/s and time-to-first-token (TTFT) latency.
+
+BENCHMARK 6: MODEL LOAD & UNLOAD LATENCY
+- Tool: POSIX time measuring process initialization and mmap fault-in.
+- Linux Command: `/usr/bin/time -v /opt/kaatya/bin/kaatya-aid --load-model qwen3-4b`
+- Metric: Model readiness time (Target: < 2.5 seconds on SSD via mmap; record HDD time).
+
+BENCHMARK 7: THERMAL CEILING & SUSTAINED CLOCK STABILITY
+- Tool: `sensors` (`lm-sensors`) and `turbostat` / `/sys/devices/system/cpu/cpu*/cpufreq`.
+- Linux Command: `sudo turbostat --interval 1 --quiet --show PkgWatt,CorWatt,CoreTmp,Bzy_MHz`
+- Protocol: Run continuous 10-minute LLM generation. Record thermal throttling onset,
+  maximum package temperature (Tjunction limit: 100°C), and sustained frequency floor.
+
+BENCHMARK 8: MEMORY PRESSURE & SWAP ENGAGEMENT
+- Tool: Linux PSI (`/proc/pressure/memory`) and `vmstat 1`.
+- Linux Command: `cat /proc/pressure/memory` during Heavy Multitasking Profile 5.
+- Metric: `some avg10` memory pressure must remain below 20.0; zero pages written to
+  physical disk swap (only zram compressed swap permitted).
+================================================================================
+
+--------------------------------------------------------------------------------
+END OF DOCUMENT [03/15]: KAATYA_STAGE2_2_HARDWARE_AND_PERFORMANCE_REALISM_v6.txt
+--------------------------------------------------------------------------------
+
+
+================================================================================
+DOCUMENT [04/15]: KAATYA_STAGE2_2_AI_SECURITY_PRIVACY_AND_PROVIDER_SPECIFICATION_v6.txt
+SOURCE PATH: T:\KAATYA\KAATYA_MASTER_PLAN_REPORTS\KAATYA_STAGE2_2_AI_SECURITY_PRIVACY_AND_PROVIDER_SPECIFICATION_v6.txt
+EXACT SIZE: 12,281 bytes | LINES: 220
+SHA-256 HASH: a2dba8e0c9420c55214f6097c96dd65fd8f485de71fed5524325faecf3a09306
+================================================================================
+
+================================================================================
+KAATYA OS 3.0 -- STAGE 2.2 AI SECURITY, PRIVACY, AND PROVIDER SPECIFICATION (VERSION 6)
+Document ID: KAATYA-SEC-2.2-AI-v6
+Phase: CREDENTIAL VAULT, PROVIDER PROTOCOLS, ABORT CALLBACK & MEMORY GOVERNOR
+Authorized Root: T:\KAATYA\
+Date: 2026-11-14
+Status: RECONCILED SECURITY & PRIVACY SPECIFICATION (VERSION 6)
+================================================================================
+
+1. AUTHORITATIVE AI PROVIDER & ADAPTER PROTOCOL DIRECTORY
+--------------------------------------------------------------------------------
+The KAATYA OS 3.0 AI provider fabric integrates exactly 15 core providers across 3
+categories (with Fireworks AI restored and Perplexity documented as an optional add-on):
+
+CATEGORY 1: DIRECT COMMERCIAL CLOUD API PROVIDERS
+
+1. OpenAI
+   - Official Base URL: `https://api.openai.com/v1`
+   - Authentication Header: `Authorization: Bearer <API_KEY>`
+   - API Version: v1 (Active REST schema)
+   - Model Discovery Endpoint: `GET https://api.openai.com/v1/models` (Supported)
+   - Connection Test: `GET /v1/models` with API key (Zero-token validation)
+   - Streaming Protocol: Server-Sent Events (SSE) `stream=true`
+   - Billing Risk: High (Direct per-token credit card or prepaid billing)
+   - OpenAI Compatibility: Native reference standard
+
+2. Anthropic
+   - Official Base URL: `https://api.anthropic.com/v1`
+   - Authentication Header: `x-api-key: <API_KEY>` + `anthropic-version: 2023-06-01`
+   - API Version: v1 Messages API
+   - Model Discovery Endpoint: `GET https://api.anthropic.com/v1/models` (Supported in recent API)
+   - Connection Test: Zero-token `GET /v1/models` request
+   - Streaming Protocol: SSE `stream=true`
+   - Billing Risk: High (Direct per-token billing)
+   - OpenAI Compatibility: Proprietary Messages format (Requires KAATYA Anthropic adapter)
+
+3. Google Gemini
+   - Official Base URL: `https://generativelanguage.googleapis.com/v1beta`
+   - Authentication Method: `x-goog-api-key: <API_KEY>` or `?key=<API_KEY>`
+   - API Version: v1beta REST API
+   - Model Discovery Endpoint: `GET https://generativelanguage.googleapis.com/v1beta/models`
+   - Connection Test: `GET /v1beta/models` (Zero-token discovery)
+   - Streaming Protocol: `alt=sse` streaming chunk endpoint
+   - Billing Risk: Pay-as-you-go per million tokens with free tier limits
+   - OpenAI Compatibility: Non-native (Requires Gemini JSON schema adapter)
+
+4. Mistral AI
+   - Official Base URL: `https://api.mistral.ai/v1`
+   - Authentication Header: `Authorization: Bearer <API_KEY>`
+   - API Version: v1 REST
+   - Model Discovery Endpoint: `GET https://api.mistral.ai/v1/models` (Supported)
+   - Connection Test: `GET /v1/models`
+   - Streaming Protocol: SSE `stream=true`
+   - Billing Risk: Direct per-token billing (European datacenter compliance)
+   - OpenAI Compatibility: Fully OpenAI-compatible
+
+5. Groq Cloud
+   - Official Base URL: `https://api.groq.com/openai/v1`
+   - Authentication Header: `Authorization: Bearer <API_KEY>`
+   - API Version: v1 REST (OpenAI-compatible)
+   - Model Discovery Endpoint: `GET https://api.groq.com/openai/v1/models` (Supported)
+   - Connection Test: `GET /openai/v1/models`
+   - Streaming Protocol: SSE `stream=true`
+   - Billing Risk: High-speed LPU billing (Pay-per-token with tier rate limits)
+   - OpenAI Compatibility: 100% OpenAI-compatible
+
+6. DeepSeek
+   - Official Base URL: `https://api.deepseek.com/v1`
+   - Authentication Header: `Authorization: Bearer <API_KEY>`
+   - API Version: v1 REST
+   - Model Discovery Endpoint: `GET https://api.deepseek.com/v1/models` (Supported)
+   - Connection Test: `GET /v1/models`
+   - Streaming Protocol: SSE `stream=true`
+   - Billing Risk: Pay-per-token balance deduction
+   - OpenAI Compatibility: 100% OpenAI-compatible
+
+7. Cohere
+   - Official Base URL: `https://api.cohere.com/v2`
+   - Authentication Header: `Authorization: Bearer <API_KEY>`
+   - API Version: v2 Chat REST API
+   - Model Discovery Endpoint: `GET https://api.cohere.com/v2/models` (Supported)
+   - Connection Test: `GET /v2/models`
+   - Streaming Protocol: SSE stream events
+   - Billing Risk: Pay-per-token API usage
+   - OpenAI Compatibility: Non-native (Requires Cohere v2 adapter)
+
+8. Together AI
+   - Official Base URL: `https://api.together.xyz/v1`
+   - Authentication Header: `Authorization: Bearer <API_KEY>`
+   - API Version: v1 REST
+   - Model Discovery Endpoint: `GET https://api.together.xyz/v1/models` (Supported)
+   - Connection Test: `GET /v1/models`
+   - Streaming Protocol: SSE `stream=true`
+   - Billing Risk: Pay-per-token balance deduction
+   - OpenAI Compatibility: 100% OpenAI-compatible
+
+9. Fireworks AI (RESTORED)
+   - Official Base URL: `https://api.fireworks.ai/inference/v1`
+   - Authentication Header: `Authorization: Bearer <API_KEY>`
+   - API Version: v1 REST (OpenAI-compatible)
+   - Model Discovery Endpoint: `GET https://api.fireworks.ai/inference/v1/models` (Supported)
+   - Connection Test: `GET /inference/v1/models`
+   - Streaming Protocol: SSE `stream=true`
+   - Billing Risk: Pay-per-token serverless billing
+   - OpenAI Compatibility: 100% OpenAI-compatible
+
+10. xAI
+    - Official Base URL: `https://api.x.ai/v1`
+    - Authentication Header: `Authorization: Bearer <API_KEY>`
+    - API Version: v1 REST
+    - Model Discovery Endpoint: `GET https://api.x.ai/v1/models` (Supported)
+    - Connection Test: `GET /v1/models`
+    - Streaming Protocol: SSE `stream=true`
+    - Billing Risk: Pay-per-token balance deduction
+    - OpenAI Compatibility: 100% OpenAI-compatible
+
+*Optional Commercial Provider: Perplexity AI*
+- Base URL: `https://api.perplexity.ai` | Auth: Bearer token | Discovery: Supported | SSE: Yes.
+
+CATEGORY 2: UNIVERSAL CLOUD MODEL GATEWAYS & HUBS
+
+11. OpenRouter
+    - Official Base URL: `https://openrouter.ai/api/v1`
+    - Authentication Header: `Authorization: Bearer <API_KEY>`
+    - Model Discovery Endpoint: `GET https://openrouter.ai/api/v1/models`
+    - Connection Test: `GET /api/v1/models` (Returns 200+ available models and pricing)
+    - Streaming Protocol: SSE `stream=true`
+    - Billing Risk: Single unified wallet balance deduction
+    - OpenAI Compatibility: 100% OpenAI-compatible
+
+12. Hugging Face Inference Providers
+    - Official Router URL: `https://router.huggingface.co/models`
+    - Authentication Header: `Authorization: Bearer <HF_TOKEN>`
+    - Crucial Discovery Distinction: Model discovery uses the Hugging Face Router endpoint
+      (`GET https://router.huggingface.co/models` or Hub API `GET https://huggingface.co/api/models?pipeline_tag=text-generation&filter=inference-provider`).
+      This queries serverless warm inference providers, NOT general cold repositories on the Hub!
+    - Connection Test: Zero-token validation via user identity check `GET https://huggingface.co/api/whoami-v2`.
+    - Streaming Protocol: SSE `stream=true` on supported router endpoints.
+    - Billing Risk: Pro/Enterprise usage or free rate-limited tier.
+
+CATEGORY 3: LOCAL ENGINE ADAPTERS (EXACTLY 3 LOCAL ADAPTERS - NO FOURTH ADAPTER)
+
+13. `llama.cpp` Engine Adapter: Native C++ library (`libllama.so`) / socket server.
+14. `whisper.cpp` STT Engine Adapter: Native C++ engine executing Whisper models.
+15. `piper` TTS Engine Adapter: Native C++ / ONNX engine executing neural voice models.
+
+================================================================================
+2. CREDENTIAL VAULT ARCHITECTURE & MEMORY PROTECTION
+================================================================================
+- Master Key Derivation: User master passphrase + 32-byte cryptographically secure salt
+  generated via `getrandom()` system call.
+- `/etc/machine-id` Rejection: Explicitly rejected as secret or sole key source (world-readable).
+- KDF: Argon2id (RFC 9106) with $m = 65,536\text{ KiB}$ (64 MiB), $t = 3$ iterations, $p = 4$ threads.
+- Symmetric Cipher: AES-256-GCM with unique 96-bit random nonces generated per encryption.
+- Kernel Session Keyring: Keys held ephemerally in Linux kernel keyring (`keyctl`).
+- In-Process Protections: `mlock()` prevents swap paging; `madvise(MADV_DONTDUMP)` prevents core dumps;
+  `explicit_bzero()` wipes buffers immediately after use.
+- Security Realism: Root users (`CAP_SYS_PTRACE`), kernel modules, and cold-boot hardware attacks
+  can extract keys from unlocked memory. Exposure window is minimized to microseconds.
+- Logging: Structural JSON omission is the primary security boundary; regex filtering is secondary defense.
+
+================================================================================
+3. AI EMERGENCY STOP & LLAMA.CPP ABORT CALLBACK ARCHITECTURE
+================================================================================
+
+A. CORRECTION OF CANCELLATION API (`LLAMA_SET_ABORT_CALLBACK`)
+--------------------------------------------------------------------------------
+In upstream llama.cpp (see `llama.h`), the abort mechanism is `llama_set_abort_callback()`:
+
+```c
+typedef bool (*ggml_abort_callback)(void * data);
+void llama_set_abort_callback(struct llama_context * ctx, ggml_abort_callback abort_callback, void * abort_callback_data);
+```
+
+Operational Implementation in `kaatya-aid`:
+1. Registration: Upon initializing the `llama_context`, `kaatya-aid` registers an abort callback
+   referencing a thread-safe atomic cancellation flag (`std::atomic<bool> g_abort_requested`).
+2. Execution Check: During active `llama_decode()`, the CPU compute backend periodically executes
+   the callback between token evaluations. If `g_abort_requested` is true, the callback returns
+   `true`, immediately halting token generation and returning execution to the daemon loop.
+3. Queue Eviction: All queued pending prompts are evicted immediately with `AbortError`.
+4. Realistic Buffer Clearing: Plaintext prompt strings and response tokens in RAM are wiped
+   using `explicit_bzero()`. Note: KV cache memory blocks are marked free; dirty cache pages
+   are released or overwritten during subsequent inference.
+
+B. CLOUD HTTP REQUEST CANCELLATION & REMOTE REALISM
+--------------------------------------------------------------------------------
+1. Local Sockets: The daemon triggers `SO_LINGER(0)` socket abort and terminates the HTTP/2 stream.
+2. In-Flight Data Realism: A local TCP reset terminates client-side data receipt. However:
+   * It DOES NOT retract data already transmitted across the Internet.
+   * It DOES NOT guarantee the remote cloud provider has stopped processing the request.
+   * In-flight token billing may still be charged by remote commercial providers.
+3. Helper Processes: Helper sandboxes receive `SIGTERM`, followed by `SIGKILL` after 250ms.
+4. UI Status: Displays prominent amber banner: "Inference Aborted by User".
+
+================================================================================
+4. USERSPACE MEMORY PRESSURE GOVERNOR (`KAATYA-MEMORYD`)
+================================================================================
+Linux Pressure Stall Information (PSI) is an accounting metric (`/proc/pressure/memory`),
+not an automatic management daemon. KAATYA OS 3.0 deploys a dedicated userspace daemon:
+`kaatya-memoryd`.
+
+1. PSI MONITORING ENGINE:
+   - Polls `/proc/pressure/memory` using `epoll` triggers on configured thresholds.
+   - Threshold Tiers:
+     * Level 1 (Elevated): `some avg10 > 15.0` (Memory bandwidth contention beginning).
+     * Level 2 (High): `some avg10 > 30.0` or physical free RAM < 15% (2,457 MiB).
+     * Level 3 (Critical): `some avg10 > 50.0` or physical free RAM < 8% (1,310 MiB).
+
+2. TIERED MEMORY SHEDDING ACTIONS:
+   - Level 1 Action: Signals Chromium via DevTools memory API to discard background tabs.
+   - Level 2 Action: Freezes inactive Waydroid containers via cgroups v2 freezer subsystem;
+     pages anonymous memory to 8 GB zram (zstd compressed) pool.
+   - Level 3 Action: Sends D-Bus message to `kaatya-aid` to unload LLM weights to disk.
+     If system pressure remains critical, `systemd-oomd` terminates low-priority cgroups.
+
+3. USER NOTIFICATION & RECOVERY:
+   - Displays notification: "Background tabs and idle AI unloaded to maintain responsiveness."
+   - Workloads reload automatically when foreground user focus resumes.
+================================================================================
+
+--------------------------------------------------------------------------------
+END OF DOCUMENT [04/15]: KAATYA_STAGE2_2_AI_SECURITY_PRIVACY_AND_PROVIDER_SPECIFICATION_v6.txt
+--------------------------------------------------------------------------------
+
+
+================================================================================
+DOCUMENT [05/15]: KAATYA_STAGE2_2_MASTER_REQUIREMENTS_TRACEABILITY_MATRIX_v6.txt
+SOURCE PATH: T:\KAATYA\KAATYA_MASTER_PLAN_REPORTS\KAATYA_STAGE2_2_MASTER_REQUIREMENTS_TRACEABILITY_MATRIX_v6.txt
+EXACT SIZE: 16,008 bytes | LINES: 295
+SHA-256 HASH: 4a2c1f871c4c70b21ee9ea776340259b59b3976c84c71953b72d75bc9cdd303a
+================================================================================
+
+================================================================================
+KAATYA OS 3.0 -- STAGE 2.2 MASTER REQUIREMENTS TRACEABILITY MATRIX (VERSION 6)
+Document ID: KAATYA-REQ-2.2-TRACE-v6
+Phase: 8-STAGE EVIDENCE-BASED REQUIREMENTS TRACEABILITY AUDIT
+Authorized Root: T:\KAATYA\
+Date: 2026-11-14
+Status: RECONCILED REQUIREMENTS TRACEABILITY MATRIX (VERSION 6)
+================================================================================
+
+1. EIGHT-STAGE EVIDENCE & VERIFICATION TAXONOMY
+--------------------------------------------------------------------------------
+KAATYA OS 3.0 enforces an 8-stage evidence hierarchy for every architectural requirement:
+
+[Stage 1] Requirement Documented: Written specification exists in master documentation.
+[Stage 2] Architecture Selected: Specific technical library, daemon, or standard defined.
+[Stage 3] Asset Metadata Inspected: Header or configuration metadata parsed and verified.
+[Stage 4] Asset Hash Verified: Cryptographic SHA-256 hash calculated and matched against disk.
+[Stage 5] Code Implemented: Handwritten source code, build scripts, or recipes created.
+[Stage 6] Functional Test Passed: Unit/integration test passed in local build harness.
+[Stage 7] Virtual-Machine Test Passed: Validated inside headless QEMU virtual machine.
+[Stage 8] Physical Hardware Test Passed: Validated on physical HP Slimline PC 270-p0xx.
+
+CRITICAL EVIDENCE AUDIT RULE:
+Inspecting an asset on disk satisfies ONLY Stages 1 through 4. Stages 5 through 8
+remain PENDING until Stage 3 execution. Zero requirements are marked complete without evidence.
+
+================================================================================
+2. AUTHORITATIVE 37-REQUIREMENT TRACEABILITY MATRIX
+================================================================================
+
+Req ID: RQ-01
+- Subsystem: OS Foundation & Base Distribution
+- Description: Debian 13 "Trixie" Stable x86_64 base, systemd init, cgroups v2 resource control.
+- Authoritative Doc: ARCH-v6, TECH-v6
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: Boots to multi-user target with systemd 256+ and cgroups v2 active.
+
+Req ID: RQ-02
+- Subsystem: Bootloader & Partitioning
+- Description: Dual BIOS (Syslinux/MBR) and UEFI (GRUB2) boot with Calamares graphical installer.
+- Authoritative Doc: BOOT-024, EXEC-v6
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: Installer executes without errors and configures bootloader on target disk.
+
+Req ID: RQ-03
+- Subsystem: Desktop Shell & Presentation
+- Description: Qt 6 / QML SceneGraph hardware-accelerated desktop UI (kaatya-shell).
+- Authoritative Doc: SHELL-005, STITCH-v6
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: Shell loads at 1366x768 reference resolution with 60 FPS design target.
+
+Req ID: RQ-04
+- Subsystem: Window Management & Compositor
+- Description: KWin-Wayland compositor wrapper with window snapping and tiling logic.
+- Authoritative Doc: SHELL-005, ARCH-v6
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: 99th percentile frame time < 16.6ms during standard window dragging.
+
+Req ID: RQ-05
+- Subsystem: Taskbar, Dock & System Tray
+- Description: 48px bottom taskbar, start menu, system tray, and persistent AI action orb.
+- Authoritative Doc: SHELL-005, STITCH-v6
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: Start menu opens via Super key; all system tray indicators display state.
+
+Req ID: RQ-06
+- Subsystem: Permanent AI Assistant Daemon
+- Description: Resident background C++ service (`kaatya-aid`) with D-Bus IPC interface.
+- Authoritative Doc: AI-008, ARCH-v6
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: Daemon starts at boot, manages model life cycles, and responds to IPC.
+
+Req ID: RQ-07
+- Subsystem: Local LLM Engine (Daily Driver)
+- Description: llama.cpp AVX2 engine executing Qwen3-4B-Q4_K_M within 16 GB RAM boundary.
+- Authoritative Doc: AI-009, TECH-v6
+- Evidence Source: Physical file `T:\KAATYA\Qwen3-4B-Q4_K_M.gguf` (SHA-256 verified).
+- Current Status: [Stages 1-4 Achieved (Asset verified)] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: Sustained generation >= 8 tokens/sec with KV cache capped at 8K tokens.
+
+Req ID: RQ-08
+- Subsystem: Specialist LLM Engine (On-Demand)
+- Description: llama.cpp engine executing Nemotron-3.5-Bolt 7.5B with single-model memory swapping.
+- Authoritative Doc: AI-009, TECH-v6
+- Evidence Source: Physical file `T:\KAATYA\Nemotron-3.5-Bolt-E4B-Q4_K_M.gguf` (SHA-256 verified).
+- Current Status: [Stages 1-4 Achieved (Asset verified)] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: Swapping succeeds without OOM; total RAM consumption remains < 13 GB.
+
+Req ID: RQ-09
+- Subsystem: Online AI Cloud Gateway
+- Description: Multi-provider gateway (OpenAI, Anthropic, Gemini, Mistral, Groq, DeepSeek, Cohere, Together, xAI).
+- Authoritative Doc: AI-010-v6, SEC-v6
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: Zero-token connection test completes without incurring billing charges.
+
+Req ID: RQ-10
+- Subsystem: Fireworks AI Cloud Integration (NEW/RESTORED)
+- Description: Fireworks Serverless API adapter (`https://api.fireworks.ai/inference/v1`) with streaming.
+- Authoritative Doc: SEC-v6, ARCH-v6
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: `GET /inference/v1/models` validates authentication; streaming tokens render cleanly.
+
+Req ID: RQ-11
+- Subsystem: Semantic Memory & Embeddings
+- Description: sqlite-vec vector store with Qwen3-Embedding-0.6B (1024-dim vector embeddings).
+- Authoritative Doc: AI-013, ARCH-v6
+- Evidence Source: Physical file `T:\KAATYA\qwen3-embedding-0.6b-q8_0.gguf` (SHA-256 verified).
+- Current Status: [Stages 1-4 Achieved (Asset verified)] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: Cosine similarity query returns nearest semantic neighbors in < 100ms.
+
+Req ID: RQ-12
+- Subsystem: Offline Speech-to-Text (STT)
+- Description: whisper.cpp engine executing quantized Whisper base.en model for voice input.
+- Authoritative Doc: VOICE-014, TECH-v6
+- Evidence Source: `T:\KAATYA\KAATYA_ASSETS\whisper-base.en.bin` asset.
+- Current Status: [Stages 1-4 Achieved (Asset verified)] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: Audio transcribed with latency < 1.5x real-time on Core i3-6100T.
+
+Req ID: RQ-13
+- Subsystem: Offline Text-to-Speech (TTS)
+- Description: piper neural TTS engine executing en_US-lessac-medium ONNX voice models.
+- Authoritative Doc: VOICE-014, TECH-v6
+- Evidence Source: `T:\KAATYA\KAATYA_ASSETS\voices\en_US-lessac-medium.onnx` asset.
+- Current Status: [Stages 1-4 Achieved (Asset verified)] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: Speech synthesis begins within 200ms of text submission.
+
+Req ID: RQ-14
+- Subsystem: Encrypted Credential Vault
+- Description: Argon2id KDF ($m=64\text{MB}, t=3, p=4$) + AES-256-GCM + Kernel Keyring.
+- Authoritative Doc: SEC-v6, AI-011
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: Vault fails decryption on tampered data; secrets absent from core dumps.
+
+Req ID: RQ-15
+- Subsystem: AI Emergency Stop & Abort Callback
+- Description: Global hotkey (`Super+Shift+X`), `llama_set_abort_callback`, socket termination, and PII redactor.
+- Authoritative Doc: SEC-v6, AI-015
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: Local inference halts within 1 decode cycle; local sockets closed immediately.
+
+Req ID: RQ-16
+- Subsystem: Userspace Memory Pressure Governor (`kaatya-memoryd`)
+- Description: PSI-based daemon managing Chromium tab discarding, Waydroid freezing, and LLM unloading.
+- Authoritative Doc: TECH-v6, SEC-v6
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: System prevents OOM panics by shedding background memory under heavy load.
+
+Req ID: RQ-17
+- Subsystem: Default Web Platform & KAATYA Browser
+- Description: Chromium-based browser with tabs, groups, bookmarks, history, profiles, PWA, and VA-API decode.
+- Authoritative Doc: WEB-020, BROWSER-036
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: 1080p60 video plays with < 10% CPU utilization on supported codecs.
+
+Req ID: RQ-18
+- Subsystem: Android Compatibility Runtime (Waydroid)
+- Description: Waydroid LXC container running AOSP with Wayland buffer sharing and F-Droid/Aurora Store.
+- Authoritative Doc: COMPAT-022, AND-038
+- Evidence Source: `T:\KAATYA\android-x86_64-9.0-r2.iso` (Audited as bootable live/QEMU image).
+- Current Status: [Stages 1-4 Achieved (Asset verified)] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: Android application launches and renders directly on Wayland desktop.
+
+Req ID: RQ-19
+- Subsystem: Windows Compatibility Runtime (Wine / Bottles)
+- Description: Bottles / Wine Stable prefix runner with DXVK and Bubblewrap sandbox wrapper.
+- Authoritative Doc: COMPAT-022, WIN-039
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: Win32 application executes in isolated prefix with `Z:\` mapping stripped.
+
+Req ID: RQ-20
+- Subsystem: Microsoft Store & MSIX Research (NEW)
+- Description: Compatibility research defining UWP/Store limitations and winget/direct extraction alternatives.
+- Authoritative Doc: ARCH-v6, WIN-039
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: Clear user documentation and automated MSIX unpack extraction helper.
+
+Req ID: RQ-21
+- Subsystem: Native Application Sandboxing
+- Description: Bubblewrap unprivileged user namespaces + Landlock LSM + Seccomp-BPF.
+- Authoritative Doc: SEC-042, ARCH-v6
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: Sandboxed process receives `EACCES` when attempting unauthorized file access.
+
+Req ID: RQ-22
+- Subsystem: Unified Software Centre
+- Description: Graphical app store managing APT debs, Flatpaks, Android APKs, and Wine EXEs.
+- Authoritative Doc: STORE-040, STITCH-v6
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: User can install, launch, update, and remove apps from a single interface.
+
+Req ID: RQ-23
+- Subsystem: Unified Application Launcher & MIME Router
+- Description: Single application menu abstracting runtime types and routing file intents.
+- Authoritative Doc: APPS-041, STITCH-v6
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: All installed applications appear in launcher regardless of runtime engine.
+
+Req ID: RQ-24
+- Subsystem: Download Verification & Package Security
+- Description: HTTPS TLS 1.3 enforcement, SHA-256 integrity validation, and static heuristic scanning.
+- Authoritative Doc: STORE-043
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: Packages failing SHA-256 or signature check are blocked from installation.
+
+Req ID: RQ-25
+- Subsystem: Desktop Notification Hub
+- Description: Freedesktop D-Bus notification server with Do Not Disturb (DND) mode.
+- Authoritative Doc: NOTIF-044, STITCH-v6
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: Notifications appear in top-right screen area with smooth fade-in.
+
+Req ID: RQ-26
+- Subsystem: Security Centre & Host Firewall
+- Description: UFW (Uncomplicated Firewall) integration, hardware kill-switch status, and audit log.
+- Authoritative Doc: SEC-018, SEC-v6
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: Inbound network traffic blocked by default; port scan reveals zero open ports.
+
+Req ID: RQ-27
+- Subsystem: File Explorer (KAATYA Files)
+- Description: Dual-pane Qt6 file manager with integrated AI document summarization side-panel.
+- Authoritative Doc: APPS-016, STITCH-v6
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: Folder loads in < 200ms; PDF documents display instant AI summary on request.
+
+Req ID: RQ-28
+- Subsystem: System Monitor & Hardware Telemetry
+- Description: Real-time CPU 4-thread telemetry, Intel HD 530 GPU usage, thermals, and zram monitor.
+- Authoritative Doc: APPS-016, PERF-v6
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: System monitor CPU overhead remains < 1.0% during active graphing.
+
+Req ID: RQ-29
+- Subsystem: Task Manager & Process Controller
+- Description: Tree-view process manager with memory advisor and SIGTERM/SIGKILL controller.
+- Authoritative Doc: APPS-016, STITCH-v6
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: Force-kill immediately terminates target process and reclaims mapped RAM.
+
+Req ID: RQ-30
+- Subsystem: System Settings Hub
+- Description: Categorized system preference hub with instant search across all settings pages.
+- Authoritative Doc: APPS-016, STITCH-v6
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: All system changes persist cleanly across system reboots.
+
+Req ID: RQ-31
+- Subsystem: Theme Studio & Visual Customizer
+- Description: 6 supernatural anime themes (Limitless Void, Malevolent Shrine, etc.) with live preview.
+- Authoritative Doc: THEME-007, STITCH-v6
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: Switching themes applies instantaneously without requiring application restarts.
+
+Req ID: RQ-32
+- Subsystem: Cursor & Animation Engine
+- Description: 20 custom Xcursor themes and particle/blur governor with reduced motion mode.
+- Authoritative Doc: THEME-007, STITCH-v6
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: Cursors scale crisply; reduced-motion mode replaces animations with 80ms fade.
+
+Req ID: RQ-33
+- Subsystem: Storage Snapshots & Recovery (Provisional Btrfs)
+- Description: Btrfs subvolume snapshots (`@snapshots`) with GRUB integration (`grub-btrfs`).
+- Authoritative Doc: STOR-017, ARCH-v6
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: System successfully recovers from broken root state via GRUB snapshot menu.
+
+Req ID: RQ-34
+- Subsystem: System Update Centre
+- Description: Atomic package updates with mandatory pre-update snapshot creation.
+- Authoritative Doc: MAINT-029, ARCH-v6
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: Snapshots are generated automatically before any package modification.
+
+Req ID: RQ-35
+- Subsystem: Native Productivity Suite (Exactly 7 Native Apps)
+- Description: Notes, Document Centre, Calculator, Clock, Calendar, Coding Studio, Research Centre.
+- Authoritative Doc: APPS-016, STITCH-v6
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: All 7 applications launch, render correctly, and persist user state.
+
+Req ID: RQ-36
+- Subsystem: Accessibility & Multilingual Interface
+- Description: AT-SPI2 screen reader hooks, high-contrast mode, Hindi transliteration (Fcitx5).
+- Authoritative Doc: ACC-027, STITCH-v6
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: Screen reader speaks UI element roles; Hindi input works across all text fields.
+
+Req ID: RQ-37
+- Subsystem: Hardware Optimization & Performance Governor
+- Description: `schedutil` CPU frequency scaling, Intel HD 530 Mesa Iris driver, and 8 GB zram swap.
+- Authoritative Doc: PERF-v6, TECH-v6
+- Current Status: [Stages 1-2 Achieved] | [Stages 5-8 Pending Stage 3]
+- Acceptance Criteria: CPU scales dynamically from 800MHz idle to 3.20GHz base; zram active.
+================================================================================
+
+--------------------------------------------------------------------------------
+END OF DOCUMENT [05/15]: KAATYA_STAGE2_2_MASTER_REQUIREMENTS_TRACEABILITY_MATRIX_v6.txt
+--------------------------------------------------------------------------------
+
+
+================================================================================
+END OF KAATYA_V6_REVIEW_PART_1.txt
+================================================================================
