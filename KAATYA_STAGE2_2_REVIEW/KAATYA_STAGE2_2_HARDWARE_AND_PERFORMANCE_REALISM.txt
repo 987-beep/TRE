@@ -1,0 +1,65 @@
+================================================================================
+KAATYA OS 3.0 -- STAGE 2.2 HARDWARE AND PERFORMANCE REALISM
+Document ID: KAATYA-PERF-2.2-REALISM
+Phase: PERFORMANCE BOUNDARY & REALISTIC WORKLOAD AUDIT
+Authorized Root: T:\KAATYA\
+Date: 2026-11-14
+================================================================================
+
+1. HARDWARE BASELINE AUDIT (HP SLIMLINE PC 270-P0XX)
+--------------------------------------------------------------------------------
+- Processor: Intel Core i3-6100T (Skylake 14nm, 2 Cores, 4 Threads @ 3.20 GHz, 3MB Cache)
+- Thermal Design Power (TDP): 35 Watts (Low-power desktop thermal ceiling)
+- Vectorization Capabilities: MMX, SSE4.2, AVX2, FMA3 (AVX-512 is NOT supported)
+- Graphics Processor: Intel HD Graphics 530 (Gen9 GT2, 24 Execution Units, Base 350MHz, Dynamic 950MHz)
+- Shared Video Memory: Dynamically allocated from system RAM (up to 1.5 GB shared)
+- System Memory: 16.0 GB DDR4-2133 MHz (Dual-channel configuration)
+- Display Resolution: 1366 x 768 @ 60 Hz Landscape Reference Target
+
+2. SEVEN DETAILED PERFORMANCE TIERS & EXPECTATION AUDIT
+--------------------------------------------------------------------------------
+Tier 1: Basic Desktop Responsiveness
+- Workload: Moving mouse cursor, drawing window frames, text typing, static desktop.
+- Evaluation: EXPECTED TO MEET 60 FPS TARGET.
+- Rationale: Handled by Mesa 24.x Iris 2D hardware blit and hardware cursor plane.
+
+Tier 2: Desktop Window Animations
+- Workload: Window minimize/maximize, taskbar slide-in, launcher grid fade.
+- Evaluation: PROVISIONAL TARGET 50 - 60 FPS (Subject to shader simplicity).
+- Rationale: Single-pass Kawase blur and linear opacity scales run smoothly on 24 EUs.
+  Multi-pass Gaussian blur shaders cause frame drops and must be avoided.
+
+Tier 3: Complex Visual Effects & Blending
+- Workload: Multiple stacked translucent glass windows with live background updates.
+- Evaluation: UNCERTAIN (Expected ~30 - 45 FPS; requires physical benchmarking).
+- Rationale: HD 530 memory bandwidth shared with CPU will become saturated.
+
+Tier 4: Video Playback & Multimedia
+- Workload: 1080p 60fps H.264 / HEVC video playback in KAATYA Video Player.
+- Evaluation: EXPECTED TO MEET 60 FPS (Hardware Offloaded).
+- Rationale: Intel VA-API (`intel-media-driver`) hardware MFX ASIC handles decoding
+  with < 10% CPU utilization. AV1 decoding will use CPU (dav1d) and drop frames.
+
+Tier 5: Local AI Inference (Qwen3-4B-Q4_K_M)
+- Workload: User prompt token generation on llama.cpp with AVX2.
+- Evaluation: ESTIMATED ~8 - 14 TOKENS/SEC (Requires live benchmarking).
+- Rationale: 3 CPU threads assigned to llama.cpp; 1 thread reserved for desktop.
+  Thermal throttling on 35W TDP will occur after ~2 minutes of sustained generation.
+
+Tier 6: Specialist AI Inference (Nemotron 7.5B Q4_K_M)
+- Workload: Heavy coding or multi-step reasoning on on-demand Nemotron model.
+- Evaluation: ESTIMATED ~3 - 6 TOKENS/SEC (High latency; CPU saturated).
+- Rationale: 5.4 GB RAM footprint + high FLOP demand. Qwen3-4B must be unloaded first.
+
+Tier 7: Combined Heavy Multitasking (Video + AI Inference + Web Browsing)
+- Workload: Running YouTube 1080p, compiling code, and streaming LLM tokens simultaneously.
+- Evaluation: UNFEASIBLE WITHOUT THROTTLING (CPU starvation will occur).
+- Rationale: System governor must automatically deprioritize `kaatya-aid` to 1 thread
+  or pause inference to maintain desktop UI responsiveness.
+
+3. HARDWARE HONESTY STATEMENT
+--------------------------------------------------------------------------------
+KAATYA OS 3.0 does not promise impossible workstation performance on an entry-level
+dual-core Skylake platform. Workloads are strictly governed, memory is capped, and
+heavy background inference is adaptively throttled to preserve system stability.
+================================================================================

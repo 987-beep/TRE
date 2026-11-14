@@ -1,0 +1,95 @@
+================================================================================
+KAATYA OS 3.0 -- STAGE 2.2 DOCUMENT CHANGELOG AND EVIDENCE REGISTER
+Document ID: KAATYA-LOG-2.2-CHANGELOG
+Phase: COMPREHENSIVE RECONCILIATION & CHANGE REGISTER
+Authorized Root: T:\KAATYA\
+Date: 2026-11-14
+================================================================================
+
+1. MASTER CHANGE REGISTER (STAGE 1 -> STAGE 2.1 -> STAGE 2.2)
+--------------------------------------------------------------------------------
+Change ID: CR-01
+- Subject: Local AI Model Concurrency
+- Previous Claim: System assumed simultaneous loading of Qwen3-4B and Nemotron 7.5B in RAM.
+- Corrected Position: STRICT CONCURRENCY CAP OF 1 LLM. Loading Nemotron evicts Qwen3-4B.
+- Reason: 16 GB physical RAM envelope cannot support dual concurrent model weights + KV caches.
+- Authoritative Document: `KAATYA_STAGE2_2_FINAL_TECHNICAL_AUDIT.txt`, `ARCH-2.2-FINAL.txt`
+
+Change ID: CR-02
+- Subject: Nemotron Architecture vs. Filename E4B
+- Previous Claim: Assumed `general.size_label = 7.5B` proved exact parameter count; inferred MoE.
+- Corrected Position: Confirmed 42 layers, 720 tensors, Gemma4 architecture (~7.5B raw parameters).
+  E4B status is classified as UNVERIFIED upstream naming; not assumed to be MoE.
+- Reason: Strict adherence to binary GGUF metadata headers; no expert routing tensors found.
+- Authoritative Document: `KAATYA_FINAL_HARDWARE_AND_MODEL_VERIFICATION_v3.txt`, `TECH-2.2-AUDIT`
+
+Change ID: CR-03
+- Subject: Local Vector Memory Engine Selection
+- Previous Claim: Inconsistent references between ChromaDB and SQLite-vec.
+- Corrected Position: `sqlite-vec` is officially designated as PRIMARY embedded vector engine.
+  ChromaDB is documented strictly as an optional external alternative.
+- Reason: `sqlite-vec` runs in-process with SQLite; zero server overhead, minimal RAM (<25MB).
+- Authoritative Document: `KAATYA_STAGE2_2_FINAL_ARCHITECTURE_SPECIFICATION.txt`
+
+Change ID: CR-04
+- Subject: 60 FPS Desktop Performance
+- Previous Claim: Guaranteed steady 60 FPS across all desktop activities.
+- Corrected Position: 60 FPS is an architectural design target for 2D QML SceneGraph rendering.
+  Heavy blur shaders, video playback, and concurrent AI inference will reduce FPS.
+- Reason: Intel HD Graphics 530 has 24 EUs sharing main memory bandwidth with CPU.
+- Authoritative Document: `KAATYA_STAGE2_2_HARDWARE_AND_PERFORMANCE_REALISM.txt`
+
+Change ID: CR-05
+- Subject: Google Play Store Compatibility
+- Previous Claim: Implied direct integration or bundling of Google Play Store.
+- Corrected Position: Proprietary GMS cannot be bundled legally without CDD/CTS certification.
+  Lawful repositories (F-Droid, Aurora Store client) and APK sideloading specified.
+- Reason: Google licensing restrictions; SafetyNet/Play Integrity hardware attestation fails.
+- Authoritative Document: `KAATYA_FINAL_REQUIREMENTS_AND_CONSISTENCY_MATRIX_v4.txt`
+
+Change ID: CR-06
+- Subject: Microsoft Store & Windows Software
+- Previous Claim: Vague claims of universal Windows application compatibility.
+- Corrected Position: Standard Win32/PE `.exe` and `.msi` run via Wine 9.x / Bottles.
+  UWP/MSIX Store-dependent apps CANNOT run under Wine; Windows 10 KVM VM used as fallback.
+- Reason: Wine does not support proprietary Windows 10/11 UWP app contract APIs.
+- Authoritative Document: `KAATYA_FINAL_REQUIREMENTS_AND_CONSISTENCY_MATRIX_v4.txt`
+
+Change ID: CR-07
+- Subject: System Rollback Duration
+- Previous Claim: Guaranteed sub-15 second complete system rollback.
+- Corrected Position: Sub-15s applies only to Btrfs snapshot metadata pointer swap.
+  Full system reboot recovery requires approximately 18 to 27 seconds.
+- Reason: BIOS POST, GRUB menu, kernel initramfs, and systemd service startup time.
+- Authoritative Document: `KAATYA_STAGE2_2_FINAL_TECHNICAL_AUDIT.txt`
+
+Change ID: CR-08
+- Subject: Compositor Core Engine
+- Previous Claim: Proposed building a custom wlroots / hyprland compositor.
+- Corrected Position: Established KWin-Wayland wrapper selected as primary prototype compositor.
+- Reason: KWin provides battle-tested stability, robust Xwayland handling, and fractional scaling.
+- Authoritative Document: `KAATYA_STAGE2_2_FINAL_ARCHITECTURE_SPECIFICATION.txt`
+
+Change ID: CR-09
+- Subject: Default Root Filesystem Candidate
+- Previous Claim: Mandated Btrfs as the sole root filesystem.
+- Corrected Position: Ext4 selected as the default candidate for prototype simplicity.
+  Btrfs evaluated and supported for snapshot rollback testing.
+- Reason: Minimizes filesystem complexity during early bootstrap while testing snapshots.
+- Authoritative Document: `KAATYA_STAGE2_2_FINAL_ARCHITECTURE_SPECIFICATION.txt`
+
+Change ID: CR-10
+- Subject: Operating System Kernel Selection
+- Previous Claim: Proposed custom Preempt-RT kernel compilation.
+- Corrected Position: Standard Debian 13 LTS kernel (`linux-image-amd64`) used for prototype.
+- Reason: Avoids unmaintained custom kernel overhead during early live-build phases.
+- Authoritative Document: `KAATYA_STAGE2_2_FINAL_ARCHITECTURE_SPECIFICATION.txt`
+
+Change ID: CR-11
+- Subject: API Provider Connection Testing
+- Previous Claim: Described model listing endpoints as universally zero-cost.
+- Corrected Position: Endpoints are not guaranteed free. Zero paid inference requests may be sent
+  during connection testing without explicit user authorization.
+- Reason: Provider billing variations and rate limit structures.
+- Authoritative Document: `KAATYA_STAGE2_2_AI_SECURITY_PRIVACY_AND_PROVIDER_SPECIFICATION.txt`
+================================================================================

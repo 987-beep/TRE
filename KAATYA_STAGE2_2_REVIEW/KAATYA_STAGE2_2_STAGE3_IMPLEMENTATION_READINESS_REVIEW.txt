@@ -1,0 +1,55 @@
+================================================================================
+KAATYA OS 3.0 -- STAGE 2.2 STAGE 3 IMPLEMENTATION READINESS REVIEW
+Document ID: KAATYA-REVIEW-2.2-STAGE3
+Phase: IMPLEMENTATION READINESS, DEPENDENCY & ACCEPTANCE REVIEW
+Authorized Root: T:\KAATYA\
+Date: 2026-11-14
+Development Status: STRICTLY LOCKED PENDING USER APPROVAL
+================================================================================
+
+1. HOST TOOLS VS. PROJECT DIRECTORY BOUNDARY RESOLUTION
+--------------------------------------------------------------------------------
+A critical conceptual contradiction was identified and resolved regarding containment:
+- Rule: All project-created source files, CMake configurations, build outputs, object files,
+  downloaded vendor dependencies, packages, and ISO media MUST reside inside `T:\KAATYA\`.
+- Host Tool Policy: Approved existing host compilers (GCC, Clang, Python, CMake, Git) are
+  executed from their standard system paths (`PATH`). No files are written to host system folders.
+- Prohibited: Modifying Windows system files, installing system-wide drivers, writing to
+  `C:\Windows` or user AppData is strictly forbidden.
+
+2. SEVEN SEQUENTIAL MILESTONES & ACCEPTANCE CRITERIA
+--------------------------------------------------------------------------------
+Milestone 1: Base Operating System & Boot Infrastructure
+- Scope: Debian 13 base bootstrap (`debootstrap`), standard Debian LTS kernel (`linux-image-amd64`),
+  Syslinux (MBR) and GRUB2 (UEFI) live boot configuration.
+- Independent Test Gate: Headless QEMU virtual machine boots cleanly to multi-user target.
+
+Milestone 2: Desktop Shell & Window Management
+- Scope: Qt 6 / QML Shell (`kaatya-shell`), KWin-Wayland wrapper, 6 visual themes, 20 cursors.
+- Independent Test Gate: Wayland session launches; 1366x768 layout renders at steady frame rates.
+
+Milestone 3: Core System Services & Security Containment
+- Scope: Bubblewrap sandboxing profiles (`bwrap`), UFW firewall integration, Polkit policy rules.
+- Independent Test Gate: Sandbox escape tests confirm unprivileged apps cannot access host `/home`.
+
+Milestone 4: AI Daemon, Local Models & Provider Gateway
+- Scope: `kaatya-aid` C++ daemon, D-Bus service, `llama.cpp` Qwen3-4B loader, Piper TTS, Whisper STT.
+- Independent Test Gate: D-Bus round-trip latency < 100ms; verify model unloads after 15m idle.
+
+Milestone 5: Native Core Applications & Productivity Suite
+- Scope: KAATYA Files, Settings, Task Manager, Notes, Document Centre, Coding Studio.
+- Independent Test Gate: All core native apps launch, display without clipping, and pass smoke tests.
+
+Milestone 6: Browser, Android & Windows Compatibility Runtimes
+- Scope: KAATYA Browser (Chromium core), Waydroid container runner, Bottles prefix manager.
+- Independent Test Gate: Chromium video playback via VA-API; test APK sideload; test standard Win32 EXE launch.
+
+Milestone 7: Software Centre, Installer, Recovery & Final Verification
+- Scope: KAATYA Software Centre, Calamares installer branding, Timeshift/Btrfs rollback hooks.
+- Independent Test Gate: End-to-end dry-run install into virtual disk; snapshot rollback verification.
+
+3. STAGE 3 LOCK CONFIRMATION
+--------------------------------------------------------------------------------
+Stage 3 development remains 100% LOCKED. No build tasks will commence without
+explicit written instruction from the user.
+================================================================================

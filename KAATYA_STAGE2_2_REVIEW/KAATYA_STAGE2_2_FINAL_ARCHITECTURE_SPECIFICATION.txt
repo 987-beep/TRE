@@ -1,0 +1,68 @@
+================================================================================
+KAATYA OS 3.0 -- STAGE 2.2 FINAL ARCHITECTURE SPECIFICATION
+Document ID: KAATYA-ARCH-2.2-FINAL
+Phase: AUTHORITATIVE ARCHITECTURAL SPECIFICATION & SUBSYSTEM RECONCILIATION
+Authorized Root: T:\KAATYA\
+Date: 2026-11-14
+================================================================================
+
+1. SUBSYSTEM INTERACTION TOPOLOGY
+--------------------------------------------------------------------------------
++------------------------------------------------------------------------------+
+|                          PRESENTATION LAYER (Qt 6 / QML)                     |
+|  +--------------------+  +--------------------+  +-------------------------+ |
+|  |   kaatya-shell     |  |   Unified Launcher |  |    Control Centre       | |
+|  +--------------------+  +--------------------+  +-------------------------+ |
+|  |   47 UI Screens    |  |   6 Anime Themes   |  |    20 Custom Cursors    | |
+|  +--------------------+  +--------------------+  +-------------------------+ |
++------------------------------------------------------------------------------+
+                                      | D-Bus / Wayland Protocol
+                                      v
++------------------------------------------------------------------------------+
+|                          COMPOSITOR & WINDOW MANAGER                         |
+|  KWin-Wayland Wrapper (Established upstream core) + Xwayland Fallback Server |
+|  DRM / KMS Driver | Mesa 24.x Iris OpenGL 4.6 / Vulkan 1.2 | Intel HD 530    |
++------------------------------------------------------------------------------+
+                                      |
+                                      v
++------------------------------------------------------------------------------+
+|                          APPLICATION RUNTIME FABRIC                          |
+|  +------------------+  +------------------+  +-----------------------------+ |
+|  | Native Qt6 Apps  |  | Waydroid LXC     |  | Wine 9.x / Bottles Prefixes | |
+|  | C++20 / Python   |  | AOSP Container   |  | Isolated Win32/PE Runtimes  | |
+|  +------------------+  +------------------+  +-----------------------------+ |
+|  | KAATYA Browser   |  | Bubblewrap       |  | Flatpak / APT Core Packages | |
+|  | Chromium Engine  |  | Sandboxing Jails |  | Native Linux Binaries       | |
+|  +------------------+  +------------------+  +-----------------------------+ |
++------------------------------------------------------------------------------+
+                                      |
+                                      v
++------------------------------------------------------------------------------+
+|                        PERMANENT AI SUBSYSTEM (kaatya-aid)                   |
+|  +-------------------------------------+  +--------------------------------+ |
+|  | Local Inference (llama.cpp AVX2)    |  | Hybrid Cloud AI Gateway        | |
+|  | - Qwen3-4B-Q4_K_M (Default Local)   |  | - 10 Cloud APIs (OpenAI, etc.) | |
+|  | - Nemotron 7.5B (On-Demand)         |  | - 4 Local / Network Adapters   | |
+|  +-------------------------------------+  +--------------------------------+ |
+|  | Semantic Memory (sqlite-vec)        |  | Voice Subsystem (PipeWire)     | |
+|  | - Qwen3-Embedding-0.6b (1024-dim)   |  | - Whisper.cpp + Piper TTS      | |
+|  +-------------------------------------+  +--------------------------------+ |
+|  | Security Guard & PII Redactor       |  | Argon2id AES-256-GCM Keystore  | |
++------------------------------------------------------------------------------+
+                                      |
+                                      v
++------------------------------------------------------------------------------+
+|                          CORE OS BASE & HARDWARE KERNEL                      |
+|  Debian 13 "Trixie" Base | Linux 6.12 LTS Standard Kernel | Ext4 Default     |
+|  Intel Core i3-6100T (2C/4T @ 3.2GHz) | Intel HD 530 | 16 GB DDR4 RAM        |
++------------------------------------------------------------------------------+
+
+2. CRITICAL ARCHITECTURAL CONCURRENCY & ISOLATION RULES
+--------------------------------------------------------------------------------
+1. Rule of One Active LLM: At any point in time, strictly ONE large language model
+   may be loaded into memory. Loading Nemotron 7.5B automatically evicts Qwen3-4B.
+2. Embedded Vector Storage: Memory is embedded directly in SQLite via `sqlite-vec`.
+   No standalone database server daemon is permitted to consume background RAM.
+3. Unprivileged Execution: All third-party Android APKs and Windows executables
+   are jailed via Bubblewrap namespaces (`bwrap`) with read-only root mounts.
+================================================================================

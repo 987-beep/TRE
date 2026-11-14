@@ -1,0 +1,27 @@
+================================================================================
+KAATYA OS 3.0 -- FINAL REQUIREMENTS AND CONSISTENCY MATRIX (VERSION 4)
+Document ID: KAATYA-REQ-004-v4
+Status: RECONCILED REQUIREMENTS REGISTER & AUDIT MATRIX
+Authorized Root: T:\KAATYA\
+Date: 2026-11-14
+================================================================================
+
+1. COMPREHENSIVE REQUIREMENTS RECONCILIATION
+--------------------------------------------------------------------------------
+Subsystem Area          Stage 1 / 2 Conflict                Stage 2.2 Authoritative Resolution
+-------------------------------------------------------------------------------------------------------------
+Local AI Memory         SQLite-vec vs. ChromaDB             SQLite-vec is PRIMARY (embedded in SQLite).
+                                                            ChromaDB is optional external tool.
+Compositor Core         Custom wlroots vs. KWin-Wayland     KWin-Wayland wrapper is PRIMARY (mature, stable).
+Default Root Filesystem Btrfs vs. Ext4                      Ext4 is default candidate for initial prototype.
+                                                            Btrfs evaluated & supported for snapshot rollback.
+Kernel Baseline         Custom Preempt-RT vs. Debian LTS    Standard Debian 13 kernel (`linux-image-amd64`)
+                                                            used for initial prototype.
+Local AI Concurrency    "Both models loaded in RAM"         STRICTLY REJECTED. Max 1 LLM loaded at a time
+                                                            (Qwen3-4B default; Nemotron 7.5B on-demand).
+Provider Counts         Conflicting "6" vs "12" providers   Explicitly defined: 10 Cloud APIs, 4 Local Adapters.
+Display Resolution      "Strict global 1366x768 boundary"   1366x768 is primary reference target; responsive
+                                                            scaling and multi-monitor supported.
+Google Play Store       "Integrated Play Store"             Direct GMS impossible; lawful F-Droid & Aurora Store used.
+Microsoft Store         "Full Windows Store apps"           Win32/PE supported via Wine; UWP/Store requires VM.
+================================================================================

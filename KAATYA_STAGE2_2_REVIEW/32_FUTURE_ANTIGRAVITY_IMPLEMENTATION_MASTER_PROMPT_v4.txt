@@ -1,0 +1,68 @@
+================================================================================
+KAATYA OS 3.0 -- FUTURE ANTIGRAVITY IMPLEMENTATION MASTER PROMPT (VERSION 4)
+Document ID: KAATYA-DEV-032-v4
+Status: AUTHORITATIVE STAGE 3 EXECUTION SPECIFICATION (STRICTLY LOCKED)
+Authorized Workspace: T:\KAATYA\
+================================================================================
+
+1. STAGE 3 MANDATE & HOST-PROJECT SEPARATION POLICY
+--------------------------------------------------------------------------------
+To Antigravity IDE:
+This specification governs Stage 3 implementation. It remains 100% INACTIVE and LOCKED
+until the user explicitly issues written authorization.
+
+STRICT OPERATING BOUNDARIES:
+1. Workspace Containment: All handwritten code, CMake files, build outputs, vendor dependencies,
+   and generated ISOs MUST be created inside `T:\KAATYA\`. Zero project files outside.
+2. Host Tool Policy: Approved existing host compilers (GCC, Clang, Python, CMake, Git) are
+   executed from their standard system paths (`PATH`). No files are written to host system folders.
+3. Read-Only Asset Preservation: The 11 audited asset files (GGUF, ONNX, ISO) are read-only.
+   Never rename, overwrite, or delete them.
+4. Non-Concurrent Milestones: Build sequentially through Milestones 1 to 7. Each milestone
+   must pass its independent verification test before the next begins.
+
+2. RIGID DIRECTORY SEPARATION SCHEME (INSIDE T:\KAATYA\)
+--------------------------------------------------------------------------------
+Directory Path                  Purpose & Contents
+---------------------------------------------------------------------------------------------
+`T:\KAATYA\src\`                All handwritten source code (C++20, QML, Python, shell)
+`T:\KAATYA\build\config\`       CMakePresets, Meson cross-files, Debian live-build recipes
+`T:\KAATYA\build\out\`          Intermediate object files, binaries, build caches
+`T:\KAATYA\deps\`               Downloaded third-party libraries, submodules (all inside root)
+`T:\KAATYA\dist\`               Generated installation media, live-build outputs, SquashFS
+`T:\KAATYA\KAATYA_ASSETS\`      Extracted icons, wallpapers, fonts, sounds
+`T:\KAATYA\KAATYA_MASTER_PLAN_REPORTS\ Authoritative specifications and documentation
+`T:\KAATYA\KAATYA_LOGS\         Compiler logs, test outputs, execution traces
+`T:\KAATYA\KAATYA_AUDIT\        Containment audits and milestone sign-off certificates
+
+3. SEVEN STRUCTURED IMPLEMENTATION MILESTONES & ACCEPTANCE GATES
+--------------------------------------------------------------------------------
+Milestone 1: Base Operating System & Boot Infrastructure
+- Task: Debian 13 base bootstrap (`debootstrap`), standard Debian LTS kernel (`linux-image-amd64`),
+  Syslinux (MBR) and GRUB2 (UEFI) live boot configuration.
+- Independent Test Gate: Headless QEMU virtual machine boots cleanly to multi-user target.
+
+Milestone 2: Desktop Shell & Window Management
+- Task: Qt 6 / QML Shell (`kaatya-shell`), KWin-Wayland wrapper, 6 visual themes, 20 cursors.
+- Independent Test Gate: Wayland session launches; 1366x768 layout renders at steady frame rates.
+
+Milestone 3: Core System Services & Security Containment
+- Task: Bubblewrap sandboxing profiles (`bwrap`), UFW firewall integration, Polkit policy rules.
+- Independent Test Gate: Sandbox escape tests confirm unprivileged apps cannot access host `/home`.
+
+Milestone 4: AI Daemon, Local Models & Provider Gateway
+- Task: `kaatya-aid` C++ daemon, D-Bus service, `llama.cpp` Qwen3-4B loader, Piper TTS, Whisper STT.
+- Independent Test Gate: D-Bus round-trip latency < 100ms; verify model unloads after 15m idle.
+
+Milestone 5: Native Core Applications & Productivity Suite
+- Task: KAATYA Files, Settings, Task Manager, Notes, Document Centre, Coding Studio.
+- Independent Test Gate: All core native apps launch, display without clipping, and pass smoke tests.
+
+Milestone 6: Browser, Android & Windows Compatibility Runtimes
+- Task: KAATYA Browser (Chromium core), Waydroid container runner, Bottles prefix manager.
+- Independent Test Gate: Chromium video playback via VA-API; test APK sideload; test standard Win32 EXE launch.
+
+Milestone 7: Software Centre, Installer, Recovery & Final Verification
+- Task: KAATYA Software Centre, Calamares installer branding, Timeshift/Btrfs rollback hooks.
+- Independent Test Gate: End-to-end dry-run install into virtual disk; snapshot rollback verification.
+================================================================================

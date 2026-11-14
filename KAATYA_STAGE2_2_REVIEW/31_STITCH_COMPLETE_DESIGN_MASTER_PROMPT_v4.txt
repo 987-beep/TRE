@@ -1,0 +1,122 @@
+================================================================================
+KAATYA OS 3.0 -- STITCH COMPLETE DESIGN MASTER PROMPT (VERSION 4 - FINAL BLUEPRINT)
+Document ID: KAATYA-STITCH-031-v4
+Status: AUTHORITATIVE STITCH GENERATION SPECIFICATION
+Authorized Root: T:\KAATYA\
+Primary Reference Display: 1366 x 768 Landscape (Dynamic Responsive Baseline)
+================================================================================
+
+1. COMPLETE DESIGN SYSTEM SPECIFICATION FOR STITCH
+--------------------------------------------------------------------------------
+You are Stitch, the world-class UI/UX design engine. Your mandate is to generate
+the complete, high-fidelity visual design for KAATYA OS 3.0, an original AI-native
+desktop operating system.
+
+A. GEOMETRY & RESPONSIVE RULES:
+- Primary Reference Resolution: 1366 x 768 Landscape (Reference Baseline).
+- Viewport Adaptation: The interface must NOT be hardcoded as an immutable box; it must
+  fluidly adapt to 1366x768, 1920x1080 (FHD), 2560x1440 (2K), and 4K displays.
+- Window Management & Snapping:
+  * Floating windows support free resizing with a minimum geometry of 640x480.
+  * Window Snapping: Half-screen (50% split), Quarter-screen (25% corner snap), Fullscreen.
+  * Window Titlebar: 36px height with consistent controls: Minimize, Maximize/Restore, Close.
+- Multi-Monitor Support: Secondary displays feature an independent, auto-dimming taskbar.
+- Taskbar Geometry: Docked at bottom edge (48px height on reference display, 56px on Hi-DPI).
+
+B. ACCESSIBILITY & ERGONOMICS:
+- Contrast Ratios: WCAG 2.1 AA compliance (minimum 4.5:1 text-to-background contrast).
+- Screen Reader Hooks: Every visual element maps to AT-SPI2 / ARIA accessibility roles.
+- Keyboard Navigation: Full focus ring (`2px solid var(--accent-primary)`) navigable via `Tab`,
+  `Shift+Tab`, `Arrow Keys`, `Enter`, and `Escape`.
+- Reduced Motion Mode: Replaces scale/slide/particle transitions with a clean 80ms cross-fade.
+- Text & Display Scaling: Fractional scaling (1.0x, 1.25x, 1.5x) with integer pixel rounding.
+
+C. RECONCILED THEME TOKENS TABLE (ALL 6 THEMES):
+Token Name            Limitless Void    Malevolent Shrine Ten Shadows     Cursed Energy   Obsidian Cyan   Clean Studio
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+`--bg-base`           #0A0D18           #0F090A           #080A10         #081210         #101214         #F4F6F9
+`--bg-surface`        rgba(18,24,43,0.85)rgba(26,14,16,0.88)rgba(15,20,32,0.85)rgba(14,31,28,0.85)rgba(26,29,33,0.90)rgba(255,255,255,0.95)
+`--accent-primary`    #00E5FF           #FF1744           #2979FF         #00E676         #00BCD4         #0284C7
+`--accent-secondary`  #8A2BE2           #D50000           #448AFF         #00B0FF         #0288D1         #475569
+`--text-primary`      #F0F4FF           #FFF5F5           #EDF2FA         #F1FDF6         #ECEFF1         #0F172A
+`--text-muted`        #8A99B5           #A88688           #7586A1         #78998F         #90A4AE         #64748B
+`--border-card`       rgba(0,229,255,0.25)rgba(255,23,68,0.30)rgba(41,121,255,0.22)rgba(0,230,118,0.28)rgba(0,188,212,0.20)rgba(2,132,199,0.18)
+`--shadow-elevation`  0 8px 32px rgba(0,0,0,0.45) (Common across all dark themes; soft slate shadow in Clean Studio)
+
+2. 20 ORIGINAL SYSTEM CURSOR SPECIFICATIONS (XCURSOR FORMAT)
+--------------------------------------------------------------------------------
+ID   Cursor Name            Visual Character & Asset Description                     Animation & Scale
+-----------------------------------------------------------------------------------------------------------------------
+C01  Kaatya_Pointer_Void    Sharp aerodynamic cyan plasma chevron with trailing apex Static 32px / 48px
+C02  Kaatya_Pointer_Shrine  Obsidian blade arrowhead with deep crimson contour glow  Static 32px / 48px
+C03  Kaatya_Pointer_Shadow  Deep shadow-cobalt silhouette with luminous tip          Static 32px / 48px
+C04  Kaatya_Pointer_Energy  Emerald energy needle with trailing particle wake        Animated 8 frames (60fps)
+C05  Kaatya_Hand_Void       Sleek mechanical gauntlet with extended index finger     Static 32px / 48px
+C06  Kaatya_Hand_Shrine     Crimson occult aura grasping hand                        Static 32px / 48px
+C07  Kaatya_Busy_Orb        Rotating twin-ring celestial orbital gyrosphere          Animated 16 frames (60fps)
+C08  Kaatya_Busy_Talisman   Spinning geometric occult seal with pulsing center       Animated 24 frames (60fps)
+C09  Kaatya_Busy_BlackFlash Pulsing black-and-crimson spark singularity              Animated 12 frames (60fps)
+C10  Kaatya_Text_IBeam      Luminous vertical energy beam with bracketed terminals   Static 32px / 48px
+C11  Kaatya_Crosshair_SniperPrecision tactical reticle with dynamic corner brackets  Static 32px / 48px
+C12  Kaatya_Resize_Horiz    Split double-headed energy arrows (Left-Right)           Static 32px / 48px
+C13  Kaatya_Resize_Vert     Split double-headed energy arrows (Up-Down)              Static 32px / 48px
+C14  Kaatya_Resize_Diag1    Diagonal double-headed energy arrow (NW-SE)              Static 32px / 48px
+C15  Kaatya_Resize_Diag2    Diagonal double-headed energy arrow (NE-SW)              Static 32px / 48px
+C16  Kaatya_Move_Pan        Four-way compass of levitating crystal shards            Static 32px / 48px
+C17  Kaatya_NotAllowed      Serrated energy barrier slash over prohibited target     Static 32px / 48px
+C18  Kaatya_Help_Question   Curved energy hook with hovering query orb               Static 32px / 48px
+C19  Kaatya_Drag_Drop       Hand gripping miniature energy cube                      Static 32px / 48px
+C20  Kaatya_AI_Inspect      Eye of insight glyph with dynamic focal ring             Animated 12 frames (60fps)
+
+3. EXHAUSTIVE 47-SCREEN INTERACTION & STATE INVENTORY
+--------------------------------------------------------------------------------
+Each screen defines standard component bounds (height <= 680px on 768px baseline)
+and explicit interaction states:
+- SCR-01: Boot Splash (Animated crest, progress bar; States: Booting, SafeMode, Error).
+- SCR-02: Login Screen (User card, password box, session switch; States: Idle, Auth, Fail).
+- SCR-03: User Greeter (Multi-user carousel, Guest pill; States: Selected, AddingUser).
+- SCR-04: Desktop Workspace (Live wallpaper, icon grid; States: Clean, AppRunning).
+- SCR-05: Taskbar & Dock (Start button, pinned apps, tray, AI orb; States: Default, AutoHide).
+- SCR-06: Start Menu (Search omnibar, favorites grid, category tree; States: Grid, Search).
+- SCR-07: Search Omnibox (Semantic query input, instant preview card; States: Typing, Results).
+- SCR-08: AI Assistant HUD (16-bar FFT visualizer, chat bubble, tool preview pill).
+- SCR-09: AI Conversation Studio (Thread history sidebar, prompt composer, model badge).
+- SCR-10: AI Provider Centre (10 provider cards, 4 endpoint cards, API vault toggle).
+- SCR-11: AI Model Centre (Local GGUF cards, RAM budget gauge, load/unload switches).
+- SCR-12: AI Memory Centre (Vector timeline, topic tag chips, delete memory dialog).
+- SCR-13: AI Voice Centre (Piper/Whisper cards, gain slider, speech test button).
+- SCR-14: System Settings Hub (Sidebar navigation, search bar, setting category pane).
+- SCR-15: Theme Studio (6 visual theme preview cards, accent palette, blur slider).
+- SCR-16: Cursor Studio (20 interactive cursor preview tiles, trail toggle).
+- SCR-17: Wallpaper Studio (16:9 thumbnail gallery, live preview canvas, import button).
+- SCR-18: File Explorer (Dual pane, breadcrumb bar, AI file summary drawer).
+- SCR-19: Task Manager (Process tree, CPU/RAM/GPU telemetry graph, kill button).
+- SCR-20: System Monitor (Sensor thermals gauge, Core i3-6100T 4-thread monitor).
+- SCR-21: Software Centre (Hero carousel, 24 category chips, app detail sheets).
+- SCR-22: KAATYA Browser (Tab strip, address bar, web canvas, collapsible AI sidebar).
+- SCR-23: Social Media Hub (WhatsApp, Discord, Telegram, YouTube isolated tabs).
+- SCR-24: Android App Centre (Waydroid container status, APK dropzone, app grid).
+- SCR-25: APK Inspector Modal (App icon, package ID, permissions audit, signature check).
+- SCR-26: Windows App Centre (Bottles list, Wine config, DXVK toggles, launch options).
+- SCR-27: EXE/MSI Inspector (PE header summary, Authenticode signature check, sandbox option).
+- SCR-28: Notification Centre (Slide-out drawer, grouped notification cards, DND switch).
+- SCR-29: Security & Privacy Centre (Firewall status, app permissions, camera/mic indicators).
+- SCR-30: Network Manager (Wi-Fi list, Ethernet status, WireGuard VPN cards).
+- SCR-31: Backup & Recovery Studio (Snapshot timeline, one-click backup, rollback modal).
+- SCR-32: System Update Centre (Update check status, changelog markdown, install button).
+- SCR-33: Document Centre (Rich-text document canvas, markdown split, AI rewrite tool).
+- SCR-34: KAATYA Notes (Note collection tree, markdown editor, semantic auto-links).
+- SCR-35: Calendar & Event Planner (Month/Week grid, task timeline, reminders).
+- SCR-36: Clock & Stopwatch (World clock, analog dial, animated countdown ring).
+- SCR-37: Calculator (Standard, scientific math functions, hex/binary programmer view).
+- SCR-38: Coding Studio IDE (File tree, code editor, integrated terminal, AI copilot).
+- SCR-39: Research Centre (Topic tree, web citation cards, synthesis panel).
+- SCR-40: Media Centre & Music (Album art canvas, waveform scrubber, PipeWire equalizer).
+- SCR-41: Video Player (VA-API video canvas, subtitle picker, audio track switch).
+- SCR-42: Image Viewer & Editor (Zoom canvas, crop marquee, color sliders, smart upscale).
+- SCR-43: Screenshot & Recorder (Rectangular area marquee, record controls).
+- SCR-44: Archive Manager (ZIP/TAR/7z tree view, extraction modal, encryption toggle).
+- SCR-45: Clipboard Manager (Copied text & image history, search filter, pin button).
+- SCR-46: Device Manager (USB peripheral tree, display resolution picker, audio routes).
+- SCR-47: Power & Session Modal (Shutdown, Restart, Sleep, Lock, Cancel buttons).
+================================================================================

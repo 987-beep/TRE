@@ -1,0 +1,54 @@
+================================================================================
+KAATYA OS 3.0 -- STAGE 2.2 MASTER REQUIREMENTS TRACEABILITY MATRIX
+Document ID: KAATYA-REQ-2.2-TRACE
+Phase: COMPLETE REQUIREMENTS TRACEABILITY AUDIT
+Authorized Root: T:\KAATYA\
+Date: 2026-11-14
+================================================================================
+
+1. COMPREHENSIVE 35-AREA REQUIREMENTS AUDIT MATRIX
+--------------------------------------------------------------------------------
+Req ID   Category / Subsystem       Requirement Scope & Core Functionality          Screen ID   Authoritative Doc  Status
+---------------------------------------------------------------------------------------------------------------------------------------------
+RQ-01    OS Foundation              Debian 13 Trixie x86_64 base, systemd, cgroups  N/A         ARCH-003, TECH-2.2 VERIFIED FROM AVAILABLE EVIDENCE
+RQ-02    Boot & Installer           Dual BIOS/UEFI boot, Calamares installer        SCR-01      BOOT-024, EXEC-v4  DOCUMENTED BUT NOT TESTED
+RQ-03    Desktop Shell              Qt 6 / QML SceneGraph hardware-accelerated UI   SCR-04,05   SHELL-005, STITCH  DOCUMENTED BUT NOT TESTED
+RQ-04    Window Management          KWin-Wayland wrapper, floating, snap assist     SCR-04      SHELL-005, ARCH-v4 DOCUMENTED BUT NOT TESTED
+RQ-05    Taskbar & Launcher         48px bottom taskbar, start menu, tray, AI orb   SCR-05,06   SHELL-005, STITCH  DOCUMENTED BUT NOT TESTED
+RQ-06    Permanent AI Assistant     Resident daemon (kaatya-aid), D-Bus IPC broker  SCR-08,09   AI-008, ARCH-v4    DOCUMENTED BUT NOT TESTED
+RQ-07    Local Model Management     llama.cpp AVX2 engine, max 1 LLM loaded at once SCR-11      AI-009, TECH-2.2   VERIFIED FROM AVAILABLE EVIDENCE
+RQ-08    Online AI Providers        10 cloud APIs, 4 local adapters, AES-GCM vault  SCR-10      AI-010-v3, SEC-2.2 VERIFIED FROM AVAILABLE EVIDENCE
+RQ-09    AI Permanent Memory        sqlite-vec primary embedded vector store        SCR-12      AI-013, ARCH-v4    VERIFIED FROM AVAILABLE EVIDENCE
+RQ-10    Multilingual Voice AI      Whisper.cpp STT + Piper ONNX TTS (Mike/Rohan)   SCR-13      VOICE-014, TECH-2.2VERIFIED FROM AVAILABLE EVIDENCE
+RQ-11    KAATYA Browser             Chromium base, VA-API decode, AI side-panel     SCR-22      WEB-020, BROWSER-36DOCUMENTED BUT NOT TESTED
+RQ-12    Social Media Applications  Isolated profile partitions for WhatsApp/DiscordSCR-23      SOCIAL-037         DOCUMENTED BUT NOT TESTED
+RQ-13    Android Runtime            Waydroid AOSP container, direct Wayland buffers SCR-24      COMPAT-022, AND-38 DOCUMENTED BUT NOT TESTED
+RQ-14    APK Installation           APK metadata inspector, signature verification  SCR-25      AND-038, STITCH    DOCUMENTED BUT NOT TESTED
+RQ-15    Windows Runtime            Wine 9.x / Bottles prefix isolation, DXVK       SCR-26      COMPAT-022, WIN-39 DOCUMENTED BUT NOT TESTED
+RQ-16    EXE/MSI Management         PE header static scanner, Authenticode audit    SCR-27      WIN-039, STITCH    DOCUMENTED BUT NOT TESTED
+RQ-17    Software Centre            24 unified categories, multi-format management  SCR-21      STORE-040, STITCH  DOCUMENTED BUT NOT TESTED
+RQ-18    Unified App Launcher       Single intent launcher abstracting runtimes     SCR-06      APPS-041, STITCH   DOCUMENTED BUT NOT TESTED
+RQ-19    Runtime Sandboxing         Bubblewrap namespaces, private network & /home  N/A         SEC-042, ARCH-v4   DOCUMENTED BUT NOT TESTED
+RQ-20    File Associations          Intelligent MIME type routing (APK, EXE, etc.)  N/A         APPS-041           DOCUMENTED BUT NOT TESTED
+RQ-21    Download Security          HTTPS TLS 1.3, SHA-256 verify, ClamAV/YARA      N/A         STORE-043          DOCUMENTED BUT NOT TESTED
+RQ-22    Notifications Hub          Freedesktop D-Bus notification server & DND     SCR-28      NOTIF-044, STITCH  DOCUMENTED BUT NOT TESTED
+RQ-23    Security & Privacy         UFW firewall, hardware kill-switches, audit log SCR-29      SEC-018, SEC-2.2   DOCUMENTED BUT NOT TESTED
+RQ-24    File Explorer              Dual-pane Qt6 files, instant AI document summarySCR-18      APPS-016, STITCH   DOCUMENTED BUT NOT TESTED
+RQ-25    System Monitor             Hardware thermals, CPU 4-thread telemetry, zram SCR-20      APPS-016, STITCH   DOCUMENTED BUT NOT TESTED
+RQ-26    Task Manager               Process tree, memory advisor, SIGTERM/SIGKILL   SCR-19      APPS-016, STITCH   DOCUMENTED BUT NOT TESTED
+RQ-27    System Settings            Categorized system preference hub with search   SCR-14      APPS-016, STITCH   DOCUMENTED BUT NOT TESTED
+RQ-28    Theme Studio               6 anime supernatural themes, palette editor     SCR-15      THEME-007, STITCH  DOCUMENTED BUT NOT TESTED
+RQ-29    Cursor & Animation System  20 custom Xcursors, particle & blur governor    SCR-16      THEME-007, STITCH  DOCUMENTED BUT NOT TESTED
+RQ-30    Backup & Recovery          Snapshot rollback, user profile backup utility  SCR-31      STOR-017, TECH-2.2 DOCUMENTED BUT NOT TESTED
+RQ-31    System Updates             Atomic package updates with pre-update snapshot SCR-32      MAINT-029          DOCUMENTED BUT NOT TESTED
+RQ-32    Native Productivity Suite  Notes, Docs, Calc, Clock, Calendar, Code Studio SCR-33-39   APPS-016, STITCH   DOCUMENTED BUT NOT TESTED
+RQ-33    Accessibility & I18N       Orca A11y, high-contrast, Hindi Fcitx5 translit N/A         ACC-027, STITCH    DOCUMENTED BUT NOT TESTED
+RQ-34    Multi-Monitor Behavior     Adaptive layout, secondary taskbar, auto-dim    N/A         STITCH-v4, ARCH-v4 DOCUMENTED BUT NOT TESTED
+RQ-35    Hardware Optimization      Schedutil governor, Intel HD 530 Mesa Iris      N/A         PERF-023, TECH-2.2 REQUIRES LIVE HARDWARE TESTING
+
+2. STATUS DEFINITION REGISTER
+--------------------------------------------------------------------------------
+- VERIFIED FROM AVAILABLE EVIDENCE: Directly confirmed via file inspection or cryptographic hash on disk.
+- DOCUMENTED BUT NOT TESTED: Architecture, schema, and UI fully specified; requires Stage 3 build to execute.
+- REQUIRES LIVE HARDWARE TESTING: Depends on CPU thermal headroom, GPU memory bandwidth, or latency under load.
+================================================================================

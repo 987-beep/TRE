@@ -1,0 +1,67 @@
+================================================================================
+KAATYA OS 3.0 -- STAGE 2.2 AI SECURITY, PRIVACY, AND PROVIDER SPECIFICATION
+Document ID: KAATYA-SEC-2.2-AI
+Phase: CREDENTIAL ENCRYPTION, PROVIDER PROTOCOLS & PRIVACY BOUNDARIES
+Authorized Root: T:\KAATYA\
+Date: 2026-11-14
+================================================================================
+
+1. DISCOVERABLE PROVIDER TAXONOMY & CLASSIFICATION
+--------------------------------------------------------------------------------
+To eliminate hardcoded provider assumptions, KAATYA OS deploys a dynamic adapter
+engine classifying integrations into three operational categories:
+
+Category A: Commercial Cloud API Providers (Require User Keys)
+1. OpenAI (GPT-4o, o1, o3-mini) - Direct HTTPS REST
+2. Anthropic (Claude 3.5 Sonnet, Haiku) - Messages API
+3. Google Gemini (Gemini 2.0 Flash, 1.5 Pro) - REST v1beta
+4. DeepSeek (DeepSeek-V3, DeepSeek-R1) - OpenAI-compatible REST
+5. xAI (Grok-2, Grok-2 Vision) - REST streaming
+6. Mistral AI (Mistral Large 2, Codestral) - European cloud
+7. Groq Cloud (Llama-3.3-70B on LPU silicon) - High-speed REST
+8. Cohere (Command R+, Embed v3) - RAG specialist API
+9. Together AI (Open-weights inference cluster) - Cloud API
+10. Fireworks AI (Specialized fine-tunes) - Cloud API
+
+Category B: Universal Gateways & Model Hubs
+1. OpenRouter - Unified proxy gateway across 100+ multi-provider models
+2. Hugging Face Inference API - Model hub serverless / dedicated endpoints
+
+Category C: Local / Self-Hosted Inference Server Adapters
+1. Localhost Ollama (`http://127.0.0.1:11434`)
+2. Localhost vLLM / LocalAI (`http://127.0.0.1:8000`)
+3. Generic OpenAI-Compatible Custom Endpoint (User-specified Base URL)
+
+2. EXPANDED ENCRYPTED CREDENTIAL VAULT ARCHITECTURE
+--------------------------------------------------------------------------------
+- Keystore Location: `/home/<user>/.local/share/kaatya/vault/credentials.enc`
+- Encryption Standard: AES-256-GCM (Galois/Counter Mode with 128-bit authentication tag).
+- Key Derivation: Argon2id (Memory-hard KDF, 64 MB memory cost, t=4 iterations, p=2 threads),
+  salted with per-installation `/etc/machine-id`.
+- Vault Unlock Flow: Master key is derived upon user PAM authentication and held ephemerally
+  in kernel memory via the Linux Keyring facility (`keyctl`).
+- Memory Protection: Plaintext key memory pages are pinned with `mlock()` and flagged with
+  `MADV_DONTDUMP` to ensure keys never enter swap space or core dumps.
+- Secret Masking: In the UI and terminal tools, keys are displayed as `••••••••••••••••[Last 4 chars]`.
+- Crash & Log Guard: An unbypassable regex sanitizer intercepts all log writers, stripping
+  any string matching API key signatures (`sk-[a-zA-Z0-9_-]{20,}`) before disk write.
+- Zero-Cost Connection Testing Rule: Connection tests must never trigger paid token inference.
+  Endpoints are validated via zero-token authentication requests (e.g. `GET /v1/models`).
+  If a provider lacks a free validation route, KAATYA warns the user and demands approval.
+
+3. STRICT PRIVACY & PER-REQUEST CONSENT ENGINE
+--------------------------------------------------------------------------------
+- Absolute Prohibition: The AI service is structurally prohibited from silently transmitting
+  user documents, active screen pixels, clipboard data, or chat histories to cloud endpoints.
+- Per-Request Consent Modal: Whenever an action requires cloud model routing, an explicit
+  modal presents:
+  1. Target Provider & Model Name.
+  2. Exact character and token count of the payload.
+  3. Visual Diff / Preview of the exact text leaving the machine.
+  4. Redaction Status: Highlights automatically redacted PII (usernames, local IPs, paths).
+  5. User Decision: "Approve for this request", "Approve for this session", or "Deny / Use Local AI".
+- Single Global Checkbox Prohibited: A single permanent blanket consent checkbox is rejected.
+  Sensitive operations (reading documents, summarizing files) require per-action authorization.
+- Emergency Kill Switch: A global keyboard shortcut (`Super + Shift + X`) instantly terminates
+  active network sockets associated with the AI daemon and purges inflight memory buffers.
+================================================================================
