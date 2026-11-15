@@ -1,0 +1,77 @@
+================================================================================
+KAATYA OS 3.0 - CORRECTION 5: EXECUTIVE SUMMARY & MANDATE
+================================================================================
+DOCUMENT IDENTIFIER: CORRECTION_5_EXECUTIVE_SUMMARY.txt
+DATE: 2026-11-15
+LOCATION: T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_5_2026_11_15\
+AUTHORIZED PROJECT ROOT: T:\KAATYA\
+GITHUB REPOSITORY: 987-beep/TRE
+BASE REVIEW BRANCH: kaatya-addendum3-correction4-review (commit ecfd144c513ede378085ed88d137812ca84fdd05)
+NEW REVIEW BRANCH: kaatya-addendum3-correction5-review
+CURRENT PHASE: Stage 2.2 - Independent Verification
+STAGE 3 STATUS: STRICTLY LOCKED (DOCUMENTATION & AUDIT ONLY)
+VERSION 8 STATUS: NOT AUTHORIZED
+================================================================================
+
+1. EXECUTIVE PURPOSE & OBJECTIVE
+--------------------------------------------------------------------------------
+This document establishes the executive mandate and technical scope for Correction 5.
+
+Following the transfer of the Correction 4 review package to GitHub repository `987-beep/TRE` 
+(commit `ecfd144c513ede378085ed88d137812ca84fdd05`), an independent ChatGPT inspection 
+confirmed that the architectural findings (GGUF `gemma4` declaration, 42 layers, 18 shared KV 
+layers, and sliding window attention pattern) are valid and empirically established.
+
+However, the external audit noted:
+1. An internal inventory inconsistency within `CORRECTION_4_FINAL_EVIDENCE_STATUS.txt`, where 
+   an embedded table contained stale draft placeholder values that conflicted with the actual 
+   on-disk files, the upload manifest, and the Git commit tree.
+2. The necessity of strictly qualifying the KV-cache mathematical formula to explicitly state 
+   its assumptions (F16 precision) and distinguish theoretical tensor payload from runtime 
+   memory allocation and physical resident RAM.
+
+Correction 5 executes a narrowly scoped, rigorous resolution of both items, remeasuring every 
+local and remote asset and publishing a final evidence closure package.
+
+================================================================================
+2. CORE CORRECTIONS DELIVERED
+================================================================================
+
+A. Local and Remote Inventory Re-Measurement & Reconciliation:
+   Every file in the Correction 4 package has been independently remeasured across local disk, 
+   local repository clone, and remote Git blob objects. All 8 files are proven 100% BYTE-IDENTICAL.
+   The root cause of the stale table in `CORRECTION_4_FINAL_EVIDENCE_STATUS.txt` is fully documented 
+   as a pre-generation script draft artifact, and the authoritative figures are formally established.
+
+B. KV-Cache Formula Assumption Qualification:
+   The formula `KV(L) = 16,384 * L + 20,971,520 bytes` is formally qualified:
+   - It represents THEORETICAL F16 KV PAYLOAD bytes based on verified GGUF architecture metadata.
+   - It is NOT a universal runtime memory guarantee. Runtime allocation depends on cache precision 
+     (e.g., F16 vs Q8_0/Q4_0), GGML 64-byte alignment, page padding, and activation buffers.
+   - NO physical RAM measurement has been performed, as model execution is strictly prohibited 
+     while Stage 3 is locked.
+
+C. GitHub Review Package Closure:
+   A dedicated review branch `kaatya-addendum3-correction5-review` is established, housing 
+   exactly six files (4 primary evidence reports + 1 upload manifest + 1 detached checksum).
+
+================================================================================
+3. MANDATORY PRESERVATION GUARANTEE
+================================================================================
+- Local V1-V7, V7.1, Closure Suite, Addenda 1-3, and Corrections 1-4 remain 100% UNCHANGED.
+- Remote `main`, Correction 3 (`2f3cbe8`), and Correction 4 (`ecfd144`) remain 100% untouched.
+- Physical asset `HBCD_PE_x64.iso` was NOT accessed, inspected, hashed, mounted, or integrated.
+- The physical model file `Nemotron-3.5-Bolt-E4B-Q4_K_M.gguf` was NOT modified.
+- No model inference, benchmarking, compilation, or OS configuration changes occurred.
+- Stage 3 remains strictly locked; Version 8 remains not authorized.
+
+================================================================================
+4. AUTHORITATIVE STATUS
+================================================================================
+STAGE 3 STATUS: STRICTLY LOCKED - IMPLEMENTATION NOT AUTHORIZED.
+VERSION 8 STATUS: NOT AUTHORIZED.
+NO INFERENCE OR RUNTIME COMPATIBILITY TEST HAS BEEN PERFORMED.
+QUALITY GATE VERDICT: PASS WITH CORRECTIONS.
+================================================================================
+END OF DOCUMENT
+================================================================================

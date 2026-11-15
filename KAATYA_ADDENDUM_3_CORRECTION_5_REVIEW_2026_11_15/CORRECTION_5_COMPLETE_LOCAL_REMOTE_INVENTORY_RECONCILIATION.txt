@@ -1,0 +1,61 @@
+================================================================================
+KAATYA OS 3.0 - CORRECTION 5: COMPLETE INVENTORY RECONCILIATION
+================================================================================
+DOCUMENT IDENTIFIER: CORRECTION_5_COMPLETE_LOCAL_REMOTE_INVENTORY_RECONCILIATION.txt
+DATE: 2026-11-15
+LOCATION: T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_5_2026_11_15\
+AUTHORIZED PROJECT ROOT: T:\KAATYA\
+AUDITED TARGET COMMIT: ecfd144c513ede378085ed88d137812ca84fdd05 (Correction 4 Review)
+AUDITED FOLDER: KAATYA_ADDENDUM_3_CORRECTION_4_REVIEW_2026_11_15/
+CURRENT PHASE: Stage 2.2 - Independent Verification
+STAGE 3 STATUS: STRICTLY LOCKED (DOCUMENTATION & AUDIT ONLY)
+================================================================================
+
+1. COMPREHENSIVE CORRECTION 4 INVENTORY & HASH RECONCILIATION TABLE
+--------------------------------------------------------------------------------
+Every file committed to GitHub commit `ecfd144c513ede378085ed88d137812ca84fdd05` was independently
+remeasured on local disk (both KAATYA_AUDIT and TRE_REPO) and directly from Git blob objects.
+
+Filename                                                | Size (Bytes) | Git Blob SHA                             | SHA-256 Checksum                                                 | Match
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+CORRECTION_4_COMPLETE_TEST_HARNESS_AUDIT.txt            | 10,158 B     | bda3c211658aaabf1a75f54c3ff5f68b4ecafa2f | 3cf42e4f5c403c56c88187b417c7b3846080c977ab6e27b33b49aef86a29f550 | BYTE-IDENTICAL (VERIFIED)
+CORRECTION_4_EXECUTIVE_SUMMARY.txt                      | 6,211 B      | 12ff6f3f6536755f3d5d7a3d9af4f061423a6737 | 73f8e90dda5fd02a4c0535115f9b79f8cebd4195cb6048ef6c9a1cc2654cd9ef | BYTE-IDENTICAL (VERIFIED)
+CORRECTION_4_FINAL_EVIDENCE_STATUS.txt                  | 6,343 B      | 40e10b872f31e2cbbe70356370997a57bd6f4ad3 | 634062ac3480bd71fb53f8de975c0947394d4414437d2997f4f725e7b787d72c | BYTE-IDENTICAL (VERIFIED)
+CORRECTION_4_GITHUB_PACKAGE_INTEGRITY_RECONCILIATION.txt | 5,541 B      | cc14064f02b686f4ba7f4423df46822b3fcdd238 | b74dca1d983ee8c98be9c2a924b598d4edf62623f65d522ad75745ad8e2fb399 | BYTE-IDENTICAL (VERIFIED)
+CORRECTION_4_MODEL_METADATA_AND_ARCHITECTURE_EVIDENCE.txt | 5,457 B      | e29469585efd4fb22b6572f8a270950f2ce15206 | 8c49f6c5300127278e59da8df181978fb8be08a50c2a2ddea1ad7957fea4dc32 | BYTE-IDENTICAL (VERIFIED)
+CORRECTION_4_UPLOAD_MANIFEST.sha256                     | 99 B         | 2223da322144d49044cadf45d9f25ea4a03360c8 | f90a7f1fb3a5a6b69e54fddfc5b3527084e351a68c52302e0da83b6d637d5928 | BYTE-IDENTICAL (VERIFIED)
+CORRECTION_4_UPLOAD_MANIFEST.txt                        | 3,492 B      | a34d5f67813de200dd12dfa67c54dfeb4a7f6fa7 | 7cc5be8408751976f7dc1c5f61461d3f9fe7c50f383fe415e711c71e283dc066 | BYTE-IDENTICAL (VERIFIED)
+NEMOTRON_GGUF_METADATA_READ_ONLY.txt                    | 13,753,433 B | c66546ee0a3dce6bad59fb821226306eb0d0e05e | df95628b2c4bbd2f7e2434647e6db99d7299ffa257291524d983bc0d45b71e95 | BYTE-IDENTICAL (VERIFIED)
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Verification Method: Direct read-only inspection of Git blob objects via `git cat-file -p <blob_sha>`
+and binary comparison against on-disk files. All 8 files are 100% byte-identical.
+
+2. ROOT CAUSE OF DISCREPANCY IN CORRECTION_4_FINAL_EVIDENCE_STATUS.TXT
+--------------------------------------------------------------------------------
+- Discrepancy Identified:
+  Section 3 of the uploaded `CORRECTION_4_FINAL_EVIDENCE_STATUS.txt` displayed the following table:
+    * CORRECTION_4_EXECUTIVE_SUMMARY.txt: 5,798 B (SHA: 96b653457ab8dc67f2e1a384812674e792dc88365a585e8a719d264c7fe092ab)
+    * CORRECTION_4_COMPLETE_TEST_HARNESS_AUDIT.txt: 10,482 B (SHA: 326c7104b2811656c1ae3ef27c57659567c9c0382348ee7df4b2670d8a9010ff)
+    * CORRECTION_4_GITHUB_PACKAGE_INTEGRITY_RECONCILIATION.txt: 5,920 B (SHA: e8a798f480f2d5f0b48dd9081e64906f2e8252a1a457a414168c17b889e47262)
+    * CORRECTION_4_MODEL_METADATA_AND_ARCHITECTURE_EVIDENCE.txt: 6,140 B (SHA: 47d2524a9197461e7fc9daaeec7d4a27329432f41d9c9a63aa68c26bbefef5ca)
+    * CORRECTION_4_FINAL_EVIDENCE_STATUS.txt: 6,890 B (SHA: 580be3e7389823908f5d0f6dcad4923e3cb8bc01d1c81734f248bb574d7c0f16)
+    * NEMOTRON_GGUF_METADATA_READ_ONLY.txt: 23,892 B (SHA: 75ab3f348de7dc4fa8632649b8ce271eef8d5be1b897e974e64f7b247c40683a)
+
+- Technical Root Cause:
+  In the generation script `generate_correction_4_and_github_transfer.py`, the string literal for `c4_doc5` 
+  was drafted with placeholder values prior to document finalization. Specifically:
+  1. `NEMOTRON_GGUF_METADATA_READ_ONLY.txt` was initially estimated at 23,892 bytes based on a prototype 
+     dump that excluded the 32,000-entry vocabulary list. When the final script serialized the full GGUF 
+     dictionary (including `tokenizer.ggml.tokens`), the actual file size became 13,753,433 bytes.
+  2. The text sections of the other documents were edited and expanded, shifting their byte sizes.
+  3. The static table embedded inside `CORRECTION_4_FINAL_EVIDENCE_STATUS.txt` was not refreshed before writing.
+  Consequently, the embedded table contained stale draft figures, while the actual files written to disk, 
+  recorded in `CORRECTION_4_UPLOAD_MANIFEST.txt`, and committed to Git (commit `ecfd144c513e`) were the 
+  true measured files (6,211 B, 10,158 B, 5,541 B, 5,457 B, 6,343 B, and 13,753,433 B).
+
+- Authoritative Statement of Record:
+  The embedded table in `CORRECTION_4_FINAL_EVIDENCE_STATUS.txt` is formally SUPERSEDED by Section 1 
+  of this document. The actual files and the upload manifest represent the true immutable evidence.
+================================================================================
+END OF DOCUMENT
+================================================================================

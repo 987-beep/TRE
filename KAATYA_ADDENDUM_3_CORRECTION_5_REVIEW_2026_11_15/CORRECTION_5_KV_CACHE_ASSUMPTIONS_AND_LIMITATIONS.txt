@@ -1,0 +1,105 @@
+================================================================================
+KAATYA OS 3.0 - CORRECTION 5: KV-CACHE ASSUMPTIONS, DERIVATIONS & LIMITATIONS
+================================================================================
+DOCUMENT IDENTIFIER: CORRECTION_5_KV_CACHE_ASSUMPTIONS_AND_LIMITATIONS.txt
+DATE: 2026-11-15
+LOCATION: T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_5_2026_11_15\
+AUTHORIZED PROJECT ROOT: T:\KAATYA\
+TARGET MODEL FILE: T:\KAATYA\Nemotron-3.5-Bolt-E4B-Q4_K_M.gguf
+CURRENT PHASE: Stage 2.2 - Independent Verification
+STAGE 3 STATUS: STRICTLY LOCKED (DOCUMENTATION & AUDIT ONLY)
+VERSION 8 STATUS: NOT AUTHORIZED
+================================================================================
+
+1. EMPIRICALLY ESTABLISHED GGUF ARCHITECTURE METADATA
+--------------------------------------------------------------------------------
+Direct read-only binary parsing of `T:\KAATYA\Nemotron-3.5-Bolt-E4B-Q4_K_M.gguf` established 
+the following immutable architecture parameters:
+- `general.architecture`: `gemma4`
+- `gemma4.block_count`: 42 total transformer layers (indices 0 to 41)
+- `gemma4.attention.head_count_kv`: 2 KV heads per layer
+- `gemma4.attention.shared_kv_layers`: 18 shared KV tail layers
+- `gemma4.attention.sliding_window`: 512 tokens
+- `gemma4.attention.key_length`: 512 (Global layer head dimension)
+- `gemma4.attention.value_length`: 512
+- `gemma4.attention.key_length_swa`: 256 (SWA layer head dimension)
+- `gemma4.attention.value_length_swa`: 256
+- `gemma4.attention.sliding_window_pattern`: Array of 42 booleans identifying:
+  * 7 Global Attention Layers (Value: `False`): [5, 11, 17, 23, 29, 35, 41]
+  * 35 Sliding Window Attention Layers (Value: `True`): all other layers
+
+================================================================================
+2. UPSTREAM HISTORICAL SOURCE MAPPING (COMMIT b8635075ff)
+================================================================================
+In `llama.cpp` at reference commit `b8635075ffe27b135c49afb9a8b5c434bd42c502` (tag `b8665`):
+- Boundary Calculation (`src/llama-model.cpp:1272`):
+  `hparams.n_layer_kv_from_start = hparams.n_layer - (int32_t)n_kv_shared_layers;`
+  `42 - 18 = 24` independent KV-owning layers (indices 0 to 23).
+- Layer Ownership:
+  * Independent Global Owners (< 24): Layers 5, 11, 17, 23 (4 layers).
+  * Independent SWA Owners (< 24): 20 layers.
+  * Shared Tail Layers (>= 24): Layers 24 to 41 (18 layers).
+- Tail Layer Reuse Callback (`src/llama-model.cpp:8359`):
+  `return (int32_t) hparams.n_layer_kv_from_start - (hparams.is_swa(il) ? 2 : 1);`
+  * Global tail layers (29, 35, 41) reuse Layer 24 - 1 = Layer 23 (last independent Global layer).
+  * SWA tail layers (15 layers) reuse Layer 24 - 2 = Layer 22 (last independent SWA layer).
+
+================================================================================
+3. MATHEMATICAL DERIVATION OF THEORETICAL F16 KV PAYLOAD
+================================================================================
+The theoretical KV cache formula is derived under the explicit assumption of F16 precision 
+(2 bytes per Key element, 2 bytes per Value element = 4 bytes per head-dimension element):
+
+A. Global Attention Contribution (4 Independent Layers):
+   Rate per Token = 4 layers * 2 KV heads * 512 dimensions * 4 bytes/pair
+                  = 16,384 bytes per token.
+
+B. Sliding Window Attention Contribution (20 Independent Layers, Capped at 512 Tokens):
+   Fixed SWA Ceiling = 20 layers * 2 KV heads * 256 dimensions * 4 bytes/pair * 512 tokens
+                     = 20,971,520 bytes (20.00 MiB).
+
+C. Combined Theoretical F16 KV Payload Formula (for context length L >= 512):
+   `KV(L) = (16,384 * L) + 20,971,520 bytes`
+
+D. Numerical Milestone Evaluations:
+   - Milestone 8K (L = 8,192 tokens):
+     KV(8,192) = (16,384 * 8,192) + 20,971,520
+               = 134,217,728 + 20,971,520 = 155,189,248 bytes = 148.00 MiB (0.155 GB)
+   - Milestone 32K (L = 32,768 tokens):
+     KV(32,768) = (16,384 * 32,768) + 20,971,520
+                = 536,870,912 + 20,971,520 = 557,842,432 bytes = 532.00 MiB = 0.558 GB
+     [NOTE: Reconciles the historical 0.558 GB external benchmark estimate].
+   - Milestone 64K (L = 65,536 tokens):
+     KV(65,536) = (16,384 * 65,536) + 20,971,520
+                = 1,073,741,824 + 20,971,520 = 1,094,713,344 bytes = 1,044.00 MiB (1.095 GB)
+
+================================================================================
+4. CRITICAL QUALIFICATIONS, DISTINCTIONS & OPERATIONAL LIMITATIONS
+================================================================================
+To maintain total scientific integrity, the following boundaries are formally established:
+
+1. Theoretical F16 Payload vs. Runtime Quantization:
+   The calculations above assume unquantized F16 KV cache. If a quantized KV cache is configured 
+   at runtime (e.g., `--cache-type-k q8_0 --cache-type-v q8_0` or `q4_0`), the actual tensor payload 
+   bytes will be proportionally lower (~50% for Q8_0, ~25% for Q4_0).
+
+2. Theoretical Payload vs. Runtime Memory Allocation:
+   Theoretical payload represents the exact mathematical sum of active tensor elements.
+   Actual runtime memory allocated by `llama.cpp` will exceed theoretical payload due to:
+   - GGML 64-byte memory alignment and page alignment (4 KiB / 2 MiB OS virtual pages).
+   - Scratch buffers and compute graphs allocated for multi-token context evaluation.
+   - Model activation tensors and temporary recurrent states.
+   - Paging and working set overhead imposed by the host operating system.
+
+3. Measured Physical RAM:
+   NO PHYSICAL RAM MEASUREMENT HAS BEEN PERFORMED.
+   Do not describe theoretical payload (148 MiB, 532 MiB) as measured physical RAM.
+   Physical RAM consumption can only be measured dynamically through hardware profiling tools 
+   after Stage 3 is explicitly authorized and unlocked.
+
+4. Model Execution Status:
+   `Nemotron-3.5-Bolt-E4B-Q4_K_M.gguf` HAS NOT BEEN LOADED OR EXECUTED.
+   Zero tokenization, zero prompt processing, and zero inference have occurred.
+================================================================================
+END OF DOCUMENT
+================================================================================
