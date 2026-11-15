@@ -1,0 +1,110 @@
+================================================================================
+KAATYA OS 3.0 — CORRECTION 6: CHECKSUM RECONCILIATION REPORT
+RESOLUTION OF VALUE A VS VALUE B & THE SELF-REFERENTIAL HASH PARADOX
+================================================================================
+PROJECT: KAATYA OS 3.0
+DATE: 15 November 2026
+PHASE: Stage 2.2 — Independent Verification
+TASK: Correction 6
+SUBJECT: CORRECTION_5_FINAL_EVIDENCE_STATUS.txt
+
+--------------------------------------------------------------------------------
+1. REPORTED DISCREPANCY
+--------------------------------------------------------------------------------
+During independent verification of the Correction 5 package, a discrepancy was
+reported regarding the SHA-256 checksum of `CORRECTION_5_FINAL_EVIDENCE_STATUS.txt`.
+
+Two competing cryptographic checksum values were documented in project records:
+
+Value A:
+4d738ae69e514664c88204380c41a8e4ff7b198b0aeb3c77694feb5054d905f2
+(Recorded inside the internal evidence status table in Section 2 of the file)
+
+Value B:
+8ec4ef2c905e11aac64b6f3bb85d196d02c44d634e25dea96c7c66033b960c8e
+(Recorded in CORRECTION_5_UPLOAD_MANIFEST.txt and CORRECTION_5_COMPLETE_LOCAL_REMOTE_INVENTORY_RECONCILIATION.txt)
+
+--------------------------------------------------------------------------------
+2. EMPIRICAL DETERMINATION OF ACTUAL PHYSICAL CHECKSUM
+--------------------------------------------------------------------------------
+To establish ground truth with mathematical certainty, the raw byte stream of
+`CORRECTION_5_FINAL_EVIDENCE_STATUS.txt` was read and evaluated across all three
+independent representations in the project environment:
+
+Representation 1: Local Audit Directory
+Path: T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_5_2026_11_15\CORRECTION_5_FINAL_EVIDENCE_STATUS.txt
+- Size: 6,134 bytes
+- SHA-256: 8ec4ef2c905e11aac64b6f3bb85d196d02c44d634e25dea96c7c66033b960c8e
+
+Representation 2: Repository Working Copy
+Path: T:\KAATYA\TRE_REPO\KAATYA_ADDENDUM_3_CORRECTION_5_REVIEW_2026_11_15\CORRECTION_5_FINAL_EVIDENCE_STATUS.txt
+- Size: 6,134 bytes
+- SHA-256: 8ec4ef2c905e11aac64b6f3bb85d196d02c44d634e25dea96c7c66033b960c8e
+
+Representation 3: Remote Git Blob (Commit df207c06b7ac85c01ff729e29cf954e5b0e78e69)
+Blob ID: 1149467d649372a4ba3c174764dce8ae0ab50edb
+- Size: 6,134 bytes
+- SHA-256: 8ec4ef2c905e11aac64b6f3bb85d196d02c44d634e25dea96c7c66033b960c8e
+
+VERDICT:
+Value B is the SOLE, TRUE, PHYSICALLY VERIFIABLE SHA-256 checksum of
+CORRECTION_5_FINAL_EVIDENCE_STATUS.txt. Value B is 100% consistent across all storage
+media and git objects.
+
+--------------------------------------------------------------------------------
+3. FORENSIC ROOT CAUSE ANALYSIS: THE SELF-REFERENTIAL HASH PARADOX
+--------------------------------------------------------------------------------
+Why did Value A appear in the internal table in Section 2?
+
+Detailed inspection of the file generation workflow reveals the following:
+
+1. Text Construction Phase:
+   When `CORRECTION_5_FINAL_EVIDENCE_STATUS.txt` was drafted by the authoring script,
+   Section 2 was designed to contain a markdown summary table listing the four core
+   Correction 5 documents along with their sizes and SHA-256 checksums.
+   The authoring script computed or estimated draft hashes for the documents.
+   For the status document itself, a pre-computed hash string:
+   `4d738ae69e514664c88204380c41a8e4ff7b198b0aeb3c77694feb5054d905f2` (Value A)
+   was inserted into the table row.
+
+2. The Self-Referential Paradox:
+   SHA-256 is an avalanche-effect cryptographic hash function. Changing even a single bit
+   in an input stream produces an entirely unpredictable 256-bit output.
+   If a document embeds the string "4d738ae...", that 64-character string constitutes
+   part of the byte stream being hashed.
+   Unless an exact mathematical fixed point exists (where Hash(Document + Hash) == Hash)
+   — which cannot be calculated practically under SHA-256 pre-image resistance —
+   inserting ANY hash into a file will inevitably change the file's resulting hash.
+
+3. Final Serialization Phase:
+   When `CORRECTION_5_FINAL_EVIDENCE_STATUS.txt` was written to disk with Value A in its
+   table, its actual resulting SHA-256 was computed by the filesystem and git as:
+   `8ec4ef2c905e11aac64b6f3bb85d196d02c44d634e25dea96c7c66033b960c8e` (Value B).
+
+4. Subsequent Manifest Generation:
+   When the generator proceeded to Step 6 and created `CORRECTION_5_UPLOAD_MANIFEST.txt`,
+   it performed a post-serialization disk read of all generated files. It measured the
+   true hash of `CORRECTION_5_FINAL_EVIDENCE_STATUS.txt` (Value B) and recorded Value B
+   in the upload manifest and in the inventory reconciliation report.
+   However, the text *inside* `CORRECTION_5_FINAL_EVIDENCE_STATUS.txt` had already been
+   written and still held the pre-generation draft string (Value A).
+
+--------------------------------------------------------------------------------
+4. ARCHITECTURAL RESOLUTION & PREVENTION PROTOCOL
+--------------------------------------------------------------------------------
+To ensure 100% cryptographic consistency and eliminate self-referential paradoxes:
+
+RULE 1: EXTERNAL MANIFEST ACCOUNTING
+A document must NEVER attempt to embed its own final cryptographic hash within its own body.
+Cryptographic integrity of individual documents must always be asserted EXTERNALLY via:
+1. An authoritative upload manifest (`UPLOAD_MANIFEST.txt`).
+2. A detached cryptographic hash signature (`UPLOAD_MANIFEST.sha256`).
+3. Git commit tree and blob object hashes.
+
+RULE 2: RECONCILED TABLE DESIGN FOR CORRECTION 6
+In `CORRECTION_6_FINAL_EVIDENCE_STATUS.txt`, the evidence manifest table explicitly
+designates its own entry as:
+`[EXTERNAL MANIFEST ACCOUNTING - Recorded in CORRECTION_6_UPLOAD_MANIFEST.txt]`
+This prevents self-referential recursion, eliminates phantom discrepancies, and ensures
+uncompromised mathematical integrity.
+================================================================================

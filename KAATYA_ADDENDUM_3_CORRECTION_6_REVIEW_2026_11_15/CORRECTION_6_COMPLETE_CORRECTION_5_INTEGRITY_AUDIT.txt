@@ -1,0 +1,128 @@
+================================================================================
+KAATYA OS 3.0 — CORRECTION 6: COMPLETE CORRECTION 5 INTEGRITY AUDIT
+FORENSIC RECONCILIATION OF LOCAL FILES, WORKING COPY, AND GIT BLOBS
+================================================================================
+PROJECT: KAATYA OS 3.0
+DATE: 15 November 2026
+PHASE: Stage 2.2 — Independent Verification
+TASK: Correction 6
+LOCAL AUDIT DIRECTORY: T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_5_2026_11_15\
+REPOSITORY DIRECTORY: T:\KAATYA\TRE_REPO\KAATYA_ADDENDUM_3_CORRECTION_5_REVIEW_2026_11_15\
+BASE GIT COMMIT: df207c06b7ac85c01ff729e29cf954e5b0e78e69
+BASE GIT BRANCH: kaatya-addendum3-correction5-review
+
+--------------------------------------------------------------------------------
+1. AUDIT OBJECTIVE & METHODOLOGY
+--------------------------------------------------------------------------------
+The objective of this audit is to provide an exhaustive, byte-for-byte verification
+of the entire 6-file evidence package generated during Correction 5.
+Verification was conducted by:
+1. Directly hashing the raw bytes from the local audit directory using SHA-256.
+2. Directly hashing the raw bytes from the git repository working tree.
+3. Extracting the git blobs directly from git object storage using `git cat-file -p <blob_id>`
+   at commit df207c06b7ac85c01ff729e29cf954e5b0e78e69 and computing their SHA-256.
+4. Performing a byte-by-byte comparison across all three representations.
+5. Verifying the detached cryptographic manifest signature.
+
+--------------------------------------------------------------------------------
+2. ITEM-BY-ITEM EVIDENCE COMPARISON MATRIX
+--------------------------------------------------------------------------------
+FILE 1: CORRECTION_5_EXECUTIVE_SUMMARY.txt
+- Local File Path: T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_5_2026_11_15\CORRECTION_5_EXECUTIVE_SUMMARY.txt
+- Working Copy:   T:\KAATYA\TRE_REPO\KAATYA_ADDENDUM_3_CORRECTION_5_REVIEW_2026_11_15\CORRECTION_5_EXECUTIVE_SUMMARY.txt
+- Git Blob ID:    81bcf1910b5144831487374a2b8da7bacc7f60ef
+- Local Size:     4,810 bytes
+- Working Size:   4,810 bytes
+- Git Blob Size:  4,810 bytes
+- Local SHA-256:  d23a76b8a0bd48ddfa4bdae222e2dafd6193fa803cafb7a7065cf5f1b94dae5d
+- Work SHA-256:   d23a76b8a0bd48ddfa4bdae222e2dafd6193fa803cafb7a7065cf5f1b94dae5d
+- Blob SHA-256:   d23a76b8a0bd48ddfa4bdae222e2dafd6193fa803cafb7a7065cf5f1b94dae5d
+- Cross-Match:    100% BYTE-FOR-BYTE IDENTICAL [MATCH]
+
+FILE 2: CORRECTION_5_COMPLETE_LOCAL_REMOTE_INVENTORY_RECONCILIATION.txt
+- Local File Path: T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_5_2026_11_15\CORRECTION_5_COMPLETE_LOCAL_REMOTE_INVENTORY_RECONCILIATION.txt
+- Working Copy:   T:\KAATYA\TRE_REPO\KAATYA_ADDENDUM_3_CORRECTION_5_REVIEW_2026_11_15\CORRECTION_5_COMPLETE_LOCAL_REMOTE_INVENTORY_RECONCILIATION.txt
+- Git Blob ID:    48c9423188e0c7e7a5cc3c8158f6e307b32183dd
+- Local Size:     6,101 bytes
+- Working Size:   6,101 bytes
+- Git Blob Size:  6,101 bytes
+- Local SHA-256:  6e1289469dea392cc67d824193a50f2051660349c21fd885bda12a9a200e2ce1
+- Work SHA-256:   6e1289469dea392cc67d824193a50f2051660349c21fd885bda12a9a200e2ce1
+- Blob SHA-256:   6e1289469dea392cc67d824193a50f2051660349c21fd885bda12a9a200e2ce1
+- Cross-Match:    100% BYTE-FOR-BYTE IDENTICAL [MATCH]
+
+FILE 3: CORRECTION_5_KV_CACHE_ASSUMPTIONS_AND_LIMITATIONS.txt
+- Local File Path: T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_5_2026_11_15\CORRECTION_5_KV_CACHE_ASSUMPTIONS_AND_LIMITATIONS.txt
+- Working Copy:   T:\KAATYA\TRE_REPO\KAATYA_ADDENDUM_3_CORRECTION_5_REVIEW_2026_11_15\CORRECTION_5_KV_CACHE_ASSUMPTIONS_AND_LIMITATIONS.txt
+- Git Blob ID:    9cfb14d68ddfa2fc83f7ccc20023dcbb403daa0a
+- Local Size:     6,233 bytes
+- Working Size:   6,233 bytes
+- Git Blob Size:  6,233 bytes
+- Local SHA-256:  243313794dc03ca1bd3740510bbf2dea09e688eaf4fa11c6409390a34cd17dc6
+- Work SHA-256:   243313794dc03ca1bd3740510bbf2dea09e688eaf4fa11c6409390a34cd17dc6
+- Blob SHA-256:   243313794dc03ca1bd3740510bbf2dea09e688eaf4fa11c6409390a34cd17dc6
+- Cross-Match:    100% BYTE-FOR-BYTE IDENTICAL [MATCH]
+
+FILE 4: CORRECTION_5_FINAL_EVIDENCE_STATUS.txt
+- Local File Path: T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_5_2026_11_15\CORRECTION_5_FINAL_EVIDENCE_STATUS.txt
+- Working Copy:   T:\KAATYA\TRE_REPO\KAATYA_ADDENDUM_3_CORRECTION_5_REVIEW_2026_11_15\CORRECTION_5_FINAL_EVIDENCE_STATUS.txt
+- Git Blob ID:    1149467d649372a4ba3c174764dce8ae0ab50edb
+- Local Size:     6,134 bytes
+- Working Size:   6,134 bytes
+- Git Blob Size:  6,134 bytes
+- Local SHA-256:  8ec4ef2c905e11aac64b6f3bb85d196d02c44d634e25dea96c7c66033b960c8e
+- Work SHA-256:   8ec4ef2c905e11aac64b6f3bb85d196d02c44d634e25dea96c7c66033b960c8e
+- Blob SHA-256:   8ec4ef2c905e11aac64b6f3bb85d196d02c44d634e25dea96c7c66033b960c8e
+- Cross-Match:    100% BYTE-FOR-BYTE IDENTICAL [MATCH]
+
+FILE 5: CORRECTION_5_UPLOAD_MANIFEST.txt
+- Local File Path: T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_5_2026_11_15\CORRECTION_5_UPLOAD_MANIFEST.txt
+- Working Copy:   T:\KAATYA\TRE_REPO\KAATYA_ADDENDUM_3_CORRECTION_5_REVIEW_2026_11_15\CORRECTION_5_UPLOAD_MANIFEST.txt
+- Git Blob ID:    1989c34051a46227268580e15e36d3bf5197411d
+- Local Size:     2,934 bytes
+- Working Size:   2,934 bytes
+- Git Blob Size:  2,934 bytes
+- Local SHA-256:  7c4591a8553a525b97ad890ff74de625738b86b031294c85e125816460e9ec19
+- Work SHA-256:   7c4591a8553a525b97ad890ff74de625738b86b031294c85e125816460e9ec19
+- Blob SHA-256:   7c4591a8553a525b97ad890ff74de625738b86b031294c85e125816460e9ec19
+- Cross-Match:    100% BYTE-FOR-BYTE IDENTICAL [MATCH]
+
+FILE 6: CORRECTION_5_UPLOAD_MANIFEST.sha256
+- Local File Path: T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_5_2026_11_15\CORRECTION_5_UPLOAD_MANIFEST.sha256
+- Working Copy:   T:\KAATYA\TRE_REPO\KAATYA_ADDENDUM_3_CORRECTION_5_REVIEW_2026_11_15\CORRECTION_5_UPLOAD_MANIFEST.sha256
+- Git Blob ID:    8861fb8ee1a26f73053946b04cddb30d6775a262
+- Local Size:     99 bytes
+- Working Size:   99 bytes
+- Git Blob Size:  99 bytes
+- Local SHA-256:  8f5f3a8fdbf9385a79fb6f3c678d9f2b7f654c147f583fc353dfbc31a955ed17
+- Work SHA-256:   8f5f3a8fdbf9385a79fb6f3c678d9f2b7f654c147f583fc353dfbc31a955ed17
+- Blob SHA-256:   8f5f3a8fdbf9385a79fb6f3c678d9f2b7f654c147f583fc353dfbc31a955ed17
+- Cross-Match:    100% BYTE-FOR-BYTE IDENTICAL [MATCH]
+
+--------------------------------------------------------------------------------
+3. DETACHED SIGNATURE VERIFICATION
+--------------------------------------------------------------------------------
+The detached checksum file CORRECTION_5_UPLOAD_MANIFEST.sha256 contains:
+7c4591a8553a525b97ad890ff74de625738b86b031294c85e125816460e9ec19  CORRECTION_5_UPLOAD_MANIFEST.txt
+
+Independent verification check:
+- Computed SHA-256 of CORRECTION_5_UPLOAD_MANIFEST.txt:
+  7c4591a8553a525b97ad890ff74de625738b86b031294c85e125816460e9ec19
+- Comparison: EXACT MATCH.
+- Detached Signature Verification: VALID.
+
+--------------------------------------------------------------------------------
+4. SUMMARY INTEGRITY TABLE
+--------------------------------------------------------------------------------
+Filename                                                    Size (B)   Verified SHA-256                                                  Local  Git    Status
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+CORRECTION_5_EXECUTIVE_SUMMARY.txt                             4,810   d23a76b8a0bd48ddfa4bdae222e2dafd6193fa803cafb7a7065cf5f1b94dae5d  OK     OK     VALID
+CORRECTION_5_COMPLETE_LOCAL_REMOTE_INVENTORY_RECONCILIATION.txt6,101   6e1289469dea392cc67d824193a50f2051660349c21fd885bda12a9a200e2ce1  OK     OK     VALID
+CORRECTION_5_KV_CACHE_ASSUMPTIONS_AND_LIMITATIONS.txt          6,233   243313794dc03ca1bd3740510bbf2dea09e688eaf4fa11c6409390a34cd17dc6  OK     OK     VALID
+CORRECTION_5_FINAL_EVIDENCE_STATUS.txt                         6,134   8ec4ef2c905e11aac64b6f3bb85d196d02c44d634e25dea96c7c66033b960c8e  OK     OK     VALID
+CORRECTION_5_UPLOAD_MANIFEST.txt                               2,934   7c4591a8553a525b97ad890ff74de625738b86b031294c85e125816460e9ec19  OK     OK     VALID
+CORRECTION_5_UPLOAD_MANIFEST.sha256                               99   8f5f3a8fdbf9385a79fb6f3c678d9f2b7f654c147f583fc353dfbc31a955ed17  OK     OK     VALID
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Total Package Size: 26,311 bytes across 6 files.
+Package Byte Consistency: 100% IDENTICAL across Local Disk, Working Copy, and Remote Git Blobs.
+================================================================================

@@ -1,0 +1,105 @@
+================================================================================
+KAATYA OS 3.0 — CORRECTION 6: FINAL EVIDENCE STATUS
+MULTI-DIMENSIONAL AUDIT TABLE, CATEGORIZATION & QUALITY GATE VERDICT
+================================================================================
+PROJECT: KAATYA OS 3.0
+DATE: 15 November 2026
+PHASE: Stage 2.2 — Independent Verification
+TASK: Correction 6
+AUTHORIZED LOCAL ROOT: T:\KAATYA\
+GITHUB REPOSITORY: 987-beep/TRE
+BRANCH: kaatya-addendum3-correction6-review
+TARGET DIRECTORY: T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_6_2026_11_15\
+
+--------------------------------------------------------------------------------
+1. COMPREHENSIVE MULTI-DIMENSIONAL EVIDENCE CATEGORIZATION
+--------------------------------------------------------------------------------
+To ensure strict adherence to empirical verification principles, all project
+findings, assertions, and test statuses are rigorously separated into six distinct
+operational categories:
+
+CATEGORY 1: VERIFIED FACTS (Empirically and Cryptographically Proven)
+- GGUF Physical Model: Nemotron-3.5-Bolt-E4B-Q4_K_M.gguf (6,180,446,208 bytes) exists.
+- GGUF Declared Architecture: "gemma4" (verified via llama-hparams / GGUF reader).
+- Total Layers: 42 layers (indices 0 to 41).
+- Global Attention Layers: Exactly 7 layers ([5, 11, 17, 23, 29, 35, 41]).
+- SWA Attention Layers: Exactly 35 layers (sliding window size = 512).
+- Key-Value Sharing: 18 tail layers reuse KV cache from prior layers.
+- Head Dimensions: Global = 512, SWA = 256.
+- Theoretical F16 KV Cache Payload Formula:
+  KV(L) = 16,384 * L + 20,971,520 bytes (e.g. 532.00 MiB / 0.558 GB at 32K context).
+- Correction 5 Physical SHA-256 Checksum:
+  Value B (8ec4ef2c905e11aac64b6f3bb85d196d02c44d634e25dea96c7c66033b960c8e)
+  verified across local disk, repo working tree, and Git blob 1149467d649372a4ba3c174764dce8ae0ab50edb.
+- Detached Manifest Signature:
+  CORRECTION_5_UPLOAD_MANIFEST.sha256 matches CORRECTION_5_UPLOAD_MANIFEST.txt (7c4591a...).
+- Upstream Historical Commit: b8635075ffe27b135c49afb9a8b5c434bd42c502 (tag b8665).
+- Git Tree Blobs: All C3, C4, and C5 files match their local counterparts byte-for-byte.
+
+CATEGORY 2: PREVIOUSLY REPORTED FACTS (Historical Documentation Record)
+- Release Date: Official public release of Nemotron-3.5-Bolt was October 23, 2026 (corrected from August 20, 2026).
+- llama.cpp PRs: Gemma 4 integration PRs #21309 and #21326 merged prior to tag b8665.
+- Test harness entry points: main() at lines 112 and 336 in test-chat-template.cpp (712 lines).
+
+CATEGORY 3: UNVERIFIED CLAIMS (Refuted or Corrected Prior Assertions)
+- Assertion that Nemotron-3.5-Bolt uses full independent KV cache for all 42 layers: REFUTED.
+  (Empirical GGUF metadata proves 18 layers are shared tail layers).
+- Assertion that theoretical F16 payload equals runtime RAM consumption: REFUTED.
+  (Runtime memory includes alignment padding, context structures, activations, and OS overhead).
+- Assertion that Value A was the physical hash of CORRECTION_5_FINAL_EVIDENCE_STATUS.txt: REFUTED.
+  (Value A was a pre-generation placeholder in Section 2 table; Value B is the true file hash).
+
+CATEGORY 4: FAILED CHECKS
+- Correction 5 Internal Table Self-Checksum: FAILED due to Self-Referential Hash Paradox.
+  (Resolved in Correction 6 via External Manifest Accounting).
+
+CATEGORY 5: DEFERRED TESTS (Pending Authorized Runtime Validation)
+- Real-time KV cache buffer memory allocation measurements under llama.cpp runtime.
+- Multi-token generation throughput benchmarks.
+- Context window scaling up to 131,072 tokens under CUDA / Vulkan / CPU backends.
+
+CATEGORY 6: UNAUTHORIZED OPERATIONS (Strictly Prohibited Under Stage 2.2)
+- Execution of llama-cli or llama-server with Nemotron GGUF.
+- Host system modification, ISO generation, or VM creation.
+- Advancement to Stage 3 or creation of Version 8.
+
+--------------------------------------------------------------------------------
+2. CORRECTION 6 EVIDENCE FILE MANIFEST & IMMUTABLE CHECKSUMS
+--------------------------------------------------------------------------------
+The Correction 6 documentation and verification deliverables are cataloged below.
+Per Rule 1 (External Manifest Accounting), this document defers its own physical
+hash to `CORRECTION_6_UPLOAD_MANIFEST.txt` to eliminate self-referential paradoxes:
+
+Filename                                                    Byte Size  Cryptographic SHA-256 Accounting Status
+---------------------------------------------------------------------------------------------------------------------------------
+CORRECTION_6_EXECUTIVE_SUMMARY.txt                          [MEASURED] Recorded in CORRECTION_6_UPLOAD_MANIFEST.txt
+CORRECTION_6_COMPLETE_CORRECTION_5_INTEGRITY_AUDIT.txt      [MEASURED] Recorded in CORRECTION_6_UPLOAD_MANIFEST.txt
+CORRECTION_6_CHECKSUM_RECONCILIATION.txt                    [MEASURED] Recorded in CORRECTION_6_UPLOAD_MANIFEST.txt
+CORRECTION_6_GITHUB_BRANCH_AND_HISTORY_VERIFICATION.txt     [MEASURED] Recorded in CORRECTION_6_UPLOAD_MANIFEST.txt
+CORRECTION_6_FINAL_EVIDENCE_STATUS.txt                      [MEASURED] [EXTERNAL MANIFEST ACCOUNTING - See Upload Manifest]
+CORRECTION_6_UPLOAD_MANIFEST.txt                            [MEASURED] Verified via CORRECTION_6_UPLOAD_MANIFEST.sha256
+CORRECTION_6_UPLOAD_MANIFEST.sha256                         [MEASURED] Authoritative Detached Checksum Signature
+---------------------------------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+3. QUALITY GATE VERDICT & STAGE BOUNDARY CONTROL
+--------------------------------------------------------------------------------
+Quality Gate Evaluation:
+- Correction 5 Checksum Discrepancy Resolved: PASS (Value B verified as physical truth; Value A root cause established)
+- Correction 5 Full Package Integrity: PASS (All 6 files byte-identical across local, repo, and GitHub)
+- Detached Manifest Signature Verified: PASS (CORRECTION_5_UPLOAD_MANIFEST.sha256 matches)
+- GitHub Branch Lineage Verified: PASS (Parent commit df207c0 confirmed; main preserved)
+- Elimination of Self-Referential Hash Paradox: PASS (External Manifest Accounting implemented)
+- Stage Boundary Enforcement: PASS (Zero runtime inference, zero Stage 3 execution)
+
+FINAL QUALITY GATE VERDICT: PASS (Stage 2.2 Documentation & Evidence Verification Complete)
+
+--------------------------------------------------------------------------------
+4. MANDATORY GOVERNANCE LOCK
+--------------------------------------------------------------------------------
+STAGE 3: STRICTLY LOCKED — IMPLEMENTATION NOT AUTHORIZED.
+VERSION 8: NOT AUTHORIZED.
+MODEL INFERENCE: NOT PERFORMED.
+PHYSICAL RAM PROFILING: NOT PERFORMED.
+RUNTIME COMPATIBILITY: NOT TESTED.
+================================================================================

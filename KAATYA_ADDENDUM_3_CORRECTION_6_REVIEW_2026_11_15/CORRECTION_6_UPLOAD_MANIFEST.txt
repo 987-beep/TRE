@@ -1,0 +1,50 @@
+================================================================================
+KAATYA OS 3.0 — CORRECTION 6: UPLOAD MANIFEST
+AUTHORITATIVE FILE SIZES, CRYPTOGRAPHIC CHECKSUMS, AND UPLOAD INVENTORY
+================================================================================
+PROJECT: KAATYA OS 3.0
+DATE: 15 November 2026
+PHASE: Stage 2.2 — Independent Verification
+TASK: Correction 6
+LOCAL DIRECTORY: T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_6_2026_11_15\
+REMOTE DIRECTORY: KAATYA_ADDENDUM_3_CORRECTION_6_REVIEW_2026_11_15/
+BRANCH: kaatya-addendum3-correction6-review
+PARENT COMMIT: df207c06b7ac85c01ff729e29cf954e5b0e78e69
+
+--------------------------------------------------------------------------------
+PRIMARY EVIDENCE REPORTS & STATUS INVENTORY (MEASURED PHYSICAL VALUES)
+--------------------------------------------------------------------------------
+Filename: CORRECTION_6_CHECKSUM_RECONCILIATION.txt
+Size:     6,024 bytes
+SHA-256:  94fecf5f44f3165decc3e5d8b81c04fd1fb2f0e80c351c88e6eff585548a144f
+Status:   VERIFIED PHYSICAL ARTIFACT
+
+Filename: CORRECTION_6_COMPLETE_CORRECTION_5_INTEGRITY_AUDIT.txt
+Size:     8,869 bytes
+SHA-256:  784697d6fd030c99743e46b078915cec0491a7d0776d68523b3fdaf58e13230a
+Status:   VERIFIED PHYSICAL ARTIFACT
+
+Filename: CORRECTION_6_EXECUTIVE_SUMMARY.txt
+Size:     8,158 bytes
+SHA-256:  e6bcfe6e496c789205b578ec18b6bb99bb6d2db430fb392817b869c5056d9914
+Status:   VERIFIED PHYSICAL ARTIFACT
+
+Filename: CORRECTION_6_FINAL_EVIDENCE_STATUS.txt
+Size:     6,942 bytes
+SHA-256:  c1ea7e963bb4ad186c6190ce3719bf1af9386a30389307eba4e21efe765fcf7a
+Status:   VERIFIED PHYSICAL ARTIFACT
+
+Filename: CORRECTION_6_GITHUB_BRANCH_AND_HISTORY_VERIFICATION.txt
+Size:     4,501 bytes
+SHA-256:  17d4818959303b452085e6964068bf4202d0d8ad75ee96fae3f8efe59caffdec
+Status:   VERIFIED PHYSICAL ARTIFACT
+
+--------------------------------------------------------------------------------
+MANIFEST ACCOUNTING & VERIFICATION PROTOCOL
+--------------------------------------------------------------------------------
+Total Primary Evidence Files: 5
+Package Manifest File:        CORRECTION_6_UPLOAD_MANIFEST.txt
+Detached Signature File:      CORRECTION_6_UPLOAD_MANIFEST.sha256
+Total Upload Package Files:   7
+Integrity Protocol:           External Manifest Accounting (eliminating self-referential hash paradox)
+================================================================================
