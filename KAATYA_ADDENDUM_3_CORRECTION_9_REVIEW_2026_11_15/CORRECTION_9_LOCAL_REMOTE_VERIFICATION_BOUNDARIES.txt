@@ -1,0 +1,61 @@
+================================================================================
+KAATYA OS 3.0 — CORRECTION 9: LOCAL & REMOTE VERIFICATION BOUNDARIES
+ACCURATE DEMARCATION OF AGENT OPERATIONS VS INDEPENDENT EXTERNAL REVIEWS
+================================================================================
+PROJECT: KAATYA OS 3.0
+DATE: 15 November 2026
+PHASE: Stage 2.2 — Independent Verification
+TASK: Correction 9
+REPOSITORY: https://github.com/987-beep/TRE
+
+--------------------------------------------------------------------------------
+1. ACCURATE SPECIFICATION OF THE FOUR-TIER MODEL
+--------------------------------------------------------------------------------
+To eliminate any ambiguity regarding who inspected what, the operational boundaries
+are defined with technical precision:
+
+TIER A: LOCAL DISK CHECKS (PERFORMED BY ANTI-GRAVITY AGENT)
+- Entity Performing: Anti-Gravity (Local Agent).
+- Environment: Host Windows filesystem (`T:\KAATYA\KAATYA_AUDIT\...`).
+- Scope of Work: Direct binary file reads, Python hashlib SHA-256 computations,
+  local file generation, and disk storage management.
+- Boundary Note: NOT accessible to external reviewers or remote language models.
+
+TIER B: REPOSITORY WORKING-TREE CHECKS (PERFORMED BY ANTI-GRAVITY AGENT)
+- Entity Performing: Anti-Gravity (Local Agent).
+- Environment: Local Git working tree (`T:\KAATYA\TRE_REPO\...`).
+- Scope of Work: File copying, Git staging (`git add`), and local commit creation.
+- Boundary Note: Local staging copy on developer workstation.
+
+TIER C: GIT OBJECT DATABASE & REMOTE TRACKING (PERFORMED BY ANTI-GRAVITY VIA GIT CLI)
+- Entity Performing: Anti-Gravity (Local Agent).
+- Environment: Local Git plumbing and transport commands.
+- Scope of Work: Reading blobs via `git cat-file -p`, parent commit inspection via
+  `git rev-parse HEAD~1`, and tracking refs via `git ls-remote origin`.
+- Boundary Note: Provides intermediate verification bridging local disk to remote repository.
+
+TIER D: INDEPENDENT EXTERNAL REMOTE AUDIT (PERFORMED BY EXTERNAL REVIEWERS / CHATGPT)
+- Entity Performing: Independent External Reviewers (including ChatGPT).
+- Environment: Public GitHub repository (`987-beep/TRE`).
+- Actual Operations Performed by External Reviewers:
+  * Verifying remote branch existence (`kaatya-addendum3-correction8-review`).
+  * Inspecting commit metadata, commit SHAs, and parent hashes via GitHub interfaces.
+  * Inspecting the commit tree to confirm exactly 8 files were added.
+  * Fetching and reviewing the text contents of the committed files directly from GitHub.
+- Clarification of Operations NOT Performed by External Reviewers:
+  * External reviewers did NOT access `T:\KAATYA\` directly (zero host access).
+  * External reviewers did NOT execute local filesystem hashing.
+  * External review confirms the public GitHub evidence record; local-to-remote byte
+    equivalence is verified by comparing the remote blob contents with local storage.
+
+--------------------------------------------------------------------------------
+2. RECORD OF CORRECTION 8 EXTERNAL VERIFICATION
+--------------------------------------------------------------------------------
+For Correction 8 specifically, external review independently confirmed:
+1. Branch `kaatya-addendum3-correction8-review` exists on GitHub.
+2. Commit `d191177fd66b698905d8952603d92a5abcd8306c` is the HEAD commit.
+3. Commit parent is verified as `e88396ca30fac1659bf907ad7a327272a8630212`.
+4. Exactly eight files were committed in directory `KAATYA_ADDENDUM_3_CORRECTION_8_REVIEW_2026_11_15/`.
+5. The retrieved remote file contents reflect the documented audit text.
+No unperformed local checks or manual external recalculations are attributed to external review.
+================================================================================

@@ -1,0 +1,79 @@
+================================================================================
+KAATYA OS 3.0 — CORRECTION 9: CHECKSUM & SIGNATURE TERMINOLOGY AUDIT
+RECONCILIATION OF DETACHED CHECKSUMS VS ASYMMETRIC DIGITAL SIGNATURES
+================================================================================
+PROJECT: KAATYA OS 3.0
+DATE: 15 November 2026
+PHASE: Stage 2.2 — Independent Verification
+TASK: Correction 9
+
+--------------------------------------------------------------------------------
+1. TECHNICAL AUDIT OF TERMINOLOGY USAGE
+--------------------------------------------------------------------------------
+In Corrections 6, 7, and 8, documents frequently used terms such as:
+- "Detached manifest signature"
+- "Cryptographic signature"
+- "Signature verification"
+- "Manifest authentication"
+
+CRITICAL TECHNICAL RECTIFICATION:
+A `.sha256` text file containing a SHA-256 hex string and a filename (e.g. standard UNIX
+`sha256sum` output) is a DETACHED CHECKSUM FILE, NOT A DIGITAL SIGNATURE.
+
+Precise distinctions:
+1. Detached SHA-256 Checksum:
+   - Mechanism: A cryptographic digest computed over a file's byte stream.
+   - Purpose: Verifies CHECKSUM CONSISTENCY and data integrity against transmission error,
+     truncation, or accidental modification.
+   - Limitation: Does NOT prove author identity, does NOT provide non-repudiation, and
+     does NOT protect against an active adversary who can modify both the file and the
+     checksum file simultaneously.
+2. Digital Signature (Cryptographic):
+   - Mechanism: Requires asymmetric public-key cryptography (e.g., RSA, ECDSA, Ed25519, GPG).
+   - Purpose: Provides AUTHENTICITY, INTEGRITY, and NON-REPUDIATION backed by a trusted key.
+   - Status in KAATYA Project: No digital signing keys or GPG mechanisms were used.
+
+APPROVED TERMINOLOGY FOR KAATYA DOCUMENTATION:
+- "Detached SHA-256 checksum file"
+- "Manifest checksum comparison"
+- "Checksum consistency verification"
+Terms such as "digital signature" and "signature verification" are deprecated and prohibited.
+
+--------------------------------------------------------------------------------
+2. COMPLETE MANIFEST AND DETACHED CHECKSUM AUDIT MATRIX
+--------------------------------------------------------------------------------
+The project's manifests and detached checksum files across all review packages were audited:
+
+PACKAGE: CORRECTION 5 (Commit: df207c0)
+- Manifest File: CORRECTION_5_UPLOAD_MANIFEST.txt (Size: 2,934 B)
+- Detached Checksum File: CORRECTION_5_UPLOAD_MANIFEST.sha256 (Size: 99 B)
+- Recomputed Manifest SHA-256: 7c4591a8553a525b97ad890ff74de625738b86b031294c85e125816460e9ec19
+- Content of .sha256 File:     7c4591a8553a525b97ad890ff74de625738b86b031294c85e125816460e9ec19  CORRECTION_5_UPLOAD_MANIFEST.txt
+- Comparison Result: EXACT MATCH (Checksum consistency confirmed).
+
+PACKAGE: CORRECTION 6 (Commit: b9aa538)
+- Manifest File: CORRECTION_6_UPLOAD_MANIFEST.txt (Size: 2,431 B)
+- Detached Checksum File: CORRECTION_6_UPLOAD_MANIFEST.sha256 (Size: 99 B)
+- Recomputed Manifest SHA-256: 614a6d9f3f128762dac1d52c7ea6f0db979f4b1060105f72356c688d46d275ee
+- Content of .sha256 File:     614a6d9f3f128762dac1d52c7ea6f0db979f4b1060105f72356c688d46d275ee  CORRECTION_6_UPLOAD_MANIFEST.txt
+- Comparison Result: EXACT MATCH (Checksum consistency confirmed).
+
+PACKAGE: CORRECTION 7 (Commit: e88396c)
+- Manifest File: CORRECTION_7_UPLOAD_MANIFEST.txt (Size: 2,627 B)
+- Detached Checksum File: CORRECTION_7_UPLOAD_MANIFEST.sha256 (Size: 99 B)
+- Recomputed Manifest SHA-256: 18ad4dc721b13d61fb040293deb6c840c38803e1e0392940f37d495acd89c204
+- Content of .sha256 File:     18ad4dc721b13d61fb040293deb6c840c38803e1e0392940f37d495acd89c204  CORRECTION_7_UPLOAD_MANIFEST.txt
+- Comparison Result: EXACT MATCH (Checksum consistency confirmed).
+
+PACKAGE: CORRECTION 8 (Commit: d191177)
+- Manifest File: CORRECTION_8_UPLOAD_MANIFEST.txt (Size: 2,626 B)
+- Detached Checksum File: CORRECTION_8_UPLOAD_MANIFEST.sha256 (Size: 99 B)
+- Recomputed Manifest SHA-256: 9bad7cb7ad39e52a9f618a585cdac864c8cbc500447ffbc193d4d34cdb96f43b
+- Content of .sha256 File:     9bad7cb7ad39e52a9f618a585cdac864c8cbc500447ffbc193d4d34cdb96f43b  CORRECTION_8_UPLOAD_MANIFEST.txt
+- Comparison Result: EXACT MATCH (Checksum consistency confirmed).
+
+CONCLUSION:
+In every package, the detached checksum file accurately reflects the final serialized
+bytes of its manifest file, establishing 100% checksum consistency. No digital signature
+authenticity is claimed or implied.
+================================================================================

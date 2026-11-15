@@ -1,0 +1,55 @@
+================================================================================
+KAATYA OS 3.0 — CORRECTION 9: UPLOAD MANIFEST
+AUTHORITATIVE FILE SIZES, CRYPTOGRAPHIC CHECKSUMS, AND UPLOAD INVENTORY
+================================================================================
+PROJECT: KAATYA OS 3.0
+DATE: 15 November 2026
+PHASE: Stage 2.2 — Independent Verification
+TASK: Correction 9
+LOCAL DIRECTORY: T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_9_2026_11_15\
+REMOTE DIRECTORY: KAATYA_ADDENDUM_3_CORRECTION_9_REVIEW_2026_11_15/
+BRANCH: kaatya-addendum3-correction9-review
+PARENT COMMIT: d191177fd66b698905d8952603d92a5abcd8306c
+
+--------------------------------------------------------------------------------
+PRIMARY EVIDENCE REPORTS & STATUS INVENTORY (MEASURED PHYSICAL VALUES)
+--------------------------------------------------------------------------------
+Filename: CORRECTION_9_CHECKSUM_AND_SIGNATURE_TERMINOLOGY_AUDIT.txt
+Size:     4,546 bytes
+SHA-256:  887e9b7e8b22abe7d7f50458d9948619d884904acb434e0e9f4695f47dd3d658
+Status:   VERIFIED PHYSICAL ARTIFACT
+
+Filename: CORRECTION_9_CORRECTION_8_MANIFEST_AND_PACKAGE_REVERIFICATION.txt
+Size:     4,758 bytes
+SHA-256:  1f720d73885f3742b530e0913ae517fedd1049dc4acf05e34aba24ec074b8bbb
+Status:   VERIFIED PHYSICAL ARTIFACT
+
+Filename: CORRECTION_9_EXECUTIVE_SUMMARY.txt
+Size:     4,938 bytes
+SHA-256:  f868f79f60b3bf643bcf23230dcfe36047e0d537abd4ba3d9097d1d8fcdc28e1
+Status:   VERIFIED PHYSICAL ARTIFACT
+
+Filename: CORRECTION_9_FINAL_STAGE_2_2_CLOSURE_DECISION.txt
+Size:     3,679 bytes
+SHA-256:  f73d09672852e69582e06896616daf1fd201be65d23fc239ce0b7805399de304
+Status:   VERIFIED PHYSICAL ARTIFACT
+
+Filename: CORRECTION_9_LOCAL_REMOTE_VERIFICATION_BOUNDARIES.txt
+Size:     3,800 bytes
+SHA-256:  6cd0b37a0e89cc42b1736ffeed0c7ea9a83e274e14cb68dfd04fd86f0087f13d
+Status:   VERIFIED PHYSICAL ARTIFACT
+
+Filename: CORRECTION_9_VALUE_A_AND_VALUE_B_FINAL_DISTINCTION.txt
+Size:     3,522 bytes
+SHA-256:  20039bdf82c8bb4698d1061bd794d47fad99ec73f66c6e3816e42aeebd78bad9
+Status:   VERIFIED PHYSICAL ARTIFACT
+
+--------------------------------------------------------------------------------
+PACKAGE MANIFEST & CHECKSUM ACCOUNTING
+--------------------------------------------------------------------------------
+Total Primary Evidence Files: 6
+Package Manifest File:        CORRECTION_9_UPLOAD_MANIFEST.txt
+Detached Checksum File:       CORRECTION_9_UPLOAD_MANIFEST.sha256
+Total Upload Package Files:   8
+Integrity Protocol:           External Manifest Accounting (Detached SHA-256 Checksum)
+================================================================================
