@@ -1,0 +1,79 @@
+================================================================================
+KAATYA OS 3.0 - CORRECTION 4: GITHUB PACKAGE INTEGRITY RECONCILIATION
+================================================================================
+DOCUMENT IDENTIFIER: CORRECTION_4_GITHUB_PACKAGE_INTEGRITY_RECONCILIATION.txt
+DATE: 2026-11-15
+LOCATION: T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_4_2026_11_15\
+AUTHORIZED PROJECT ROOT: T:\KAATYA\
+TARGET REVIEW REPOSITORY: 987-beep/TRE
+EXISTING REVIEW BRANCH: kaatya-addendum3-correction3-review
+EXISTING REVIEW COMMIT: 2f3cbe8c5e8925bbb1df3590529fbb80c88fb879
+EXISTING REVIEW DIRECTORY: KAATYA_ADDENDUM_3_CORRECTION_3_REVIEW_2026_11_15/
+CURRENT PHASE: Stage 2.2 - Independent Verification
+STAGE 3 STATUS: STRICTLY LOCKED (DOCUMENTATION & AUDIT ONLY)
+================================================================================
+
+1. EXECUTIVE PURPOSE & SCOPE
+--------------------------------------------------------------------------------
+This document establishes the authoritative reconciliation of documentation discrepancies 
+identified in the GitHub review package for Correction 3.
+
+To maintain immutable audit standards, the existing review folder and commit remain completely 
+untouched. This document formally registers the findings, explains their technical root causes, 
+and reconciles all file counts, sizes, and SHA-256 checksums.
+
+================================================================================
+2. FILE-COUNT DISCREPANCY RECONCILIATION
+================================================================================
+- Discrepancy Observed:
+  The manifest file `GITHUB_REVIEW_UPLOAD_MANIFEST.txt` concluded with:
+  `TOTAL FILES IN REVIEW PACKAGE: 20`
+  However, the Git tree for commit `2f3cbe8c5e8925bbb1df3590529fbb80c88fb879` contains exactly 22 files.
+
+- Root Cause Analysis:
+  The generator script iterated over all payload files to construct the manifest body, recording 
+  exactly 20 payload files:
+  * 3 Correction 3 documents
+  * 5 Original Addendum 3 documents
+  * 3 Correction 1 documents
+  * 4 Correction 2 documents
+  * 4 Raw historical source files (`llama-model.cpp`, `llama-hparams.cpp`, `arg.cpp`, `test-chat-template.cpp`)
+  * 1 Provenance README (`SOURCE_EVIDENCE_README.txt`)
+  Total Payload Files = 20.
+  When the manifest (`GITHUB_REVIEW_UPLOAD_MANIFEST.txt`) and its detached checksum 
+  (`GITHUB_REVIEW_UPLOAD_MANIFEST.sha256`) were written and committed to Git, the total file count 
+  in the Git tree became 20 + 2 = 22 files.
+- Reconciliation:
+  Git commit `2f3cbe8c5e8925bbb1df3590529fbb80c88fb879` legitimately contains 22 files (20 payload 
+  files plus 2 manifest/checksum files).
+
+================================================================================
+3. CORRECTION 3 DOCUMENT INVENTORY RECONCILIATION
+================================================================================
+- Discrepancy Observed:
+  In the uploaded document `CORRECTION_3_FINAL_EVIDENCE_STATUS.txt`, Section 3 displayed pre-computed 
+  draft byte sizes and SHA-256 checksums for the three Correction 3 files that differed from the actual 
+  final files committed to disk and Git.
+
+- Exhaustive Re-Measurement & Comparison:
+
+Document Name                                      Local Disk Size  Local Disk SHA-256                                                Git Blob SHA (Commit 2f3cbe8)  Git Blob Size  Git Blob SHA-256                                                  Match Status
+-------------------------------------------------  ---------------  ----------------------------------------------------------------  -----------------------------  -------------  ----------------------------------------------------------------  ------------
+CORRECTION_3_EXECUTIVE_SUMMARY.txt                           6,818  78cdc94699344f5a9019042caf4b0faed2ff4c1b630ea9e9011fd572663b3bac  9c37072b536b224fd68e6cf91679   6,818 B        78cdc94699344f5a9019042caf4b0faed2ff4c1b630ea9e9011fd572663b3bac  BYTE-IDENTICAL
+CORRECTION_3_AUTHORITATIVE_SOURCE_REGISTER.txt              16,308  f5f5b410f010966ca9474df219500c7162bc665d9165e0f34db51567e64413ad  a775c95623e1992ce8c220ec304aa  16,308 B        f5f5b410f010966ca9474df219500c7162bc665d9165e0f34db51567e64413ad  BYTE-IDENTICAL
+CORRECTION_3_FINAL_EVIDENCE_STATUS.txt                       6,367  909912c4c34e8f124bcc39c7f8aba20739a09bf35c71eaeaae0e9f4255605560  049636b14865251ef7e904609ac5   6,367 B        909912c4c34e8f124bcc39c7f8aba20739a09bf35c71eaeaae0e9f4255605560  BYTE-IDENTICAL
+
+- Explanation of Pre-Computed Figures:
+  The generator script generated an initial text draft for `CORRECTION_3_FINAL_EVIDENCE_STATUS.txt` containing 
+  placeholder estimates (5,831 B, 14,354 B, 6,512 B) before the full narrative text of the documents was finalized.
+  The upload manifest `GITHUB_REVIEW_UPLOAD_MANIFEST.txt` correctly recorded the actual final measured figures:
+  * `CORRECTION_3_EXECUTIVE_SUMMARY.txt`: 6,818 bytes (`78cdc946...`)
+  * `CORRECTION_3_AUTHORITATIVE_SOURCE_REGISTER.txt`: 16,308 bytes (`f5f5b410...`)
+  * `CORRECTION_3_FINAL_EVIDENCE_STATUS.txt`: 6,367 bytes (`909912c4...`)
+
+CONCLUSION:
+Local disk copies and remote Git blobs in commit `2f3cbe8c5e8925bbb1df3590529fbb80c88fb879` are 
+100% BYTE-IDENTICAL. The draft placeholder numbers are reconciled and preserved for the historical record.
+================================================================================
+END OF DOCUMENT
+================================================================================

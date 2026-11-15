@@ -1,0 +1,102 @@
+================================================================================
+KAATYA OS 3.0 - CORRECTION 4: MODEL METADATA & ARCHITECTURE EVIDENCE
+================================================================================
+DOCUMENT IDENTIFIER: CORRECTION_4_MODEL_METADATA_AND_ARCHITECTURE_EVIDENCE.txt
+DATE: 2026-11-15
+LOCATION: T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_4_2026_11_15\
+AUTHORIZED PROJECT ROOT: T:\KAATYA\
+TARGET MODEL FILE: T:\KAATYA\Nemotron-3.5-Bolt-E4B-Q4_K_M.gguf
+TARGET FILE SIZE: 6,180,446,208 bytes
+CURRENT PHASE: Stage 2.2 - Independent Verification
+STAGE 3 STATUS: STRICTLY LOCKED (DOCUMENTATION & AUDIT ONLY)
+VERSION 8 STATUS: NOT AUTHORIZED
+================================================================================
+
+1. EXECUTIVE SUMMARY & OBJECTIVE
+--------------------------------------------------------------------------------
+This document establishes the empirical architectural reality of the approved model 
+`Nemotron-3.5-Bolt-E4B-Q4_K_M.gguf` through direct read-only binary parsing of its GGUF 
+header and metadata key-value store.
+
+The critical audit question resolved here is:
+Does the physical model file declare the `gemma4` architecture and the exact layer/KV structure 
+analyzed in the upstream `llama.cpp` historical source code, or does it declare another architecture?
+
+================================================================================
+2. EMPIRICAL GGUF METADATA EXTRACTION RESULTS
+================================================================================
+Extraction Method: Custom read-only Python binary parser reading GGUF v3 magic, tensor header, 
+and metadata key-value pairs directly from local disk (zero inference, zero execution).
+
+A. General Model Identity:
+   - `general.name`: `Nemotron 3.5 Bolt E4B`
+   - `general.architecture`: `gemma4` (Directly stored in GGUF metadata)
+   - `general.file_type`: 15 (Standard GGUF enumeration for Q4_K_M quantization)
+   - `general.quantization_version`: 2
+   - `general.size_label`: `7.5B`
+
+B. Layer & Attention Hyperparameters:
+   - `gemma4.block_count`: 42 (Exactly 42 transformer layers)
+   - `gemma4.context_length`: 65,536 tokens
+   - `gemma4.embedding_length`: 2,560
+   - `gemma4.feed_forward_length`: 10,240
+   - `gemma4.attention.head_count`: 8
+   - `gemma4.attention.head_count_kv`: 2 (Exactly 2 KV heads)
+   - `gemma4.attention.shared_kv_layers`: 18 (Exactly 18 shared KV layers)
+   - `gemma4.attention.sliding_window`: 512 tokens
+   - `gemma4.attention.key_length`: 512 (Global head dimension)
+   - `gemma4.attention.value_length`: 512
+   - `gemma4.attention.key_length_swa`: 256 (SWA head dimension)
+   - `gemma4.attention.value_length_swa`: 256
+   - `gemma4.rope.dimension_count`: 512
+   - `gemma4.rope.dimension_count_swa`: 256
+
+C. Sliding Window Attention Pattern (`gemma4.attention.sliding_window_pattern`):
+   Direct inspection of the 42-element boolean array confirms:
+   - Total Layers: 42 (indices 0 through 41).
+   - Global Attention Layers (Value: `False`, count: 7):
+     `[5, 11, 17, 23, 29, 35, 41]`
+   - Sliding Window Attention (SWA) Layers (Value: `True`, count: 35):
+     `[0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 36, 37, 38, 39, 40]`
+
+D. KV Sharing Boundary & Layer Ownership:
+   - Boundary: `n_layer_kv_from_start = 42 - 18 = 24`.
+   - Independent Layers (0 to 23):
+     * Global Independent Owners: Layers 5, 11, 17, 23 (4 layers).
+     * SWA Independent Owners: 20 layers.
+   - Shared Tail Layers (24 to 41):
+     * Global Shared Layers: Layers 29, 35, 41 (3 layers; reuse Layer 23).
+     * SWA Shared Layers: 15 layers (reuse Layer 22).
+
+================================================================================
+3. CHAT TEMPLATE EMPIRICAL VERIFICATION
+================================================================================
+Metadata Key: `tokenizer.chat_template`
+Stored Length: Exactly 20,159 characters.
+
+Structural Analysis of Extracted Template:
+1. Five Custom Macros:
+   - `format_parameters(properties, required, filter_keys=false)`
+   - `format_function_declaration(tool_data)`
+   - `format_argument(argument, escape_keys=True)`
+   - `strip_thinking(text)`
+   - `format_tool_response_block(tool_name, response)`
+2. Dynamic State Management:
+   - Contains exactly 13 invocations of Jinja `namespace()`.
+3. Special Control Tokens:
+   - Contains `<|channel>` (count = 4) and `<|tool_call>` (count = 1).
+
+Complete raw template text is published verbatim in `NEMOTRON_GGUF_METADATA_READ_ONLY.txt`.
+
+================================================================================
+4. ARCHITECTURAL APPLICABILITY CONCLUSION
+================================================================================
+CRITICAL AUDIT VERDICT ON ARCHITECTURE IDENTITY:
+1. `Nemotron-3.5-Bolt-E4B-Q4_K_M.gguf` explicitly and directly declares `general.architecture = "gemma4"`.
+2. All parameters required for the historical `llama.cpp` Gemma 4 KV-cache sharing logic 
+   (42 layers, 18 shared KV layers, 2 KV heads, 512/256 head dimensions, 512 SWA window) 
+   are directly present in the model's GGUF metadata.
+3. Therefore, the theoretical 42-layer KV memory model is 100% applicable to this physical model file.
+================================================================================
+END OF DOCUMENT
+================================================================================

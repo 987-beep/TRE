@@ -1,0 +1,106 @@
+================================================================================
+KAATYA OS 3.0 - CORRECTION 4: EXECUTIVE SUMMARY & MANDATE
+================================================================================
+DOCUMENT IDENTIFIER: CORRECTION_4_EXECUTIVE_SUMMARY.txt
+DATE: 2026-11-15
+LOCATION: T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_4_2026_11_15\
+AUTHORIZED PROJECT ROOT: T:\KAATYA\
+GITHUB REPOSITORY: 987-beep/TRE
+REVIEW BRANCH: kaatya-addendum3-correction4-review
+CURRENT PHASE: Stage 2.2 - Independent Verification
+STAGE 3 STATUS: STRICTLY LOCKED (DOCUMENTATION & AUDIT ONLY)
+VERSION 8 STATUS: NOT AUTHORIZED
+================================================================================
+
+1. EXECUTIVE PURPOSE & OBJECTIVE
+--------------------------------------------------------------------------------
+This document establishes the executive mandate and technical scope for Correction 4.
+
+Following the transfer of the 22-document review package to GitHub repository `987-beep/TRE` 
+(commit `2f3cbe8c5e8925bbb1df3590529fbb80c88fb879`), an independent external inspection 
+verified that all four historical source files (`llama-model.cpp`, `llama-hparams.cpp`, 
+`arg.cpp`, `test-chat-template.cpp`) match upstream Git blob IDs at commit 
+`b8635075ffe27b135c49afb9a8b5c434bd42c502` (`b8665`), and confirmed the validity of the 
+reconciled source-line register.
+
+However, the external audit noted:
+1. Documentation inaccuracies in describing `tests/test-chat-template.cpp` (actual entry points, 
+   assertion statements, and test case inventory).
+2. An upstream source-code bug in historical `test-chat-template.cpp` regarding `--no-common`.
+3. The necessity of empirical proof establishing the actual architecture and layer structure 
+   declared in `Nemotron-3.5-Bolt-E4B-Q4_K_M.gguf`.
+4. Packaging integrity discrepancies in the Correction 3 manifest and inventory tables.
+
+Correction 4 resolves every finding through empirical read-only verification.
+
+================================================================================
+2. KEY TECHNICAL FINDINGS & BREAKTHROUGHS
+================================================================================
+
+A. Empirical GGUF Model Architecture Proof:
+   Direct read-only binary parsing of `T:\KAATYA\Nemotron-3.5-Bolt-E4B-Q4_K_M.gguf` confirms:
+   - `general.name`: `Nemotron 3.5 Bolt E4B`
+   - `general.architecture`: `gemma4`
+   - `gemma4.block_count`: 42 layers
+   - `gemma4.attention.head_count_kv`: 2 KV heads
+   - `gemma4.attention.shared_kv_layers`: 18 layers (Boundary at Layer 24)
+   - `gemma4.attention.sliding_window`: 512 tokens
+   - `gemma4.attention.key_length`: 512 (Global head dimension)
+   - `gemma4.attention.key_length_swa`: 256 (SWA head dimension)
+   - `gemma4.attention.sliding_window_pattern`: Array of 42 booleans identifying exactly 
+     7 Global layers (5, 11, 17, 23, 29, 35, 41) and 35 SWA layers.
+   CONCLUSION: The Gemma 4 KV-cache sharing memory model in `llama.cpp` applies directly, 
+   identically, and empirically to the approved Nemotron-3.5-Bolt model file.
+
+B. Complete Test Harness Audit & Upstream Bug Discovery:
+   - `main(int argc, char ** argv)` begins at line 112 (not 669).
+   - `main_automated_tests(void)` begins at line 336 (not 669).
+   - Expected-output assertions reside at lines 669 and 701:
+     `assert(output == test_case.expected_output)` and `assert(output == expected_output)`.
+   - Upstream `--no-common` Bug: Line 138 contains `use_common = true;` instead of `false`. 
+     Consequently, `--no-common` fails to disable common mode in this revision, leaving 
+     `format_using_direct_engine()` unreachable from the CLI.
+   - Comprehensive Test Case Inventory: Contains exactly 35 distinct `.name` test cases, 
+     all cataloged in `CORRECTION_4_COMPLETE_TEST_HARNESS_AUDIT.txt`.
+
+C. GitHub Packaging Integrity Reconciliation:
+   - Discrepancy 1: Manifest stated 20 files, but commit contained 22 files. 
+     Resolved: The manifest registered the 20 audit documents, omitting itself and its detached checksum.
+   - Discrepancy 2: Pre-computed draft inventory figures in `CORRECTION_3_FINAL_EVIDENCE_STATUS.txt` 
+     differed from final on-disk/git sizes. Fully reconciled and verified byte-identical across local and remote.
+
+================================================================================
+3. STRUCTURE OF CORRECTION 4 DELIVERABLES
+================================================================================
+Directory: `T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_4_2026_11_15\`
+GitHub Branch: `kaatya-addendum3-correction4-review`
+GitHub Folder: `KAATYA_ADDENDUM_3_CORRECTION_4_REVIEW_2026_11_15/`
+
+Uploaded Files:
+1. `CORRECTION_4_EXECUTIVE_SUMMARY.txt`
+2. `CORRECTION_4_COMPLETE_TEST_HARNESS_AUDIT.txt`
+3. `CORRECTION_4_GITHUB_PACKAGE_INTEGRITY_RECONCILIATION.txt`
+4. `CORRECTION_4_MODEL_METADATA_AND_ARCHITECTURE_EVIDENCE.txt`
+5. `CORRECTION_4_FINAL_EVIDENCE_STATUS.txt`
+6. `NEMOTRON_GGUF_METADATA_READ_ONLY.txt`
+7. `CORRECTION_4_UPLOAD_MANIFEST.txt`
+8. `CORRECTION_4_UPLOAD_MANIFEST.sha256`
+
+================================================================================
+4. MANDATORY PRESERVATION GUARANTEE
+================================================================================
+- Local V1-V7, V7.1, Closure Suite, Addenda 1-3, and Corrections 1-3 remain 100% UNCHANGED.
+- Remote `main` branch and `kaatya-addendum3-correction3-review` remain 100% untouched.
+- Physical asset `HBCD_PE_x64.iso` was NOT accessed, inspected, hashed, mounted, or copied.
+- No model weights, ISOs, or executables were uploaded.
+- Stage 3 remains strictly locked; Version 8 remains not authorized.
+
+================================================================================
+5. AUTHORITATIVE STATUS
+================================================================================
+STAGE 3 STATUS: STRICTLY LOCKED - IMPLEMENTATION NOT AUTHORIZED.
+VERSION 8 STATUS: NOT AUTHORIZED.
+QUALITY GATE VERDICT: PASS WITH CORRECTIONS.
+================================================================================
+END OF DOCUMENT
+================================================================================

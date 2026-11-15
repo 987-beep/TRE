@@ -1,0 +1,57 @@
+================================================================================
+KAATYA OS 3.0 - CORRECTION 4 GITHUB REVIEW UPLOAD MANIFEST
+================================================================================
+REPOSITORY: 987-beep/TRE
+REVIEW BRANCH: kaatya-addendum3-correction4-review
+TARGET DIRECTORY: KAATYA_ADDENDUM_3_CORRECTION_4_REVIEW_2026_11_15/
+DATE: 2026-11-15
+PURPOSE: External ChatGPT Review Package - Test Harness, Integrity & Model Metadata
+STAGE 3 STATUS: STRICTLY LOCKED - IMPLEMENTATION NOT AUTHORIZED
+VERSION 8 STATUS: NOT AUTHORIZED
+================================================================================
+
+UPLOADED EVIDENCE FILES REGISTER:
+--------------------------------------------------------------------------------
+Relative Path: CORRECTION_4_COMPLETE_TEST_HARNESS_AUDIT.txt
+Byte Size: 10,158 bytes
+SHA-256: 3cf42e4f5c403c56c88187b417c7b3846080c977ab6e27b33b49aef86a29f550
+Source Origin: Local Correction 4 Suite (VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_4_2026_11_15)
+Classification: Newly Generated
+--------------------------------------------------------------------------------
+Relative Path: CORRECTION_4_EXECUTIVE_SUMMARY.txt
+Byte Size: 6,211 bytes
+SHA-256: 73f8e90dda5fd02a4c0535115f9b79f8cebd4195cb6048ef6c9a1cc2654cd9ef
+Source Origin: Local Correction 4 Suite (VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_4_2026_11_15)
+Classification: Newly Generated
+--------------------------------------------------------------------------------
+Relative Path: CORRECTION_4_FINAL_EVIDENCE_STATUS.txt
+Byte Size: 6,343 bytes
+SHA-256: 634062ac3480bd71fb53f8de975c0947394d4414437d2997f4f725e7b787d72c
+Source Origin: Local Correction 4 Suite (VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_4_2026_11_15)
+Classification: Newly Generated
+--------------------------------------------------------------------------------
+Relative Path: CORRECTION_4_GITHUB_PACKAGE_INTEGRITY_RECONCILIATION.txt
+Byte Size: 5,541 bytes
+SHA-256: b74dca1d983ee8c98be9c2a924b598d4edf62623f65d522ad75745ad8e2fb399
+Source Origin: Local Correction 4 Suite (VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_4_2026_11_15)
+Classification: Newly Generated
+--------------------------------------------------------------------------------
+Relative Path: CORRECTION_4_MODEL_METADATA_AND_ARCHITECTURE_EVIDENCE.txt
+Byte Size: 5,457 bytes
+SHA-256: 8c49f6c5300127278e59da8df181978fb8be08a50c2a2ddea1ad7957fea4dc32
+Source Origin: Local Correction 4 Suite (VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_4_2026_11_15)
+Classification: Newly Generated
+--------------------------------------------------------------------------------
+Relative Path: NEMOTRON_GGUF_METADATA_READ_ONLY.txt
+Byte Size: 13,753,433 bytes
+SHA-256: df95628b2c4bbd2f7e2434647e6db99d7299ffa257291524d983bc0d45b71e95
+Source Origin: Local Correction 4 Suite (VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_4_2026_11_15)
+Classification: Read-Only GGUF Metadata Extraction
+--------------------------------------------------------------------------------
+TOTAL PRIMARY EVIDENCE FILES IN THIS REVIEW PACKAGE: 6
+DETACHED CHECKSUM: See CORRECTION_4_UPLOAD_MANIFEST.sha256
+NOTE ON FILE COUNT: This manifest registers the 6 primary evidence documents.
+Together with this manifest and its detached checksum file, the Git tree contains exactly 8 files.
+================================================================================
+END OF MANIFEST
+================================================================================

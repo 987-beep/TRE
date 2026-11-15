@@ -1,0 +1,151 @@
+================================================================================
+KAATYA OS 3.0 - CORRECTION 4: COMPLETE TEST HARNESS AUDIT
+================================================================================
+DOCUMENT IDENTIFIER: CORRECTION_4_COMPLETE_TEST_HARNESS_AUDIT.txt
+DATE: 2026-11-15
+LOCATION: T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_4_2026_11_15\
+AUTHORIZED PROJECT ROOT: T:\KAATYA\
+SOURCE FILE AUDITED: tests/test-chat-template.cpp
+HISTORICAL COMMIT: b8635075ffe27b135c49afb9a8b5c434bd42c502 (tag b8665)
+GIT BLOB SHA: bf45d737c83207f2e92978a7554d81ff97f1c342
+CURRENT PHASE: Stage 2.2 - Independent Verification
+STAGE 3 STATUS: STRICTLY LOCKED (DOCUMENTATION & AUDIT ONLY)
+================================================================================
+
+1. EXACT FUNCTION LOCATIONS & LINE-COUNT CONVENTION
+--------------------------------------------------------------------------------
+- Actual Source File Length: Exactly 712 newline-terminated lines.
+- Line Count Convention Clarification:
+  Standard Unix tools (`wc -l`) and POSIX parsers count 712 lines because the file ends with a trailing newline.
+  Tools that split on literal `
+` without stripping the terminal token (such as Python `split(b"\n")`) 
+  produce an empty 713th element. The authoritative line count is 712 lines.
+
+- Exact Function Entry Points:
+  * Line 112: `int main(int argc, char ** argv) {` (Normal CLI entry point)
+  * Line 336: `int main_automated_tests(void) {` (Automated test suite entry point)
+  * Line 284: `if (use_common) {` in helper `run_single()`
+  * Line 297: `format_using_common(...)`
+  * Line 303: `format_using_direct_engine(...)`
+  * Line 669: First expected-output assertion (`assert(output == test_case.expected_output);`)
+  * Line 701: Second expected-output assertion (`assert(output == expected_output);`)
+  * Line 705: Failure assertion on exception (`assert(false);`)
+
+================================================================================
+2. THE `--no-common` ARGUMENT BUG & CONTROL-FLOW ANALYSIS
+================================================================================
+Inspection of the CLI argument parser in `main()` reveals an upstream implementation bug:
+
+- Line 120: Default initialization:
+  `bool use_common = true;`
+- Lines 137-138: Handling of `--no-common`:
+  ```cpp
+  137: } else if (args[i] == "--no-common") {
+  138:     use_common = true;
+  ```
+  ANALYSIS OF BUG:
+  The CLI option `--no-common` assigns `true` to `use_common` rather than `false`.
+  The help text at lines 34-36 states:
+  `--no-common: use the jinja template directly, without the common chat template path`
+  However, because line 138 assigns `use_common = true;`, `use_common` remains `true` regardless of whether 
+  `--no-common` is passed on the command line.
+
+- Control-Flow in `run_single()` (lines 284-306):
+  ```cpp
+  284: if (use_common) {
+  ...
+  297:     auto output = format_using_common(contents, bos_token, eos_token, messages, tools);
+  ...
+  302: } else {
+  303:     output_parts = format_using_direct_engine(contents, input);
+  ...
+  306: }
+  ```
+  REACHABILITY CONCLUSION:
+  Because `use_common` cannot be set to `false` via CLI arguments, the direct engine branch at line 302 
+  is UNREACHABLE through CLI invocation in this revision. `format_using_direct_engine()` is never called 
+  via `--no-common`. This is documented as a historical upstream bug in commit `b8635075ff`.
+
+================================================================================
+3. EXECUTION PATHWAYS & ASSERTION MECHANICS
+================================================================================
+The test file contains two primary execution paths:
+
+1. CLI Single-Template Execution (`main()`, lines 112-334):
+   Invoked when positional arguments (a template path) are provided. Reads a custom `.jinja` file and 
+   JSON conversation payload, rendering output to stdout or file via `run_single()`.
+
+2. Automated Test Suite (`main_automated_tests()`, lines 336-711):
+   Invoked when no positional template path is passed. Executes 35 hardcoded test cases against predefined 
+   conversations (`conversation` at lines 339-347, `conversation_with_tools` at lines 349-357).
+   - High-Level Library Path (lines 665-670): Calls `llama_chat_apply_template()` and checks:
+     Line 669: `assert(output == test_case.expected_output);`
+   - Direct Jinja Template Engine Path (lines 675-703): Directly parses `test_case.template_str` with 
+     `minja::Parser` and checks:
+     Line 701: `assert(output == expected_output);`
+
+ASSERTION SUMMARY:
+The assertions are NOT generic syntax checks. They strictly verify that the rendered output text, 
+formatting, special tokens, and indentation match expected reference strings byte-for-byte.
+
+================================================================================
+4. COMPLETE 35-ENTRY TEST CASE INVENTORY (IN SOURCE ORDER)
+================================================================================
+
+Below is the exhaustive catalog of all 35 `TestCase` entries in `main_automated_tests()`:
+
+Index  Line   Exact Test Case Name / Identifier                                     Variant / Notes
+-----  -----  --------------------------------------------------------------------  --------------------------------------------------
+ 1     361    `teknium/OpenHermes-2.5-Mistral-7B`                                   Standard conversation
+ 2     369    `mistralai/Mistral-7B-Instruct-v0.2 (NOTE: Old pre-v1...)`            Old pre-v1 without system prompt
+ 3     377    `TheBloke/FusionNet_34Bx2_MoE-AWQ`                                    Standard conversation
+ 4     385    `bofenghuang/vigogne-2-70b-chat`                                      Standard conversation
+ 5     393    `mlabonne/AlphaMonarch-7B`                                            Standard conversation
+ 6     401    `google/gemma-7b-it`                                                  Standard conversation
+ 7     407    `OrionStarAI/Orion-14B-Chat`                                          Standard conversation
+ 8     415    `openchat/openchat-3.5-0106`                                          Standard conversation
+ 9     423    `deepseek-ai/deepseek-coder-33b-instruct`                             Standard conversation
+ 10    429    `eachadea/vicuna-13b-1.1`                                             Standard conversation
+ 11    438    `Orca-Vicuna`                                                         Standard conversation
+ 12    447    `CohereForAI/c4ai-command-r-plus`                                     Standard conversation
+ 13    453    `Llama-3`                                                             Standard conversation
+ 14    459    `Phi-3-mini`                                                          Standard conversation
+ 15    465    `Phi-3-small`                                                         Standard conversation
+ 16    471    `Phi-3-medium`                                                        Standard conversation
+ 17    477    `Phi-3-vision`                                                        Standard conversation
+ 18    485    `ChatGLM3`                                                            Standard conversation
+ 19    491    `ChatGLM4`                                                            Standard conversation
+ 20    499    `GLMEdge`                                                             Standard conversation
+ 21    507    `MiniCPM-3B-OpenHermes-2.5-v2-GGUF`                                   Standard conversation
+ 22    515    `DeepSeek-V2`                                                         Standard conversation
+ 23    523    `ibm-granite/granite-3.0-8b-instruct`                                 Standard conversation
+ 24    529    `mistralai/Mistral-7B-Instruct-v0.2 (mistralai 'v1'...)`              v1 template with system prompt
+ 25    537    `Mistral-Large-Instruct-2407 (mistralai 'v3' template...)`            v3 template with system prompt
+ 26    545    `Mistral-Nemo-Instruct-2407 (mistralai 'v3-tekken'...)`               v3-tekken template
+ 27    553    `mistralai/Mistral-Large-Instruct-2411 (mistralai 'v7'...)`           v7 template
+ 28    561    `ai-sage/GigaChat-20B-A3B-instruct`                                   Standard conversation
+ 29    570    `Infinigence/Megrez-3B-Instruct`                                      Standard conversation
+ 30    578    `phi-4`                                                               Standard conversation
+ 31    586    `yandex/YandexGPT-5-Lite-8B-instruct`                                 Tool call variant (with macro __render_tools)
+ 32    594    `inclusionAI/Ling-lite`                                               Standard conversation
+ 33    602    `ByteDance-Seed/Seed-OSS-36B-Instruct`                                Standard conversation
+ 34    610    `ibm-granite/granite-3.x (tool call)`                                 Tool call variant
+ 35    620    `ibm-granite/granite-4.0 (tool call)`                                 Tool call variant (added in PR #20804)
+
+================================================================================
+5. EMPIRICAL NEMOTRON 3.5 BOLT COVERAGE & QUALIFICATION
+================================================================================
+- Exhaustive string search of all 712 lines in `test-chat-template.cpp`:
+  * `Nemotron`: Exactly 0 matches.
+  * `Bolt`: Exactly 0 matches.
+  * `<|channel>`: Exactly 0 matches.
+- Technical Finding:
+  `tests/test-chat-template.cpp` contains ZERO test cases for `Nemotron-3.5-Bolt`.
+- Scope Qualification:
+  The absence of Nemotron test cases in this historical test harness proves only that `llama.cpp` 
+  automated unit tests did not explicitly evaluate Nemotron. It does NOT imply or prove what is 
+  contained within the model's actual GGUF template (which was separately extracted and verified 
+  in `CORRECTION_4_MODEL_METADATA_AND_ARCHITECTURE_EVIDENCE.txt`).
+================================================================================
+END OF DOCUMENT
+================================================================================
