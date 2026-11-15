@@ -1,0 +1,54 @@
+================================================================================
+KAATYA OS 3.0 — CORRECTION 8: EVIDENCE CLASSIFICATION RECONCILIATION
+FORMAL TAXONOMY & AUDIT BOUNDARIES ACROSS ALL STAGE 2.2 CLAIMS
+================================================================================
+PROJECT: KAATYA OS 3.0
+DATE: 15 November 2026
+PHASE: Stage 2.2 — Independent Verification
+TASK: Correction 8
+
+--------------------------------------------------------------------------------
+1. FORMAL TAXONOMY OF TECHNICAL CLAIMS
+--------------------------------------------------------------------------------
+To prevent conflation between newly performed verifications and inherited technical
+baseline data, all claims are rigorously categorized:
+
+TIER 1: INDEPENDENTLY VERIFIED IN CORRECTION 7 & CORRECTION 8
+- Correction 6 Package Integrity: All 7 files verified byte-identical across local, repo, and Git blobs.
+- Correction 7 Package Integrity: All 8 files verified byte-identical across local, repo, and Git blobs.
+- Correction 5 Physical File SHA-256: Recomputed as Value B (8ec4ef2...) from disk and remote Git blob 1149467d64.
+- Detached Manifest Authenticity: CORRECTION_6_UPLOAD_MANIFEST.sha256 and CORRECTION_7_UPLOAD_MANIFEST.sha256 verified.
+- Git Commit Lineage: Commit SHAs, parent pointers, and branch immutability verified via `git ls-remote`.
+- Search History Transparency: Chronological separation of completed vs cancelled search operations.
+
+TIER 2: INHERITED FROM PRIOR VERIFIED EVIDENCE (CORRECTIONS 4 & 5)
+- GGUF File Architecture: Declared architecture string is "gemma4" (verified in Correction 4).
+- Layer Quantities: Total 42 layers (indices 0 to 41) (verified in Correction 4).
+- Attention Partitioning: 7 Global layers ([5, 11, 17, 23, 29, 35, 41]) and 35 SWA layers (verified in Correction 4).
+- Sliding Window Size: SWA window is 512 tokens (verified in Correction 4).
+- Tail KV Cache Sharing: 18 tail layers share KV cache from preceding layers (verified in Correction 4).
+- Head Dimensions: Global = 512, SWA = 256; KV heads = 2 (verified in Correction 4).
+- Theoretical F16 KV Cache Formula: KV(L) = 16,384 * L + 20,971,520 bytes (qualified in Correction 5).
+NOTE: The GGUF model file was NOT re-opened or re-parsed during Correction 7 or Correction 8.
+
+TIER 3: PREVIOUSLY REPORTED HISTORICAL FACTS
+- Nemotron-3.5-Bolt Public Release: October 23, 2026 (corrected from August 20, 2026).
+- llama.cpp Upstream Integration: PR #21309 and PR #21326 merged prior to tag b8665.
+- Test Harness Entry Points: Entry points at lines 112 and 336 in test-chat-template.cpp (712 lines).
+
+TIER 4: UNVERIFIED CLAIMS / HYPOTHESES
+- Specific mechanism of Value A introduction (Classified: PLAUSIBLE ROOT-CAUSE EXPLANATION — NOT FULLY PROVEN BY RETAINED GENERATION EVIDENCE).
+
+TIER 5: FAILED CHECKS
+- Zero failed checks in Correction 8.
+
+TIER 6: DEFERRED TESTS (STRICTLY PROHIBITED IN STAGE 2.2)
+- Live model execution or inference with Nemotron GGUF.
+- Real-time buffer allocation profiling under llama.cpp runtime.
+- Multi-token throughput and latency benchmarking.
+- Operating system ISO building or virtual machine execution.
+
+TIER 7: UNAUTHORIZED OPERATIONS
+- Initiation of Stage 3 implementation.
+- Creation of Version 8.
+================================================================================

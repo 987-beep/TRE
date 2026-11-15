@@ -1,0 +1,70 @@
+================================================================================
+KAATYA OS 3.0 — CORRECTION 8: SEARCH COVERAGE & PROVENANCE CLARIFICATION
+CHRONOLOGICAL AUDIT OF EXECUTED SEARCHES & REFINED PROVENANCE STATUS
+================================================================================
+PROJECT: KAATYA OS 3.0
+DATE: 15 November 2026
+PHASE: Stage 2.2 — Independent Verification
+TASK: Correction 8
+
+--------------------------------------------------------------------------------
+1. DETAILED LOG OF EXECUTED SEARCH OPERATIONS
+--------------------------------------------------------------------------------
+During the forensic audit of the origin of Value A (`4d738ae...`), the following
+operations were executed in the workspace:
+
+OPERATION 1: INVENTORY OF SCRIPTS AND LOGS (COMPLETED)
+- Command: Python script scanning `T:\KAATYA` for files matching `correction_5`, `c5`, `.py`, `.log`, `.sh`.
+- Result: 56 matching files located (chiefly in `KAATYA_TEMP`, `KAATYA_AUDIT`, and `TRE_REPO`).
+- Status: COMPLETED.
+
+OPERATION 2: KAATYA_TEMP STRING SEARCH (COMPLETED)
+- Command: Python script reading all text/script files in `T:\KAATYA\KAATYA_TEMP` searching for `4d738ae` and `correction_5`.
+- Result: ZERO occurrences. No Correction 5 generator scripts exist in `KAATYA_TEMP`.
+- Status: COMPLETED.
+
+OPERATION 3: UNCONSTRAINED WORKSPACE SCAN (CANCELLED)
+- Command: Python script attempting unconstrained `os.walk` over all files in `T:\KAATYA` searching for `4d738ae`.
+- Interruption: Command encountered multi-gigabyte ISO images and archive files, causing excessive runtime.
+- Background Task ID: `5cd82cad-6817-40cc-ae72-16157ded993e/task-1440`.
+- Task Action: Explicitly terminated via `manage_task(Action='kill')`.
+- Status: CANCELLED (Aborted before completion).
+
+OPERATION 4: TARGETED WORKSPACE SCAN (COMPLETED)
+- Command: Python script scanning `T:\KAATYA` for `4d738ae` with explicit filtering:
+  * Excluded directories: `.git`
+  * Excluded extensions: `.iso`, `.rar`, `.gguf`, `.bin`, `.zip`, `.7z`, `.exe`, `.dll`, `.tar`, `.gz`
+  * Excluded file sizes: Files > 2,000,000 bytes
+- Task ID: `5cd82cad-6817-40cc-ae72-16157ded993e/task-1446`.
+- Execution Result: Completed with exit code 0.
+- Findings: Exactly six files contained the string `4d738ae`:
+  1. `T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_5_2026_11_15\CORRECTION_5_FINAL_EVIDENCE_STATUS.txt`
+  2. `T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_6_2026_11_15\CORRECTION_6_CHECKSUM_RECONCILIATION.txt`
+  3. `T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_6_2026_11_15\CORRECTION_6_EXECUTIVE_SUMMARY.txt`
+  4. `T:\KAATYA\TRE_REPO\KAATYA_ADDENDUM_3_CORRECTION_5_REVIEW_2026_11_15\CORRECTION_5_FINAL_EVIDENCE_STATUS.txt`
+  5. `T:\KAATYA\TRE_REPO\KAATYA_ADDENDUM_3_CORRECTION_6_REVIEW_2026_11_15\CORRECTION_6_CHECKSUM_RECONCILIATION.txt`
+  6. `T:\KAATYA\TRE_REPO\KAATYA_ADDENDUM_3_CORRECTION_6_REVIEW_2026_11_15\CORRECTION_6_EXECUTIVE_SUMMARY.txt`
+- Status: COMPLETED.
+
+--------------------------------------------------------------------------------
+2. AREAS NOT SEARCHED OR NOT VERIFIABLE
+--------------------------------------------------------------------------------
+To ensure complete transparency, the following areas were NOT searched:
+1. Internal contents of unmounted disk images (`.iso`) and compressed archives (`.rar`, `.zip`, `.7z`).
+2. Packed Git objects inside `.git/objects/pack/`.
+3. Binary executables and large data files (> 2 MB).
+4. Memory or swap allocations from previous runtime sessions.
+
+--------------------------------------------------------------------------------
+3. FORMAL PROVENANCE RULING
+--------------------------------------------------------------------------------
+Because no intermediate generation script, authoring template, or session console log
+was retained in `T:\KAATYA\`, it is impossible to establish with empirical certainty
+whether Value A was inserted manually as a placeholder, generated during an earlier draft
+iteration, or introduced by an unrecorded script pass.
+
+Therefore, the formal classification established in Correction 7 is reaffirmed without change:
+**PLAUSIBLE ROOT-CAUSE EXPLANATION — NOT FULLY PROVEN BY RETAINED GENERATION EVIDENCE.**
+
+This classification must NOT be upgraded to a proven fact.
+================================================================================

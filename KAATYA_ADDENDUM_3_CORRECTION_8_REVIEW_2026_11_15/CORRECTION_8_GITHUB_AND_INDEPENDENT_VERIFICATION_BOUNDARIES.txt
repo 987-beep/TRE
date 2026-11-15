@@ -1,0 +1,63 @@
+================================================================================
+KAATYA OS 3.0 — CORRECTION 8: GITHUB & INDEPENDENT VERIFICATION BOUNDARIES
+DEMARCATION OF LOCAL AGENT OPERATIONS VS REMOTE EXTERNAL AUDITS
+================================================================================
+PROJECT: KAATYA OS 3.0
+DATE: 15 November 2026
+PHASE: Stage 2.2 — Independent Verification
+TASK: Correction 8
+REPOSITORY: https://github.com/987-beep/TRE
+
+--------------------------------------------------------------------------------
+1. FOUR-TIER VERIFICATION ARCHITECTURE
+--------------------------------------------------------------------------------
+To ensure complete transparency and prevent misunderstanding regarding who verified
+what and where, the verification methodology is structured into four distinct tiers:
+
+TIER A: LOCAL DISK CHECKS (PERFORMED BY ANTI-GRAVITY AGENT)
+- Operational Environment: Host Windows filesystem under `T:\KAATYA\`.
+- Operations Performed:
+  * Binary file reads via standard Python I/O (`open(..., 'rb')`).
+  * Direct filesystem SHA-256 digest computation.
+  * Local directory creation and file serialization.
+- Scope Limitation: Accessible ONLY to the local Anti-Gravity agent. Not accessible
+  to external reviewers or external models.
+
+TIER B: REPOSITORY WORKING-TREE CHECKS (PERFORMED BY ANTI-GRAVITY AGENT)
+- Operational Environment: Local git working copy at `T:\KAATYA\TRE_REPO\`.
+- Operations Performed:
+  * File staging, branch checkouts, and commit creation.
+  * Git working-tree byte comparisons against local audit directories.
+  * Local configuration enforcement (`core.autocrlf false`).
+- Scope Limitation: Local working-copy state on developer machine.
+
+TIER C: GIT OBJECT & COMMIT CHECKS (PERFORMED BY ANTI-GRAVITY AGENT VIA GIT CLI)
+- Operational Environment: Git object database and GitHub remote tracking.
+- Operations Performed:
+  * Reading raw blob bytes directly via `git cat-file -p <blob_id>`.
+  * Verifying commit parent hashes via `git rev-parse HEAD~1`.
+  * Verifying remote branch existence via `git ls-remote origin`.
+- Scope Limitation: Intermediate verification bridge confirming local-to-remote parity.
+
+TIER D: REMOTE EXTERNAL AUDIT (PERFORMED BY EXTERNAL REVIEWERS / CHATGPT)
+- Operational Environment: Public GitHub repository (`987-beep/TRE`).
+- Operations Performed:
+  * Reading committed files directly from GitHub web URLs and GitHub raw endpoints.
+  * Reviewing commit history, parent hashes, and diffs via GitHub repository interfaces.
+  * Recomputing cryptographic digests directly from GitHub HTTP response bytes.
+- Scope Clarification:
+  External reviewers (including ChatGPT) do NOT access `T:\KAATYA\` directly. All external
+  verification is grounded strictly in publicly visible, immutable GitHub assets.
+
+--------------------------------------------------------------------------------
+2. COMMIT LINEAGE & IMMUTABILITY RECONFIRMATION
+--------------------------------------------------------------------------------
+Remote Commit Chain (100% Linear, Zero Force-Pushes):
+  main (b14cf27)
+    └── kaatya-addendum3-correction3-review (2f3cbe8)
+          └── kaatya-addendum3-correction4-review (ecfd144)
+                └── kaatya-addendum3-correction5-review (df207c0)
+                      └── kaatya-addendum3-correction6-review (b9aa538)
+                            └── kaatya-addendum3-correction7-review (e88396c)
+                                  └── kaatya-addendum3-correction8-review (<HEAD>)
+================================================================================

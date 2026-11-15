@@ -1,0 +1,84 @@
+================================================================================
+KAATYA OS 3.0 — CORRECTION 8: EXECUTIVE SUMMARY
+CORRECTION 7 REPORTING ACCURACY, EVIDENCE CLASSIFICATION & STAGE 2.2 CLOSURE REVIEW
+================================================================================
+PROJECT: KAATYA OS 3.0
+DATE: 15 November 2026
+PHASE: Stage 2.2 — Independent Verification
+TASK: Correction 8
+AUTHORIZED LOCAL ROOT: T:\KAATYA\
+GITHUB REPOSITORY: 987-beep/TRE
+BASE REVIEW BRANCH: kaatya-addendum3-correction7-review
+BASE COMMIT VERIFIED: e88396ca30fac1659bf907ad7a327272a8630212
+TARGET REVIEW BRANCH: kaatya-addendum3-correction8-review
+TARGET LOCAL DIRECTORY: T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_8_2026_11_15\
+REMOTE UPLOAD DIRECTORY: KAATYA_ADDENDUM_3_CORRECTION_8_REVIEW_2026_11_15/
+
+--------------------------------------------------------------------------------
+1. PURPOSE & AUDIT MANDATE
+--------------------------------------------------------------------------------
+Correction 8 conducts a rigorous reporting-accuracy audit of Correction 7, rectifies
+overstated search and verification claims, formalizes evidence inheritance
+boundaries, separates local audit mechanisms from remote external verification,
+and delivers an exhaustive, evidence-backed Stage 2.2 Closure Assessment.
+
+Strict governance protocols remain in effect:
+- Work is restricted entirely to T:\KAATYA\.
+- No historical versions (V1-V7, V7.1, Closure, Addenda 1-3, Corrections 1-7) were altered.
+- GitHub main and historical review branches (corrections 3-7) remain untouched.
+- No model inference, tokenization, compilation, benchmarking, or RAM profiling was run.
+- Stage 3 remains strictly locked; Version 8 is not authorized.
+
+--------------------------------------------------------------------------------
+2. KEY RECONCILIATIONS AND CORRECTIONS TO CORRECTION 7
+--------------------------------------------------------------------------------
+1. Search Coverage Transparency:
+   Correction 7 broadly stated that "all non-binary text and script files across T:\KAATYA\"
+   were scanned for Value A ("4d738ae"). In reality, the initial unconstrained search was
+   terminated (cancelled) when it encountered large disk images/archives. The completed
+   investigation consisted of:
+   - A targeted scan of files <= 2MB skipping binary extensions (.iso, .rar, .gguf, .git).
+   - An exhaustive scan of all text and script files in T:\KAATYA\KAATYA_TEMP\.
+   - A git commit and blob inspection.
+   Correction 8 explicitly details completed vs cancelled searches and uninspected areas.
+
+2. Evidence Inheritance vs New Verification:
+   Correction 7 listed the Nemotron GGUF architecture ("gemma4", 42 layers, 18 shared KV
+   tail layers) and theoretical KV formula under "Independently Verified Facts".
+   In Correction 7, the GGUF model was NOT re-opened or re-parsed. These findings were
+   empirically established in Corrections 4 and 5. Correction 8 properly reclassifies
+   them as "Inherited Facts from Prior Verified Evidence".
+
+3. Verification Boundary Separation:
+   Correction 8 clearly demarcates:
+   - Level A: Local Windows disk I/O performed by Anti-Gravity agent.
+   - Level B: Working tree inspections performed by Anti-Gravity agent.
+   - Level C: Git commit/blob inspections performed by Anti-Gravity agent via Git tooling.
+   - Level D: Remote external audit performed by external reviewers/ChatGPT strictly
+     via GitHub URLs, APIs, and raw blobs, with zero direct access to T:\KAATYA\.
+
+4. Retained Root-Cause Provenance Classification:
+   Because no generator code or execution trace for Correction 5 was retained in T:\KAATYA\,
+   the cause of Value A remains classified as:
+   PLAUSIBLE ROOT-CAUSE EXPLANATION — NOT FULLY PROVEN BY RETAINED GENERATION EVIDENCE.
+
+--------------------------------------------------------------------------------
+3. CORRECTION 7 ARTIFACT STATUS
+--------------------------------------------------------------------------------
+The Correction 7 package on GitHub (commit e88396ca30fac1659bf907ad7a327272a8630212)
+was independently audited:
+- Branch `kaatya-addendum3-correction7-review` is verified at HEAD `e88396c`.
+- Parent commit is verified as `b9aa538` (Correction 6).
+- All 8 files in `KAATYA_ADDENDUM_3_CORRECTION_7_REVIEW_2026_11_15/` match local disk bytes 100%.
+- Detached manifest signature is cryptographically valid.
+
+--------------------------------------------------------------------------------
+4. STAGE 2.2 CLOSURE DECISION SUMMARY
+--------------------------------------------------------------------------------
+- Documentation & Evidence Verification Phase: COMPLETE & CLOSED (PASS).
+- Historical Records & Repository Genealogy: FULLY PRESERVED (PASS).
+- Stage 3 Implementation: STRICTLY LOCKED — NOT AUTHORIZED.
+- Version 8: NOT AUTHORIZED.
+Documentation-phase closure verifies historical facts and technical formulas but does NOT
+constitute authorization to commence implementation or runtime testing.
+================================================================================

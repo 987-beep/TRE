@@ -1,0 +1,67 @@
+================================================================================
+KAATYA OS 3.0 — CORRECTION 8: CORRECTION 7 REPORTING ACCURACY AUDIT
+RECTIFICATION OF VERIFICATION SCOPE, SEARCH COVERAGE & INHERITED METRICS
+================================================================================
+PROJECT: KAATYA OS 3.0
+DATE: 15 November 2026
+PHASE: Stage 2.2 — Independent Verification
+TASK: Correction 8
+AUDIT SUBJECT: Correction 7 Deliverables & Execution Records
+
+--------------------------------------------------------------------------------
+1. AUDIT OF CORRECTION 7 REPORTING ACCURACY
+--------------------------------------------------------------------------------
+An item-by-item review of the documentation delivered in Correction 7 identified three
+reporting inaccuracies requiring formal correction:
+
+INACCURACY 1: UNQUALIFIED SEARCH SCOPE IN PROVENANCE AUDIT
+- Correction 7 Report Text:
+  "Workspace File-System Scan: All non-binary text and script files across T:\KAATYA\ ...
+   were searched for occurrences of the string '4d738ae'."
+- Forensic Reality from Execution Logs:
+  The first search command attempted an unconstrained `os.walk(r'T:\KAATYA')` without
+  skipping archive extensions or setting file-size thresholds. This command hung on multi-GB
+  ISO images and archives, backgrounded as task-1440, and was explicitly terminated via
+  `manage_task(Action='kill')`.
+  The actual completed search was a subsequent targeted script (task-1446) that explicitly
+  skipped `.git`, `.iso`, `.rar`, `.gguf`, `.bin`, `.zip`, `.7z`, and files > 2 MB.
+- Rectification:
+  Correction 8 corrects the record: The broad search was aborted; only the targeted
+  sub-2MB non-archive search completed.
+
+INACCURACY 2: OVERSTATED INDEPENDENT VERIFICATION OF GGUF METADATA
+- Correction 7 Report Text:
+  Listed under "CATEGORY 1: INDEPENDENTLY VERIFIED FACTS":
+  "Model Topology (GGUF): Nemotron-3.5-Bolt-E4B-Q4_K_M.gguf declared as 'gemma4',
+   42 layers, 7 global layers, 35 SWA layers (window 512), 18 shared tail layers."
+  "Theoretical F16 KV Cache Payload Formula: KV(L) = 16,384 * L + 20,971,520 bytes."
+- Forensic Reality from Execution Logs:
+  During Correction 7, the GGUF model binary was NOT opened, inspected, or parsed via
+  any GGUF reader or Python script.
+  These topological facts and formulas were empirically verified during Correction 4
+  and Correction 5. They were inherited by Correction 7, not independently re-verified.
+- Rectification:
+  Correction 8 reclassifies these items as "Inherited Facts from Prior Verified Evidence".
+
+INACCURACY 3: AMBIGUITY BETWEEN LOCAL AGENT CHECKS AND REMOTE EXTERNAL AUDITS
+- Correction 7 Report Text:
+  Stated that files were "independently read back and verified across local disk and GitHub."
+  Without clarification, an external reviewer might interpret this as claiming external
+  parties accessed the local Windows drive directly.
+- Forensic Reality:
+  Anti-Gravity performed local disk I/O, local git working-tree checks, and remote Git
+  blob comparisons. External reviewers (e.g., ChatGPT) verified files exclusively via
+  remote GitHub blobs and URLs.
+- Rectification:
+  Correction 8 formalizes the exact four-tier verification hierarchy.
+
+--------------------------------------------------------------------------------
+2. CORRECTION 7 INTEGRITY RECONFIRMATION
+--------------------------------------------------------------------------------
+Despite the reporting inaccuracies identified and corrected above, the cryptographic
+integrity of the Correction 7 artifacts is 100% verified:
+- Every one of the 8 Correction 7 files exists on disk, in the repository working tree,
+  and in remote Git commit e88396ca30fac1659bf907ad7a327272a8630212.
+- All 8 files are 100% byte-for-byte identical across local and remote.
+- Detached manifest signature is mathematically valid.
+================================================================================
