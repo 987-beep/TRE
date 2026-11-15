@@ -1,0 +1,42 @@
+================================================================================
+KAATYA OS 3.0 — CORRECTION 10: VERIFICATION BOUNDARIES
+CANONICAL SPECIFICATION OF OPERATIONAL TIERS AND REVIEW BOUNDARIES
+================================================================================
+PROJECT: KAATYA OS 3.0
+DATE: 15 November 2026
+PHASE: Stage 2.2 — Independent Verification
+TASK: Correction 10
+REPOSITORY: https://github.com/987-beep/TRE
+
+--------------------------------------------------------------------------------
+1. CANONICAL FOUR-TIER VERIFICATION ARCHITECTURE
+--------------------------------------------------------------------------------
+
+TIER A: LOCAL DISK CHECKS (ANTI-GRAVITY AGENT)
+- Execution Environment: Local Windows workstation under `T:\KAATYA\KAATYA_AUDIT\...`.
+- Verified Operations: Direct binary reads (`open(..., 'rb')`), standard Python `hashlib.sha256`
+  computations, and local file generation.
+- Boundary: Completely inaccessible to external reviewers or remote models.
+
+TIER B: REPOSITORY WORKING-TREE CHECKS (ANTI-GRAVITY AGENT)
+- Execution Environment: Local Git checkout at `T:\KAATYA\TRE_REPO\...`.
+- Verified Operations: Staging files (`git add`), verifying line-ending stability
+  (`core.autocrlf false`), and checking local working-copy parity against local audit folders.
+- Boundary: Local staging workspace on developer machine.
+
+TIER C: GIT OBJECT DATABASE & REMOTE TRACKING (ANTI-GRAVITY VIA GIT CLI)
+- Execution Environment: Git CLI plumbing and porcelain commands.
+- Verified Operations: Extracting raw blob bytes directly via `git cat-file -p <blob_id>`,
+  validating commit parent lineage via `git rev-parse HEAD~1`, and verifying remote refs
+  via `git ls-remote origin`.
+- Boundary: Confirms byte-for-byte fidelity between local files and Git object storage.
+
+TIER D: INDEPENDENT EXTERNAL REMOTE AUDIT (EXTERNAL REVIEWERS / CHATGPT)
+- Execution Environment: Public GitHub repository (`987-beep/TRE`).
+- Verified Operations: Inspecting remote branch existence, verifying commit SHAs and parent
+  pointers on GitHub, inspecting commit diffs and directory trees, and reading remote file
+  text contents.
+- Strict Demarcation: External reviewers (including ChatGPT) do NOT have direct access to
+  `T:\KAATYA\` and did NOT perform local filesystem hashing. Local-to-remote parity is
+  established by comparing the local agent's binary readings with the remote Git blobs.
+================================================================================
