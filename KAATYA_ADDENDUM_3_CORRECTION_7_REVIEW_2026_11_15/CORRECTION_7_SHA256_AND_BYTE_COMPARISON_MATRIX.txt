@@ -1,0 +1,48 @@
+================================================================================
+KAATYA OS 3.0 — CORRECTION 7: SHA-256 AND BYTE COMPARISON MATRIX
+CROSS-VERSION CRYPTOGRAPHIC EVIDENCE RECONCILIATION (CORRECTIONS 5, 6, 7)
+================================================================================
+PROJECT: KAATYA OS 3.0
+DATE: 15 November 2026
+PHASE: Stage 2.2 — Independent Verification
+TASK: Correction 7
+
+--------------------------------------------------------------------------------
+1. CORRECTION 5 RECOMPUTED ARTIFACT MATRIX (COMMIT: df207c06b7ac85c01ff729e29cf954e5b0e78e69)
+--------------------------------------------------------------------------------
+Filename                                                    Size (B)   Git Blob ID   Recomputed SHA-256 Checksum                                       Status
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+CORRECTION_5_EXECUTIVE_SUMMARY.txt                             4,810   81bcf1910b    d23a76b8a0bd48ddfa4bdae222e2dafd6193fa803cafb7a7065cf5f1b94dae5d  VERIFIED
+CORRECTION_5_COMPLETE_LOCAL_REMOTE_INVENTORY_RECONCILIATION.txt6,101   48c9423188    6e1289469dea392cc67d824193a50f2051660349c21fd885bda12a9a200e2ce1  VERIFIED
+CORRECTION_5_KV_CACHE_ASSUMPTIONS_AND_LIMITATIONS.txt          6,233   9cfb14d68d    243313794dc03ca1bd3740510bbf2dea09e688eaf4fa11c6409390a34cd17dc6  VERIFIED
+CORRECTION_5_FINAL_EVIDENCE_STATUS.txt                         6,134   1149467d64    8ec4ef2c905e11aac64b6f3bb85d196d02c44d634e25dea96c7c66033b960c8e  VERIFIED [Value B]
+CORRECTION_5_UPLOAD_MANIFEST.txt                               2,934   1989c34051    7c4591a8553a525b97ad890ff74de625738b86b031294c85e125816460e9ec19  VERIFIED
+CORRECTION_5_UPLOAD_MANIFEST.sha256                               99   8861fb8ee1    8f5f3a8fdbf9385a79fb6f3c678d9f2b7f654c147f583fc353dfbc31a955ed17  VERIFIED
+
+--------------------------------------------------------------------------------
+2. CORRECTION 6 RECOMPUTED ARTIFACT MATRIX (COMMIT: b9aa5386ca89a0a4ea692da361a10bab73746c29)
+--------------------------------------------------------------------------------
+Filename                                                    Size (B)   Git Blob ID   Recomputed SHA-256 Checksum                                       Status
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+CORRECTION_6_EXECUTIVE_SUMMARY.txt                             8,158   031507447b    e6bcfe6e496c789205b578ec18b6bb99bb6d2db430fb392817b869c5056d9914  VERIFIED
+CORRECTION_6_COMPLETE_CORRECTION_5_INTEGRITY_AUDIT.txt         8,869   ea9dc6fe5f    784697d6fd030c99743e46b078915cec0491a7d0776d68523b3fdaf58e13230a  VERIFIED
+CORRECTION_6_CHECKSUM_RECONCILIATION.txt                       6,024   7476113fea    94fecf5f44f3165decc3e5d8b81c04fd1fb2f0e80c351c88e6eff585548a144f  VERIFIED
+CORRECTION_6_GITHUB_BRANCH_AND_HISTORY_VERIFICATION.txt        4,501   fde0ec3b9a    17d4818959303b452085e6964068bf4202d0d8ad75ee96fae3f8efe59caffdec  VERIFIED
+CORRECTION_6_FINAL_EVIDENCE_STATUS.txt                         6,942   7c0221dfd9    c1ea7e963bb4ad186c6190ce3719bf1af9386a30389307eba4e21efe765fcf7a  VERIFIED
+CORRECTION_6_UPLOAD_MANIFEST.txt                               2,431   f7bd4ad370    614a6d9f3f128762dac1d52c7ea6f0db979f4b1060105f72356c688d46d275ee  VERIFIED
+CORRECTION_6_UPLOAD_MANIFEST.sha256                               99   5a244fcc55    6565339e0637a35515788f469f8c0efb219c73f236c2f4a6975b809d4d14da4f  VERIFIED
+
+--------------------------------------------------------------------------------
+3. CORRECTION 7 BASELINE RECOMPUTED ARTIFACT MATRIX
+--------------------------------------------------------------------------------
+Filename                                                    Size (B)   Cryptographic Accounting & Verification Method
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+CORRECTION_7_EXECUTIVE_SUMMARY.txt                          [MEASURED] Recorded in CORRECTION_7_UPLOAD_MANIFEST.txt
+CORRECTION_7_COMPLETE_CORRECTION_6_INTEGRITY_AUDIT.txt      [MEASURED] Recorded in CORRECTION_7_UPLOAD_MANIFEST.txt
+CORRECTION_7_SHA256_AND_BYTE_COMPARISON_MATRIX.txt          [MEASURED] Recorded in CORRECTION_7_UPLOAD_MANIFEST.txt
+CORRECTION_7_CORRECTION_5_ROOT_CAUSE_PROVENANCE_AUDIT.txt   [MEASURED] Recorded in CORRECTION_7_UPLOAD_MANIFEST.txt
+CORRECTION_7_GITHUB_BRANCH_AND_HISTORY_VERIFICATION.txt     [MEASURED] Recorded in CORRECTION_7_UPLOAD_MANIFEST.txt
+CORRECTION_7_FINAL_EVIDENCE_STATUS.txt                      [MEASURED] [EXTERNAL MANIFEST ACCOUNTING - See Upload Manifest]
+CORRECTION_7_UPLOAD_MANIFEST.txt                            [MEASURED] Authenticated via CORRECTION_7_UPLOAD_MANIFEST.sha256
+CORRECTION_7_UPLOAD_MANIFEST.sha256                         [MEASURED] Detached Cryptographic Signature
+================================================================================

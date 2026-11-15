@@ -1,0 +1,97 @@
+================================================================================
+KAATYA OS 3.0 — CORRECTION 7: FINAL EVIDENCE STATUS
+MULTI-DIMENSIONAL AUDIT TABLE, CATEGORIZATION & QUALITY GATE VERDICT
+================================================================================
+PROJECT: KAATYA OS 3.0
+DATE: 15 November 2026
+PHASE: Stage 2.2 — Independent Verification
+TASK: Correction 7
+AUTHORIZED LOCAL ROOT: T:\KAATYA\
+GITHUB REPOSITORY: 987-beep/TRE
+BRANCH: kaatya-addendum3-correction7-review
+
+--------------------------------------------------------------------------------
+1. MULTI-DIMENSIONAL EVIDENCE CATEGORIZATION
+--------------------------------------------------------------------------------
+
+CATEGORY 1: INDEPENDENTLY VERIFIED FACTS
+- Correction 6 Package Integrity: All 7 files match recomputed bytes and SHA-256 digests.
+- Correction 6 Commit HEAD: b9aa5386ca89a0a4ea692da361a10bab73746c29 verified on remote.
+- Correction 6 Parent Commit: df207c06b7ac85c01ff729e29cf954e5b0e78e69 verified.
+- Correction 5 Physical SHA-256 Checksum: Value B (8ec4ef2c905e11aac64b6f3bb85d196d02c44d634e25dea96c7c66033b960c8e)
+  reconfirmed across local disk, repo working tree, and Git blob 1149467d649372a4ba3c174764dce8ae0ab50edb.
+- Detached Signature Verification: CORRECTION_6_UPLOAD_MANIFEST.sha256 exactly authenticates
+  CORRECTION_6_UPLOAD_MANIFEST.txt.
+- Model Topology (GGUF): Nemotron-3.5-Bolt-E4B-Q4_K_M.gguf declared as "gemma4", 42 layers,
+  7 global layers, 35 SWA layers (window 512), 18 shared tail layers.
+- Theoretical F16 KV Cache Payload Formula: KV(L) = 16,384 * L + 20,971,520 bytes.
+
+CATEGORY 2: PREVIOUSLY REPORTED FACTS
+- Public Release Date: Nemotron-3.5-Bolt released October 23, 2026.
+- Upstream llama.cpp PRs: PR #21309 and PR #21326 integrated prior to commit b8635075ffe27b135c49afb9a8b5c434bd42c502 (tag b8665).
+- Test Harness Entry Points: main() entry points at lines 112 and 336 in test-chat-template.cpp (712 lines).
+
+CATEGORY 3: UNVERIFIED CLAIMS
+- Claim that Value A was definitively produced by a specific generation script: UNVERIFIED
+  (Classified as PLAUSIBLE ROOT-CAUSE EXPLANATION — NOT FULLY PROVEN BY RETAINED GENERATION EVIDENCE).
+
+CATEGORY 4: FAILED CHECKS
+- Zero failed integrity checks in Correction 7.
+  (All recomputed hashes, blob IDs, and manifests match 100%).
+
+CATEGORY 5: CORRECTED CLAIMS
+- Technical Explanation of Self-Referential Hashing: Refined from absolute impossibility
+  to cryptographic digest staleness upon serialization and pre-image computational bounds.
+- Manifest Scope: Explicitly clarified that detached checksum authenticates the manifest,
+  which in turn authenticates the package reports.
+
+CATEGORY 6: DEFERRED TESTS
+- Real-time buffer allocation profiling under live llama.cpp runtime.
+- Multi-token throughput and inference latency measurements.
+- Full context scaling execution (8K, 32K, 64K, 128K) on target hardware.
+
+CATEGORY 7: UNAUTHORIZED OPERATIONS
+- Loading or execution of Nemotron GGUF model.
+- Host ISO building, VM generation, or OS modification.
+- Advancing to Stage 3 or creating Version 8.
+
+--------------------------------------------------------------------------------
+2. CORRECTION 7 EVIDENCE DELIVERABLES INVENTORY
+--------------------------------------------------------------------------------
+The complete 8-file package is cataloged below. Per External Manifest Accounting,
+this document defers its own cryptographic hash to CORRECTION_7_UPLOAD_MANIFEST.txt:
+
+Filename                                                    Byte Size  Cryptographic Verification Status
+---------------------------------------------------------------------------------------------------------------------------------
+CORRECTION_7_EXECUTIVE_SUMMARY.txt                          [MEASURED] Recorded in CORRECTION_7_UPLOAD_MANIFEST.txt
+CORRECTION_7_COMPLETE_CORRECTION_6_INTEGRITY_AUDIT.txt      [MEASURED] Recorded in CORRECTION_7_UPLOAD_MANIFEST.txt
+CORRECTION_7_SHA256_AND_BYTE_COMPARISON_MATRIX.txt          [MEASURED] Recorded in CORRECTION_7_UPLOAD_MANIFEST.txt
+CORRECTION_7_CORRECTION_5_ROOT_CAUSE_PROVENANCE_AUDIT.txt   [MEASURED] Recorded in CORRECTION_7_UPLOAD_MANIFEST.txt
+CORRECTION_7_GITHUB_BRANCH_AND_HISTORY_VERIFICATION.txt     [MEASURED] Recorded in CORRECTION_7_UPLOAD_MANIFEST.txt
+CORRECTION_7_FINAL_EVIDENCE_STATUS.txt                      [MEASURED] [EXTERNAL MANIFEST ACCOUNTING - See Upload Manifest]
+CORRECTION_7_UPLOAD_MANIFEST.txt                            [MEASURED] Authenticated via CORRECTION_7_UPLOAD_MANIFEST.sha256
+CORRECTION_7_UPLOAD_MANIFEST.sha256                         [MEASURED] Detached Cryptographic Signature
+---------------------------------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+3. QUALITY GATE VERDICT & STAGE BOUNDARY CONTROL
+--------------------------------------------------------------------------------
+Quality Gate Evaluation:
+- Correction 6 Full Package Integrity: PASS (All 7 files byte-identical across local, repo, and remote blobs)
+- Correction 5 Value B Reconfirmation: PASS (8ec4ef2... confirmed as physical truth)
+- Value A Provenance Audit: PASS (Empirical search complete; formal classification assigned)
+- Technical Explanation Refinement: PASS (Digest staleness and pre-image bounds documented)
+- GitHub Lineage and Immutability: PASS (Parent commit b9aa538 verified; historical branches preserved)
+- Stage Boundary Control: PASS (Zero runtime inference, zero Stage 3 activities)
+
+FINAL QUALITY GATE VERDICT: PASS (Stage 2.2 Documentation & Verification Phase Complete)
+
+--------------------------------------------------------------------------------
+4. MANDATORY GOVERNANCE LOCK
+--------------------------------------------------------------------------------
+STAGE 3: STRICTLY LOCKED — IMPLEMENTATION NOT AUTHORIZED.
+VERSION 8: NOT AUTHORIZED.
+MODEL INFERENCE: NOT PERFORMED.
+PHYSICAL RAM PROFILING: NOT PERFORMED.
+RUNTIME COMPATIBILITY: NOT TESTED.
+================================================================================
