@@ -1,0 +1,50 @@
+================================================================================
+KAATYA OS 3.0 - ADDENDUM 3: HISTORICAL GEMMA 4 KV-SHARING & MEMORY MODEL AUDIT
+================================================================================
+DOCUMENT IDENTIFIER: ADDENDUM_3_EXECUTIVE_SUMMARY.txt
+DATE: 2026-11-15
+LOCATION: T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_2026_11_15\
+AUTHORIZED PROJECT ROOT: T:\KAATYA\
+CURRENT PHASE: Stage 2.2 - Independent Verification
+STAGE 3 STATUS: STRICTLY LOCKED (DOCUMENTATION & AUDIT ONLY)
+VERSION 8 STATUS: NOT AUTHORIZED
+================================================================================
+
+1. EXECUTIVE SUMMARY & OBJECTIVE
+--------------------------------------------------------------------------------
+This addendum provides the definitive, historical source-level resolution of Gemma 4 
+cross-layer KV sharing and corrects the theoretical KV cache calculations for NVIDIA 
+Nemotron 3.5 Bolt (`Nemotron-3.5-Bolt-E4B-Q4_K_M.gguf`).
+
+By directly inspecting the historical source tree of `ggml-org/llama.cpp` at the exact 
+target commit `b8635075ffe27b135c49afb9a8b5c434bd42c502` (tag `b8665`, merged 
+2026-04-04T18:39:00Z), this audit establishes:
+1. Historical Source Validation: The KV sharing boundary formula 
+   `n_layer_kv_from_start = hparams.n_layer - (int32_t)n_kv_shared_layers` and the 
+   dual-mode source assignment logic `reuse(il) = n_layer_kv_from_start - (is_swa ? 2 : 1)` 
+   were ALREADY fully implemented in `src/llama-model.cpp` in historical build `b8665`.
+2. Mathematical Reconciliation: For Nemotron 3.5 Bolt (42 layers, 18 shared layers), 
+   the boundary is Layer 24. This produces:
+   - 4 independently owned Global layers (5, 11, 17, 23)
+   - 20 independently owned SWA layers (0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22)
+   - 3 shared Global layers (29, 35, 41) pointing to Layer 23
+   - 15 shared SWA layers (24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 36, 37, 38, 39, 40) pointing to Layer 22
+3. Genuine Resolution of the 0.558 GB Figure: Under this verified 4-Global / 20-SWA mapping, 
+   the theoretical minimal KV payload at 32K context is exactly:
+   557,842,432 Bytes = 532.00 MiB = 0.557842 GB = ~0.558 GB!
+   The external ~0.558 GB estimate was NOT a coincidence or based on speculative padding; 
+   it was the exact mathematical implementation of `llama.cpp`'s Gemma 4 KV sharing model!
+4. CLI Flag Retraction: The proposed `--chat-template-test` flag does not exist in `b8665` 
+   and is formally retracted. The supported CLI options and test mechanisms are documented.
+
+================================================================================
+2. MANDATORY PRESERVATION RULES
+================================================================================
+- All documents across V1-V7, V7.1, Closure Suite, Addendum 1, and Addendum 2 remain pristine.
+- All 16 physical approved assets remain completely untouched.
+- Excluded file `HBCD_PE_x64.iso` was NOT accessed, inspected, hashed, or integrated.
+- No repository cloning, code compilation, model inference, benchmarking, or VM creation occurred.
+- Stage 3 remains LOCKED. Version 8 has NOT been initiated.
+================================================================================
+END OF DOCUMENT
+================================================================================

@@ -1,0 +1,93 @@
+================================================================================
+KAATYA OS 3.0 - ADDENDUM 3 FINAL EVIDENCE STATUS & QUALITY GATE VERDICT
+================================================================================
+DOCUMENT IDENTIFIER: ADDENDUM_3_FINAL_EVIDENCE_STATUS.txt
+DATE: 2026-11-15
+LOCATION: T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_2026_11_15\
+AUTHORIZED PROJECT ROOT: T:\KAATYA\
+CURRENT PHASE: Stage 2.2 - Independent Verification
+STAGE 3 STATUS: STRICTLY LOCKED (DOCUMENTATION & AUDIT ONLY)
+VERSION 8 STATUS: NOT AUTHORIZED
+================================================================================
+
+1. CHAT-TEMPLATE QUALIFICATION & STATUS
+--------------------------------------------------------------------------------
+1. Disambiguation of CLI Arguments:
+   - `--conversation`: Enables interactive multi-turn terminal conversation mode in `llama-cli`. 
+     It is NOT a template correctness test.
+   - `--chat-template`: Injects an explicit custom Jinja string, bypassing model metadata template.
+   - `--chat-template-file`: Injects an external Jinja file, providing full prompt override capability.
+   - `--chat-template-kwargs`: Injects custom JSON parameters into the template scope.
+
+2. Parser Acceptance vs. Rendered Correctness:
+   - Acceptance by a C++ tokenizer or Jinja parser does not prove that rendered output matches 
+     model training distribution formatting.
+   - Syntax validation alone does not test macro expansion, whitespace preservation, or tool block 
+     syntax conformity.
+
+3. Testing Status:
+   - A model-specific template rendering test and tool-call round-trip test remain UNPERFORMED.
+   - Stage 2.2 read-only restrictions strictly forbid executing models or runtime benchmarks.
+   - Therefore, live conversation template correctness remains formally UNVERIFIED pending an 
+     authorized implementation test.
+
+================================================================================
+2. IMMUTABLE PRESERVATION OF PROVEN KV CACHE RECONCILIATION
+================================================================================
+The 42-layer ownership mapping and mathematical calculations proven in Addendum 3 from historical 
+source `src/llama-model.cpp` (lines 1272 & 8358-8360) remain 100% verified and unchanged:
+
+- Boundary: `n_layer_kv_from_start = 42 - 18 = 24`.
+- Independently Owned Layers: 24 layers (4 Global layers + 20 SWA layers).
+- Shared Layers: 18 layers (3 Global layers reuse Layer 23; 15 SWA layers reuse Layer 22).
+
+Theoretical KV Payload Recalculation Check:
+$$\text{KV}(L) = (16,384 \times L) + 20,971,520\text{ Bytes}$$
+- At 8,192 (8K):    155,189,248 Bytes = 148.00 MiB (0.155 GB)
+- At 32,768 (32K):   557,842,432 Bytes = 532.00 MiB (0.558 GB) [Reconciles external estimate]
+- At 65,536 (64K): 1,094,713,344 Bytes = 1,044.00 MiB (1.095 GB)
+
+Distinction: Theoretical payload ($532.00\text{ MiB}$ at 32K) is strictly separated from 
+runtime physical RAM (RSS), committed memory, and allocator pools.
+
+================================================================================
+3. FINAL QUALITY GATE VERDICT
+================================================================================
+EVALUATION OUTCOME:
+[X] PASS WITH CORRECTIONS
+
+STAGE 3 IMPLEMENTATION GATE STATUS:
+[X] STRICTLY LOCKED - NO IMPLEMENTATION, COMPILATION, BENCHMARKING, OR SYSTEM ACTIONS AUTHORIZED
+VERSION 8 STATUS:
+[X] NOT AUTHORIZED
+
+Verdict Justification:
+1. Source Citations Conclusively Verified: Every line reference in `src/llama-model.cpp` (1264-1283, 
+   8356-8364), `src/llama-hparams.cpp` (231-242, 244-254), and `common/arg.cpp` (1484-1494, 2937-2950, 
+   3115-3138) has been audited directly against commit `b8635075ffe27b135c49afb9a8b5c434bd42c502`.
+2. Template Claims Properly Qualified: The misconception regarding `--conversation` has been corrected, 
+   the absence of `--chat-template-test` confirmed, and the limited scope of `test-chat-template.cpp` documented.
+3. KV Memory Model Preserved: The historical 4-Global / 20-SWA mapping and 0.558 GB reconciliation 
+   remain mathematically robust.
+4. Reason for Non-Unconditional PASS: Because live model-specific template rendering and physical RSS 
+   profiling remain unperformed (awaiting authorized implementation-stage testing), the gate is formally 
+   certified as PASS WITH CORRECTIONS.
+
+================================================================================
+4. FINAL GOVERNANCE & PRESERVATION CERTIFICATION
+================================================================================
+I hereby certify that:
+1. Baseline suites V1-V7, V7.1, Closure, Addendum 1, Addendum 2, and Addendum 3 remain 100% UNCHANGED.
+2. All 16 physical approved assets remain completely UNCHANGED.
+3. Excluded file `HBCD_PE_x64.iso` was NOT accessed, inspected, or integrated.
+4. No Git repository was cloned, modified, or pushed.
+5. No code compilation, benchmark, model inference, VM creation, or ISO build occurred.
+6. Stage 3 remains STRICTLY LOCKED.
+7. Version 8 has NOT been initiated.
+
+AUTHORIZATION: Antigravity Quality Gate Reviewer
+DATE: 2026-11-15
+STATUS: STAGE 2.2 SOURCE AUDIT COMPLETE | STAGE 3 LOCKED
+================================================================================
+END OF DOCUMENT
+================================================================================

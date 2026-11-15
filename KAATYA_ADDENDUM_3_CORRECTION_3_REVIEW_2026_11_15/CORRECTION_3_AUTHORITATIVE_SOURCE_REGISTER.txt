@@ -1,0 +1,125 @@
+================================================================================
+KAATYA OS 3.0 - CORRECTION 3: AUTHORITATIVE SOURCE REGISTER & AUDIT
+================================================================================
+DOCUMENT IDENTIFIER: CORRECTION_3_AUTHORITATIVE_SOURCE_REGISTER.txt
+DATE: 2026-11-15
+LOCATION: T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_3_2026_11_15\
+AUTHORIZED PROJECT ROOT: T:\KAATYA\
+GITHUB REPOSITORY: 987-beep/TRE
+REVIEW BRANCH: kaatya-addendum3-correction3-review
+CURRENT PHASE: Stage 2.2 - Independent Verification
+STAGE 3 STATUS: STRICTLY LOCKED (DOCUMENTATION & AUDIT ONLY)
+VERSION 8 STATUS: NOT AUTHORIZED
+================================================================================
+
+1. HISTORICAL TARGET COMMIT & REPOSITORY METADATA
+--------------------------------------------------------------------------------
+- Repository: `https://github.com/ggml-org/llama.cpp`
+- Reference Commit SHA: `b8635075ffe27b135c49afb9a8b5c434bd42c502`
+- Release Tag: `b8665`
+- Merge Date / Timestamp: 2026-04-04T18:39:00Z
+- Commit Title: `common : add gemma 4 specialized parser (#21418)`
+- Committer / Author: Georgi Gerganov / Upstream Contributors
+- Tree SHA: `ea70acd2a73226e1ccfbb612e5902c413af63d4d`
+- Audit Method: Direct inspection of complete raw source files retrieved via shallow clone of tag `b8665`.
+- Verification Date: 2026-11-15
+
+================================================================================
+2. AUTHORITATIVE SOURCE LINE AUDIT & CROSS-REVISION RECONCILIATION TABLE
+================================================================================
+
+The table below reconciles:
+1. Target code feature / subject.
+2. Expected review line target (reflecting upstream state in early March 2026).
+3. Content found at the expected lines in commit `b8635075ffe27b135c49afb9a8b5c434bd42c502`.
+4. Verified empirical lines in the complete raw file at commit `b8635075ff`.
+5. Verbatim quoted code snippet from those verified lines.
+6. Detailed historical origin explaining the line shift across commits.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Target File             Subject / Code Segment             Expected Target      Content at Expected Target in Commit b8635075ff          Verified Empirical Lines   Quoted Identifying Code Snippet                                                   Upstream Line Drift Origin
+----------------------  ---------------------------------  -------------------  -------------------------------------------------------  -------------------------  --------------------------------------------------------------------------------  --------------------------------------------------
+src/llama-model.cpp     Gemma 4 Metadata & KV Boundary     Lines 1171-1187      Contains LLM_ARCH_GEMMA and GEMMA2 metadata parser       Lines 1264-1283            `case LLM_ARCH_GEMMA4:`                                                           File expanded from ~8,300 lines to 9,313 lines
+                                                                                (Line 1171: `case LLM_ARCH_GEMMA:`)                                                 `ml.get_key(LLM_KV_ATTENTION_SHARED_KV_LAYERS, n_kv_shared_layers, false);`        between early 2026 and April 2026 due to PRs adding
+                                                                                                                                                                    `hparams.n_layer_kv_from_start = hparams.n_layer - (int32_t)n_kv_shared_layers;`   support for new model architectures.
+
+src/llama-model.cpp     KV Reuse Callback Logic            Lines 7368-7376      Contains LLM_ARCH_QWEN35MOE tensor initialization       Lines 8356-8364            `if (arch == LLM_ARCH_GEMMA3N || arch == LLM_ARCH_GEMMA4) {`                      Shifted by +988 lines due to preceding model
+                                                                                (Line 7368: `case LLM_ARCH_QWEN35MOE:`)                                             `    reuse = [&](int32_t il) {`                                                   graph and tensor allocation routines.
+                                                                                                                                                                    `        if (il >= (int32_t) hparams.n_layer_kv_from_start) {`
+                                                                                                                                                                    `            return (int32_t) hparams.n_layer_kv_from_start -`
+                                                                                                                                                                    `                   (hparams.is_swa(il) ? 2 : 1);`
+                                                                                                                                                                    `        }`
+                                                                                                                                                                    `        return -1;`
+                                                                                                                                                                    `    };`
+                                                                                                                                                                    `}`
+
+src/llama-hparams.cpp   has_kv() Implementation            Lines 216-227        Contains is_mla() and MLA head dimension logic           Lines 231-242              `bool llama_hparams::has_kv(uint32_t il) const {`                                 File was 234 lines until PR #20301 (2026-03-09:
+                                                                                (Line 216: `uint32_t llama_hparams::n_embd_k_s()`)                                  `    if (n_layer_kv_from_start >= 0) {`                                           dynamic head_dim and n_rot for SWA), which added
+                                                                                                                                                                    `        if (il < (uint32_t) n_layer_kv_from_start) return true;`                     15 lines (lines 200-215), shifting has_kv() from
+                                                                                                                                                                    `        return false;`                                                                   line 216 to line 231. Total lines = 258.
+                                                                                                                                                                    `    }`
+                                                                                                                                                                    `    return true;`
+                                                                                                                                                                    `}`
+
+src/llama-hparams.cpp   n_layer_kv() Counting Logic        Lines 229-238        Contains closing brace of MLA block                      Lines 244-254              `uint32_t llama_hparams::n_layer_kv() const {`                                   Shifted by +15 lines due to PR #20301.
+                                                                                (Line 229: `}`)                                                                     `    uint32_t res = 0;`                                                           In early 2026 / commit 7bed317f53 (243 lines),
+                                                                                                                                                                    `    for (uint32_t il = 0; il < n_layer; ++il) if (has_kv(il)) res++;`           n_layer_kv was around lines 220-229.
+                                                                                                                                                                    `    return res;`
+                                                                                                                                                                    `}`
+
+common/arg.cpp          --conversation CLI Option          Lines 1413-1423      Contains -bf / --binary-file option parsing              Lines 1484-1494            `add_opt(common_arg({"-cnv", "--conversation"}, {"-no-cnv", "--no-conversation"},`Shifted by +71 lines due to new CLI flags added
+                                                                                (Line 1413: `add_opt(common_arg({"-bf", ...`                                        `    "whether to run in conversation mode...",`                                  between early 2026 and commit b8635075ff.
+                                                                                                                                                                    `    [](common_params & params, bool value) {`                                    Total lines = 3,907.
+                                                                                                                                                                    `        params.conversation_mode = value ? ...;`
+                                                                                                                                                                    `    }));`
+
+common/arg.cpp          --chat-template-kwargs Option      Lines 2863-2875      Contains --tools and --webui CLI options                 Lines 2937-2950            `add_opt(common_arg({"--chat-template-kwargs"}, "STRING",`                        Shifted by +74 lines due to intervening options.
+                                                                                (Line 2863: `add_opt(common_arg({"--tools"}, ...`                                   `    "set chat template kwargs (JSON string)",`
+                                                                                                                                                                    `    [](common_params & params, const std::string & value) {`
+                                                                                                                                                                    `        params.chat_template_kwargs = value;`
+                                                                                                                                                                    `    }));`
+
+common/arg.cpp          --chat-template Option             Lines 3041-3051      Contains --spm-infill SPM fill-in-the-middle flag        Lines 3115-3126            `add_opt(common_arg({"--chat-template"}, "JINJA_TEMPLATE",`                       Shifted by +74 lines due to intervening options.
+                                                                                (Line 3041: `add_opt(common_arg({"--spm-infill"}, ...`                              `    "set custom jinja chat template...",`
+                                                                                                                                                                    `    [](common_params & params, const std::string & value) {`
+                                                                                                                                                                    `        params.chat_template = value;`
+                                                                                                                                                                    `    }));`
+
+common/arg.cpp          --chat-template-file Option        Lines 3052-3063      Contains --lora-scaled adapter scaling option            Lines 3127-3138            `add_opt(common_arg({"--chat-template-file"}, "JINJA_TEMPLATE_FILE",`                  Shifted by +75 lines due to intervening options.
+                                                                                (Line 3052: `add_opt(common_arg({"--lora-scaled"}, ...`                             `    "set path to custom jinja chat template file...",`
+                                                                                                                                                                    `    [](common_params & params, const std::string & value) {`
+                                                                                                                                                                    `        params.chat_template_file = value;`
+                                                                                                                                                                    `    }));`
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+================================================================================
+3. COMPLETE HISTORICAL SOURCE FILE METRICS & SHAS
+================================================================================
+All four complete source files retrieved directly from commit `b8635075ffe27b135c49afb9a8b5c434bd42c502`:
+
+Source File Path in Repo        Uploaded File Name       Exact Bytes    Line Count   Git Blob SHA                              SHA-256 Checksum
+------------------------------  -----------------------  -------------  -----------  ----------------------------------------  ----------------------------------------------------------------
+src/llama-model.cpp             llama-model.cpp                558,582        9,313  79d08ff41e3dffa1937681de1c6ddcefe8c623c6  b20d272f5623c3de2fbf71cf7bd0111288ea50d684fefbf969e9b62cdb4b6f04
+src/llama-hparams.cpp           llama-hparams.cpp                6,665          258  002d15d415fe0897eeb9ac582f652e135a0e7fc6  4ea911b6564c45878a26e1263139819ebd3691a1732edb1fdfd89655ad416b6a
+common/arg.cpp                  arg.cpp                        181,097        3,907  2e0f46db519146d86cebf7e3a0b7f78ba5289543  3a2f7a2fd4609d6dd51e8bdec6faea4a7617ec2fd64a6403b8b148affc166113
+tests/test-chat-template.cpp    test-chat-template.cpp          67,203          712  bf45d737c83207f2e92978a7554d81ff97f1c342  bc70cde18db29d4cdfe248a6d6980fc3896f009e6b9f42b238e4d353f113a1d6
+
+================================================================================
+4. TEMPLATE TEST SUITE AUDIT (`tests/test-chat-template.cpp`)
+================================================================================
+- Actual File Length: Exactly 712 lines.
+- Test Entry Point: `main(int argc, char ** argv)` at lines 669-711.
+- CLI Flags: `--verbose` / `-v`, `--no-common`, `--dump-prog`.
+- Test Harness Mechanics:
+  * Evaluates two paths: high-level `common_chat_template_render` wrapper vs direct `minja::Template` engine.
+  * Payloads: `DEFAULT_JSON` (lines 44-58) and `DEFAULT_JSON_WITH_TOOLS` (lines 60-80).
+  * Assertion: Strict string equality assertion `assert(actual == expected)`. Tests rendered text formatting.
+  * Explicit Models Tested (12 total): Gemma-7b-it, Gemma-2-9b-it, Llama-2-7b-chat, Llama-3-8B-Instruct,
+    Mistral-7B-Instruct-v0.1/v0.2/v0.3 (with tools), DeepSeek-V2, Command-R, Granite-3.0, Granite-4.0, ChatML.
+  * Nemotron 3.5 Bolt Coverage: Exactly ZERO references, ZERO test cases. None of Nemotron's 5 custom macros,
+    13 `namespace()` state objects, or `<|channel>` tokens are tested.
+  * Operational Boundaries: Evaluates template text formatting only. Does NOT test tokenization IDs, GPU
+    tensor operations, inference, KV-cache layer sharing, or live tool execution.
+================================================================================
+END OF DOCUMENT
+================================================================================

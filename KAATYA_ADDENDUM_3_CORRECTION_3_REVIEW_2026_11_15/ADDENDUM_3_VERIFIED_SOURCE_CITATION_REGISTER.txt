@@ -1,0 +1,90 @@
+================================================================================
+KAATYA OS 3.0 - ADDENDUM 3 VERIFIED SOURCE CITATION REGISTER
+================================================================================
+DOCUMENT IDENTIFIER: ADDENDUM_3_VERIFIED_SOURCE_CITATION_REGISTER.txt
+DATE: 2026-11-15
+LOCATION: T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_2026_11_15\
+AUTHORIZED PROJECT ROOT: T:\KAATYA\
+CURRENT PHASE: Stage 2.2 - Independent Verification
+STAGE 3 STATUS: STRICTLY LOCKED (DOCUMENTATION & AUDIT ONLY)
+================================================================================
+
+1. HISTORICAL TARGET COMMIT & REPOSITORY METADATA
+--------------------------------------------------------------------------------
+- Repository: `https://github.com/ggml-org/llama.cpp`
+- Commit SHA: `b8635075ffe27b135c49afb9a8b5c434bd42c502`
+- Release Tag: `b8665`
+- Merge Date: 2026-04-04T18:39:00Z
+- Subject: `common : add gemma 4 specialized parser (#21418)`
+- Method: Direct read-only inspection via public GitHub API endpoints.
+
+================================================================================
+2. COMPREHENSIVE SOURCE LINE AUDIT & CORRECTION TABLE
+================================================================================
+
+Target File             Topic / Code Segment               Cited / Draft Lines   Verified Actual Lines   Exact Source Content at Commit b8635075ffe27b135c49afb9a8b5c434bd42c502                          Audit Status
+----------------------  ---------------------------------  --------------------  ----------------------  ----------------------------------------------------------------------------------------------  ------------
+src/llama-model.cpp     Gemma 4 Metadata & KV Boundary     1171-1187             Lines 1264-1283         Lines 1171-1187 contain LLM_ARCH_GEMMA & GEMMA2. Gemma 4 is at lines 1264-1283:               VERIFIED &
+                                                                                                         `case LLM_ARCH_GEMMA4:`                                                                        CORRECTED
+                                                                                                         `ml.get_key(LLM_KV_ATTENTION_SHARED_KV_LAYERS, n_kv_shared_layers, false);`
+                                                                                                         Line 1272: `hparams.n_layer_kv_from_start = hparams.n_layer - (int32_t)n_kv_shared_layers;`
+src/llama-model.cpp     KV Reuse Callback Logic            7368-7376             Lines 8356-8364         Lines 7368-7376 contain LLM_ARCH_QWEN35MOE. Reuse callback is at lines 8356-8364:              VERIFIED &
+                                                                                                         `if (arch == LLM_ARCH_GEMMA3N || arch == LLM_ARCH_GEMMA4) {`                                   CORRECTED
+                                                                                                         `    reuse = [&](int32_t il) {`
+                                                                                                         `        if (il >= (int32_t) hparams.n_layer_kv_from_start) {`
+                                                                                                         `            return (int32_t) hparams.n_layer_kv_from_start - (hparams.is_swa(il) ? 2 : 1);`
+                                                                                                         `        }`
+                                                                                                         `        return -1;`
+                                                                                                         `    };`
+                                                                                                         `}`
+src/llama-hparams.cpp   has_kv() Implementation            216-227               Lines 231-242           Lines 216-227 contain is_mla() and MLA head dimension functions. has_kv() is at lines 231-242: VERIFIED &
+                                                                                                         `bool llama_hparams::has_kv(uint32_t il) const {`                                               CORRECTED
+                                                                                                         `    if (n_layer_kv_from_start >= 0) {`
+                                                                                                         `        if (il < (uint32_t) n_layer_kv_from_start) return true;`
+                                                                                                         `        return false;`
+                                                                                                         `    }`
+                                                                                                         `    return true;`
+                                                                                                         `}`
+src/llama-hparams.cpp   n_layer_kv() Counting Logic        229-238               Lines 244-254           Line 229 is closing brace of MLA. n_layer_kv() is at lines 244-254:                             VERIFIED &
+                                                                                                         `uint32_t llama_hparams::n_layer_kv() const {`                                                  CORRECTED
+                                                                                                         `    uint32_t res = 0;`
+                                                                                                         `    for (uint32_t il = 0; il < n_layer; ++il) if (has_kv(il)) res++;`
+                                                                                                         `    return res;`
+                                                                                                         `}`
+common/arg.cpp          --conversation Flag                1413-1423             Lines 1484-1494         Lines 1413-1423 contain -bf/--binary-file. Conversation mode is at lines 1484-1494:             VERIFIED &
+                                                                                                         `add_opt(common_arg({"-cnv", "--conversation"}, {"-no-cnv", "--no-conversation"},`            CORRECTED
+                                                                                                         `    "whether to run in conversation mode...",`
+                                                                                                         `    [](common_params & params, bool value) {`
+                                                                                                         `        params.conversation_mode = value ? COMMON_CONVERSATION_MODE_ENABLED : ...;`
+                                                                                                         `    }));`
+common/arg.cpp          --chat-template-kwargs Option      2863-2875             Lines 2937-2950         Lines 2863-2875 contain --tools and --webui. chat-template-kwargs is at lines 2937-2950:        VERIFIED &
+                                                                                                         `add_opt(common_arg({"--chat-template-kwargs"}, "STRING",`                                     CORRECTED
+                                                                                                         `    "sets additional params for the json template parser...",`
+                                                                                                         `    [](common_params & params, const std::string & value) { ... }));`
+common/arg.cpp          --chat-template Option             3041-3051             Lines 3115-3126         Lines 3041-3051 contain --models-preset. chat-template is at lines 3115-3126:                  VERIFIED &
+                                                                                                         `add_opt(common_arg({"--chat-template"}, "JINJA_TEMPLATE",`                                     CORRECTED
+                                                                                                         `    "set custom jinja chat template (default: template taken from model's metadata)...",`
+                                                                                                         `    [](common_params & params, const std::string & value) { params.chat_template = value; }));`
+common/arg.cpp          --chat-template-file Option        3052-3063             Lines 3127-3138         Lines 3052-3063 contain --models-max and --models-autoload. chat-template-file is at 3127-3138: VERIFIED &
+                                                                                                         `add_opt(common_arg({"--chat-template-file"}, "JINJA_TEMPLATE_FILE",`                          CORRECTED
+                                                                                                         `    "set custom jinja chat template file...",`
+                                                                                                         `    [](common_params & params, const std::string & value) { params.chat_template = read_file(value); }));`
+
+================================================================================
+3. AUDIT OF HISTORICAL TEST HARNESS (tests/test-chat-template.cpp)
+================================================================================
+File Details:
+- Path: `tests/test-chat-template.cpp`
+- Commit SHA: `b8635075ffe27b135c49afb9a8b5c434bd42c502`
+- Total Lines: 712 lines
+- Actual Functionality:
+  * Command Line Interface: `test-chat-template [OPTIONS] PATH_TO_TEMPLATE` (Lines 30-42).
+  * Automated Suite: Tests a fixed collection of legacy/standard templates (e.g., Line 401: `google/gemma-7b-it`).
+- Critical Finding:
+  * `tests/test-chat-template.cpp` contains ZERO test cases for `Nemotron-3.5-Bolt` or its specific 
+    Jinja constructs (5 custom macros, 13 `namespace()` objects, `<|channel>` tokens).
+  * It tests general mini-Jinja parser features, NOT model-specific complete conversation behavior 
+    or multi-turn tool-calling formatting for Nemotron 3.5 Bolt.
+================================================================================
+END OF DOCUMENT
+================================================================================

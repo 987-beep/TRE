@@ -1,0 +1,113 @@
+================================================================================
+KAATYA OS 3.0 - ADDENDUM 3: HISTORICAL B8665 KV-SHARING SOURCE AUDIT
+================================================================================
+DOCUMENT IDENTIFIER: ADDENDUM_3_HISTORICAL_B8665_KV_SHARING_SOURCE_AUDIT.txt
+DATE: 2026-11-15
+LOCATION: T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_2026_11_15\
+AUTHORIZED PROJECT ROOT: T:\KAATYA\
+CURRENT PHASE: Stage 2.2 - Independent Verification
+STAGE 3 STATUS: STRICTLY LOCKED (DOCUMENTATION & AUDIT ONLY)
+================================================================================
+
+1. TARGET COMMIT & SOURCE REPOSITORY DETAILS
+--------------------------------------------------------------------------------
+- Repository: `https://github.com/ggml-org/llama.cpp`
+- Historical Target Commit SHA: `b8635075ffe27b135c49afb9a8b5c434bd42c502`
+- Git Tag: `b8665`
+- Merge Date: 2026-04-04T18:39:00Z
+- Pull Request: PR #21418 (`common : add gemma 4 specialized parser`)
+- Verification Method: Direct raw source tree inspection via public GitHub API endpoints 
+  (no repository cloning, no reliance on current master branch).
+
+================================================================================
+2. HISTORICAL SOURCE CODE VERIFICATION & EXCERPTS
+================================================================================
+
+2.1. Model Hyperparameter Initialization & Boundary Calculation:
+- Historical File: `src/llama-model.cpp`
+- Commit SHA: `b8635075ffe27b135c49afb9a8b5c434bd42c502`
+- Source URL: `https://raw.githubusercontent.com/ggml-org/llama.cpp/b8635075ffe27b135c49afb9a8b5c434bd42c502/src/llama-model.cpp`
+- Lines 1264–1273:
+```cpp
+        case LLM_ARCH_GEMMA4:
+            {
+                hparams.swa_type = LLAMA_SWA_TYPE_STANDARD;
+                ml.get_key_or_arr(LLM_KV_ATTENTION_SLIDING_WINDOW_PATTERN, hparams.swa_layers, hparams.n_layer);
+
+                uint32_t n_kv_shared_layers = 0;
+                ml.get_key(LLM_KV_ATTENTION_SHARED_KV_LAYERS, n_kv_shared_layers, false);
+
+                hparams.n_layer_kv_from_start = hparams.n_layer - (int32_t)n_kv_shared_layers;
+                hparams.f_attention_scale     = 1.0f; // Gemma4 uses self.scaling = 1.0 (no pre-attn scaling)
+```
+- Explanation: The code retrieves `gemma4.attention.shared_kv_layers` and directly computes 
+  the boundary `hparams.n_layer_kv_from_start = hparams.n_layer - (int32_t)n_kv_shared_layers`. 
+  This proves the boundary formula existed in historical build `b8665`.
+
+2.2. Cross-Layer KV Reuse Callback & Source-Layer Assignment Logic:
+- Historical File: `src/llama-model.cpp`
+- Commit SHA: `b8635075ffe27b135c49afb9a8b5c434bd42c502`
+- Source URL: `https://raw.githubusercontent.com/ggml-org/llama.cpp/b8635075ffe27b135c49afb9a8b5c434bd42c502/src/llama-model.cpp`
+- Lines 8356–8364:
+```cpp
+                    if (arch == LLM_ARCH_GEMMA3N || arch == LLM_ARCH_GEMMA4) {
+                        reuse = [&](int32_t il) {
+                            if (il >= (int32_t) hparams.n_layer_kv_from_start) {
+                                return (int32_t) hparams.n_layer_kv_from_start - (hparams.is_swa(il) ? 2 : 1);
+                            }
+
+                            return -1;
+                        };
+                    }
+```
+- Explanation: For any layer index `il >= n_layer_kv_from_start`:
+  * If the layer is an SWA layer (`hparams.is_swa(il) == true`), it reuses source layer:
+    `n_layer_kv_from_start - 2`.
+  * If the layer is a Global layer (`hparams.is_swa(il) == false`), it reuses source layer:
+    `n_layer_kv_from_start - 1`.
+  * If `il < n_layer_kv_from_start`, it returns `-1` (meaning it owns independent KV cache).
+  This proves the exact source-layer selection logic was ALREADY present in build `b8665`.
+
+2.3. Layer Attention Computation & KV Cache Aliasing:
+- Historical File: `src/models/gemma4-iswa.cpp`
+- Commit SHA: `b8635075ffe27b135c49afb9a8b5c434bd42c502`
+- Source URL: `https://raw.githubusercontent.com/ggml-org/llama.cpp/b8635075ffe27b135c49afb9a8b5c434bd42c502/src/models/gemma4-iswa.cpp`
+- Lines 69–100:
+```cpp
+        // self-attention
+        if (hparams.has_kv(il)) {
+            ggml_tensor * Kcur = build_lora_mm(model.layers[il].wk, cur);
+            cb(Kcur, "Kcur", il);
+
+            ggml_tensor * Vcur = model.layers[il].wv
+                                    ? build_lora_mm(model.layers[il].wv, cur)
+                                    : Kcur;
+            cb(Vcur, "Vcur", il);
+            // ... builds K/V projections and allocates KV cache ...
+            cur = build_attn(inp_attn, model.layers[il].wo,
+                    nullptr, Qcur, Kcur, Vcur, nullptr, nullptr, nullptr,
+                    hparams.f_attention_scale, il);
+        } else {
+            // reuse KV cache of earlier layers
+            cur = build_attn(inp_attn,
+                    model.layers[il].wo, nullptr,
+                    Qcur, nullptr, nullptr, nullptr, nullptr, nullptr, hparams.f_attention_scale, il);
+        }
+```
+- Explanation: In `gemma4-iswa.cpp`, if `hparams.has_kv(il)` is true (i.e., `il < n_layer_kv_from_start`), 
+  the engine computes K and V projections and stores them into the KV cache. If `has_kv(il)` is false, 
+  it skips K/V projections entirely and calls `build_attn` with null K/V pointers, reading directly 
+  from the reused KV cache established by the `reuse` callback.
+
+================================================================================
+3. AUDIT CONCLUSION ON HISTORICAL SOURCE
+================================================================================
+The historical source at commit `b8635075ffe27b135c49afb9a8b5c434bd42c502` (`b8665`) 
+conclusively proves:
+1. `n_layer_kv_from_start = hparams.n_layer - (int32_t)n_kv_shared_layers`
+2. `reuse(il) = n_layer_kv_from_start - (is_swa ? 2 : 1)`
+3. Layer execution branches on `hparams.has_kv(il)`.
+This establishes the authoritative basis for the 42-layer mapping and memory recalculations.
+================================================================================
+END OF DOCUMENT
+================================================================================

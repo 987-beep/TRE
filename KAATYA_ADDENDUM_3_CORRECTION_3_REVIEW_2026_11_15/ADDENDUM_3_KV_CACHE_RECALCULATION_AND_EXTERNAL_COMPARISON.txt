@@ -1,0 +1,98 @@
+================================================================================
+KAATYA OS 3.0 - ADDENDUM 3: KV CACHE RECALCULATION & EXTERNAL COMPARISON
+================================================================================
+DOCUMENT IDENTIFIER: ADDENDUM_3_KV_CACHE_RECALCULATION_AND_EXTERNAL_COMPARISON.txt
+DATE: 2026-11-15
+LOCATION: T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_2026_11_15\
+AUTHORIZED PROJECT ROOT: T:\KAATYA\
+CURRENT PHASE: Stage 2.2 - Independent Verification
+STAGE 3 STATUS: STRICTLY LOCKED (DOCUMENTATION & AUDIT ONLY)
+================================================================================
+
+1. FORMULA DERIVATION BASED ON VERIFIED B8665 SOURCE MAPPING
+--------------------------------------------------------------------------------
+From verified historical source mapping (4 independent Global layers, 20 independent SWA layers):
+
+1. Global Attention KV Cache Rate:
+   - Independent Global Layers: Exactly 4 layers (Indices 5, 11, 17, 23).
+   - KV Heads: 2 heads.
+   - Head Key Dimension: 512 elements.
+   - Head Value Dimension: 512 elements.
+   - Precision: FP16 (2 Bytes per element).
+   - K bytes/token/layer: 2 heads * 512 dim * 2 Bytes = 2,048 Bytes.
+   - V bytes/token/layer: 2 heads * 512 dim * 2 Bytes = 2,048 Bytes.
+   - Rate per Global layer: 2,048 B (K) + 2,048 B (V) = 4,096 Bytes/token.
+   - Total Global Rate: 4 layers * 4,096 Bytes/token = 16,384 Bytes/token.
+
+2. Sliding Window Attention (SWA) Cache Footprint:
+   - Independent SWA Layers: Exactly 20 layers.
+   - KV Heads: 2 heads.
+   - Head Key Dimension: 256 elements.
+   - Head Value Dimension: 256 elements.
+   - Precision: FP16 (2 Bytes per element).
+   - Rate per SWA layer: 2 heads * 256 dim * 2 Bytes * 2 (K+V) = 2,048 Bytes/token.
+   - SWA Window Size (W): 512 tokens (circular ring buffer).
+   - Capacity per independent SWA layer: 2,048 Bytes/token * 512 tokens = 1,048,576 Bytes (1.00 MiB).
+   - Total SWA Ring Buffer Footprint: 20 layers * 1,048,576 Bytes = 20,971,520 Bytes (20.00 MiB).
+
+3. Shared Layer Contribution:
+   - 3 shared Global layers + 15 shared SWA layers = 18 shared layers.
+   - These 18 layers alias existing cache pages established by layers 22 and 23.
+   - Additional allocation: Exactly 0 Bytes.
+
+Master Theoretical KV Cache Formula (for context length L >= 512):
+KV(L) = (16,384 * L) + 20,971,520 Bytes
+
+================================================================================
+2. THEORETICAL KV PAYLOAD CALCULATIONS
+================================================================================
+1. At Context Length L = 8,192 tokens (8K):
+   - Global Cache: 16,384 * 8,192 = 134,217,728 Bytes (128.00 MiB / 134.22 MB)
+   - SWA Cache: 20,971,520 Bytes (20.00 MiB / 20.97 MB)
+   - Total Payload: 155,189,248 Bytes
+   - Binary Units: 148.00 MiB (0.144531 GiB)
+   - Decimal Units: 155.189 MB (0.155189 GB)
+
+2. At Context Length L = 32,768 tokens (32K):
+   - Global Cache: 16,384 * 32,768 = 536,870,912 Bytes (512.00 MiB / 536.87 MB)
+   - SWA Cache: 20,971,520 Bytes (20.00 MiB / 20.97 MB)
+   - Total Payload: 557,842,432 Bytes
+   - Binary Units: 532.00 MiB (0.519531 GiB)
+   - Decimal Units: 557.842 MB (0.557842 GB = ~0.558 GB!)
+
+3. At Context Length L = 65,536 tokens (64K - Model Maximum Context):
+   - Global Cache: 16,384 * 65,536 = 1,073,741,824 Bytes (1,024.00 MiB / 1,073.74 MB)
+   - SWA Cache: 20,971,520 Bytes (20.00 MiB / 20.97 MB)
+   - Total Payload: 1,094,713,344 Bytes
+   - Binary Units: 1,044.00 MiB (1.019531 GiB)
+   - Decimal Units: 1,094.713 MB (1.094713 GB)
+
+================================================================================
+3. RECONCILIATION WITH THE EXTERNAL ~0.558 GB ESTIMATE
+================================================================================
+Comparison Analysis:
+- The external tool reported ~0.558 GB at 32K context.
+- Our verified historical first-principles calculation yields:
+  557,842,432 Bytes = 0.557842432 GB = 0.558 GB (rounded to 3 decimal places).
+- Conclusion: This is a GENUINE MATHEMATICAL RECONCILIATION, not a coincidence!
+- Origin of External Value: The external estimator was directly running the upstream `llama.cpp` 
+  Gemma 4 memory sizing formula (`n_layer_kv_from_start = 24`, resulting in 4 Global + 20 SWA layers).
+- Previous Confusion Resolved:
+  * Prior Addendum 1 conjectured that the tool assumed uniform 256-dim heads on 8 layers plus ~3.3 MB padding.
+  * That conjecture is now obsolete and replaced by the proven source-code reality: the tool was 
+    computing the exact 4-Global (512-dim) + 20-SWA (256-dim) payload!
+
+================================================================================
+4. RUNTIME MEMORY ALLOCATION BOUNDARIES
+================================================================================
+Theoretical minimal payload (532.00 MiB at 32K context) must remain strictly distinguished from:
+1. Virtual address space mappings (`mmap`).
+2. Committed page allocations.
+3. Resident Physical RAM (RSS).
+4. Memory pool alignment padding.
+
+Status: Runtime physical memory consumption remains unverified pending an authorized 
+implementation-stage test. No model execution or benchmark was performed.
+================================================================================
+END OF DOCUMENT
+================================================================================

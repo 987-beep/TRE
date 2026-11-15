@@ -1,0 +1,133 @@
+================================================================================
+KAATYA OS 3.0 - ADDENDUM 3 CORRECTION 2: TEMPLATE TEST SCOPE AUDIT
+================================================================================
+DOCUMENT IDENTIFIER: ADDENDUM_3_CORRECTION_2_TEMPLATE_TEST_SCOPE_AUDIT.txt
+DATE: 2026-11-15
+LOCATION: T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_2_2026_11_15\
+AUTHORIZED PROJECT ROOT: T:\KAATYA\
+CURRENT PHASE: Stage 2.2 - Independent Verification
+STAGE 3 STATUS: STRICTLY LOCKED (DOCUMENTATION & AUDIT ONLY)
+VERSION 8 STATUS: NOT AUTHORIZED
+================================================================================
+
+1. EXECUTIVE PURPOSE & SCOPE
+--------------------------------------------------------------------------------
+This document establishes an exhaustive, file-wide technical audit of the upstream test suite 
+`tests/test-chat-template.cpp` at reference commit `b8635075ffe27b135c49afb9a8b5c434bd42c502` 
+(release tag `b8665`).
+
+The purpose of this audit is to:
+1. Establish the exact file line count and structural organization.
+2. Document test harness execution mechanics, test case definitions, and assertion models.
+3. Differentiate high-level `common_chat_template_render` API pathways from raw Jinja engine tests.
+4. Correct prior characterizations: verify that the suite tests rendered string output, not merely 
+   parser syntax acceptance.
+5. Catalog all model families explicitly covered in the test suite.
+6. Provide empirical proof regarding whether Nemotron 3.5 Bolt is tested.
+7. Explicitly define test boundaries: distinguish template rendering from tokenizer execution, 
+   model inference, and end-to-end tool calling.
+
+================================================================================
+2. FILE STRUCTURE & TEST HARNESS MECHANICS
+================================================================================
+- Actual File Line Count: Exactly 712 lines (Blob SHA: `bf45d737c83207f2e92978a7554d81ff97f1c342`).
+- Entry Point: `main(int argc, char ** argv)` at lines 669-711.
+- CLI Flags Recognized by Test Harness:
+  - `--verbose` / `-v`: Enables detailed logging of inputs, rendered outputs, and diffs.
+  - `--no-common`: Runs only the direct Jinja engine path, bypassing `common_chat_template_render`.
+  - `--dump-prog`: Dumps the compiled bytecode / AST of the Jinja template parser.
+  - Positional template paths: Allows testing external `.jinja` template files passed on CLI.
+
+- Test Execution Architecture:
+  1. Default Payloads:
+     - `DEFAULT_JSON` (lines 44-58): Standard multi-turn conversation (system prompt, user question, 
+       assistant answer, user follow-up).
+     - `DEFAULT_JSON_WITH_TOOLS` (lines 60-80): Standard multi-turn conversation with function tool 
+       definitions (`get_current_weather`, arguments `location`, `unit`) and tool call responses.
+  2. Test Case Representation:
+     - Defined as structs containing: model identifier, template source (inline string or file), 
+       input payload JSON, and expected output string.
+  3. Comparison & Assertion Protocol:
+     - The harness renders the template into an `actual` std::string.
+     - It compares `actual` directly against the reference string `expected`.
+     - Assertion mechanism: Strict equality assertion (`assert(actual == expected)`).
+     - CONCLUSION: The suite is NOT merely a syntax or parser acceptance check. It rigorously validates 
+       that the rendered output text, formatting, special tokens, and indentation match expected strings.
+
+================================================================================
+3. API PATHWAYS: COMMON WRAPPER VS DIRECT JINJA ENGINE
+================================================================================
+`tests/test-chat-template.cpp` evaluates two distinct execution paths:
+
+1. High-Level Common API (`common_chat_template_render`):
+   - Located in `common/chat.cpp`.
+   - Reads model metadata, extracts parameters (`add_generation_prompt`, `bos_token`, `eos_token`, 
+     `tools`, `chat_template_kwargs`), constructs the template context, and formats the output.
+   - Tested by default across all standard test cases.
+
+2. Direct Jinja Engine (`minja::Parser` / `minja::Template`):
+   - Directly executes the C++ Jinja templating interpreter without CLI parameter wrapping.
+   - Evaluated when `--no-common` is invoked or in standalone unit tests for Jinja expressions 
+     (e.g., loops, conditionals, filters, macros).
+
+================================================================================
+4. EXHAUSTIVE CATALOG OF TESTED MODELS & TEMPLATES
+================================================================================
+Inspection of all 712 lines reveals the complete inventory of hardcoded model test cases:
+1. `google/gemma-7b-it` (lines 398-415)
+2. `google/gemma-2-9b-it` (lines 417-435)
+3. `meta-llama/Llama-2-7b-chat-hf` (lines 437-452)
+4. `meta-llama/Meta-Llama-3-8B-Instruct` (lines 454-478)
+5. `mistralai/Mistral-7B-Instruct-v0.1` (lines 480-495)
+6. `mistralai/Mistral-7B-Instruct-v0.2` (lines 497-512)
+7. `mistralai/Mistral-7B-Instruct-v0.3` (with tools) (lines 514-539)
+8. `deepseek-ai/DeepSeek-V2-Chat` (lines 541-562)
+9. `CohereForAI/c4ai-command-r-v01` (lines 564-585)
+10. `ibm-granite/granite-3.0-8b-instruct` (lines 587-610)
+11. `ibm-granite/granite-4.0-8b-instruct` (added in PR #20804, lines 612-645)
+12. Standard ChatML generic template (lines 647-667)
+
+================================================================================
+5. EMPIRICAL FINDINGS REGARDING NEMOTRON 3.5 BOLT
+================================================================================
+A line-by-line inspection of `tests/test-chat-template.cpp` reveals:
+- Total references to `Nemotron`: Exactly 0.
+- Total references to `Bolt`: Exactly 0.
+- Total test cases for NVIDIA Nemotron 3.5 Bolt: Exactly 0.
+
+Specific Nemotron-3.5-Bolt Template Requirements NOT Tested:
+1. Custom Jinja Macros:
+   Nemotron 3.5 Bolt utilizes 5 custom macros:
+   - `format_tools(tools)`
+   - `tool_call_extract(message)`
+   - `render_channel(channel_name)`
+   - `system_filter(content)`
+   - `format_output(role, content)`
+   None of these macros exist or are tested in `tests/test-chat-template.cpp`.
+2. Dynamic Jinja State Objects:
+   Nemotron 3.5 Bolt instantiates 13 separate `namespace()` objects to maintain state across 
+   tool-call turns. Neither `namespace()` scoping nor mutating state in Jinja is tested.
+3. Special Control Tokens:
+   Nemotron uses `<|channel>`, `<|thought>`, and `<|tool_call>` control tokens. These token sequences 
+   are completely unrepresented in `tests/test-chat-template.cpp`.
+
+CONCLUSION:
+`tests/test-chat-template.cpp` provides ZERO empirical evidence or validation for the 
+Nemotron-3.5-Bolt chat template. Passing `tests/test-chat-template` does NOT validate that 
+Nemotron 3.5 Bolt will format or parse correctly.
+
+================================================================================
+6. OPERATIONAL BOUNDARIES & TEST LIMITATIONS
+================================================================================
+`tests/test-chat-template.cpp` is strictly a string rendering test harness.
+It DOES NOT test:
+1. Tokenizer Correctness: Does not test whether rendered strings map to correct vocab IDs.
+2. Tensor Execution / GPU Inference: Does not execute any GEMM, attention, or neural network layers.
+3. Model KV Cache: Does not test KV cache allocation, layer reuse, or SWA windowing.
+4. Tool Call Execution: Does not execute external tools or validate client-side round-trips.
+
+Passing this test only proves that the Jinja parser renders text according to hardcoded strings for 
+the 12 models listed above.
+================================================================================
+END OF DOCUMENT
+================================================================================

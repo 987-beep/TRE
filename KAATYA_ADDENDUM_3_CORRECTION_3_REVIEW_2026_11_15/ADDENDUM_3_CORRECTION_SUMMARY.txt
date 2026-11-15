@@ -1,0 +1,45 @@
+================================================================================
+KAATYA OS 3.0 - ADDENDUM 3 SOURCE-CITATION & TEMPLATE-TEST CORRECTION SUMMARY
+================================================================================
+DOCUMENT IDENTIFIER: ADDENDUM_3_CORRECTION_SUMMARY.txt
+DATE: 2026-11-15
+LOCATION: T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_2026_11_15\
+AUTHORIZED PROJECT ROOT: T:\KAATYA\
+CURRENT PHASE: Stage 2.2 - Independent Verification
+STAGE 3 STATUS: STRICTLY LOCKED (DOCUMENTATION & AUDIT ONLY)
+VERSION 8 STATUS: NOT AUTHORIZED
+================================================================================
+
+1. EXECUTIVE SUMMARY & OBJECTIVE
+--------------------------------------------------------------------------------
+This document establishes authoritative corrections to source-code line citations 
+and qualifies chat-template testing assertions made in Addendum 3.
+
+Every cited file in `ggml-org/llama.cpp` was directly fetched and verified at the exact 
+historical commit `b8635075ffe27b135c49afb9a8b5c434bd42c502` (tag `b8665`, merged 
+2026-04-04T18:39:00Z).
+
+Key Corrections Delivered:
+1. Line-by-Line Source Auditing: Resolves exact line number boundaries for Gemma 4 
+   hyperparameters, KV boundary calculation, KV reuse callbacks, `has_kv()` functions, 
+   and CLI options in `common/arg.cpp`.
+2. Template-Testing Qualification: Corrects the characterization of `--conversation` so it 
+   is not described as a dedicated template validation test. Explicitly defines CLI flags, 
+   differentiates parser acceptance from rendered correctness, and audits the scope of 
+   `tests/test-chat-template.cpp`.
+3. Preservation of Verified KV Math: Confirms that the verified 42-layer ownership mapping 
+   (4 independent Global, 20 independent SWA, 18 tail shared) and theoretical KV cache 
+   payloads (148 MiB at 8K, 532 MiB / 0.558 GB at 32K, 1,044 MiB at 64K) remain 100% 
+   immutable and mathematically proven.
+
+================================================================================
+2. MANDATORY PRESERVATION GUARANTEE
+================================================================================
+- Baseline suites V1-V7, V7.1, Closure Suite, Addendum 1, Addendum 2, and Addendum 3 remain 100% UNCHANGED.
+- All 16 physical approved assets remain completely unaltered on local disk.
+- Excluded file `HBCD_PE_x64.iso` was NOT accessed, inspected, hashed, or integrated.
+- No repository cloning, code compilation, model inference, benchmarking, or VM creation occurred.
+- Stage 3 remains LOCKED. Version 8 has NOT been initiated.
+================================================================================
+END OF DOCUMENT
+================================================================================

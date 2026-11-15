@@ -1,0 +1,139 @@
+================================================================================
+KAATYA OS 3.0 - GITHUB REVIEW UPLOAD MANIFEST
+================================================================================
+REPOSITORY: 987-beep/TRE
+REVIEW BRANCH: kaatya-addendum3-correction3-review
+TARGET DIRECTORY: KAATYA_ADDENDUM_3_CORRECTION_3_REVIEW_2026_11_15/
+DATE: 2026-11-15
+PURPOSE: Complete Evidence Handoff for External ChatGPT Independent Audit
+STAGE 3 STATUS: STRICTLY LOCKED - IMPLEMENTATION NOT AUTHORIZED
+VERSION 8 STATUS: NOT AUTHORIZED
+================================================================================
+
+UPLOADED EVIDENCE FILES REGISTER:
+--------------------------------------------------------------------------------
+Relative Path: ADDENDUM_3_CORRECTED_42_LAYER_MAPPING.txt
+Byte Size: 9,708 bytes
+SHA-256: d3dbf932a7544031a418487babd2615ed77076354670e1630f91e61338b43a15
+Source Origin: Local Original Addendum 3 Suite (VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_2026_11_15)
+Classification: Copied Local Baseline
+--------------------------------------------------------------------------------
+Relative Path: ADDENDUM_3_CORRECTION_2_EXECUTIVE_SUMMARY.txt
+Byte Size: 5,820 bytes
+SHA-256: d6a488de7936021428abd564f02d21939a43ff22c33e072981fc188b6b4705ed
+Source Origin: Local Correction 2 Suite (VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_2_2026_11_15)
+Classification: Copied Local Baseline
+--------------------------------------------------------------------------------
+Relative Path: ADDENDUM_3_CORRECTION_2_FINAL_EVIDENCE_STATUS.txt
+Byte Size: 8,734 bytes
+SHA-256: 7bd76885401dc53b1ac8904b4eef0bced549e58b0c972328eb15378716cdf020
+Source Origin: Local Correction 2 Suite (VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_2_2026_11_15)
+Classification: Copied Local Baseline
+--------------------------------------------------------------------------------
+Relative Path: ADDENDUM_3_CORRECTION_2_TEMPLATE_TEST_SCOPE_AUDIT.txt
+Byte Size: 7,891 bytes
+SHA-256: 60828d2c33d96d9ee016d1b4d086c6c3d3d0b9d23af61fd04903dbe6fd030dcf
+Source Origin: Local Correction 2 Suite (VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_2_2026_11_15)
+Classification: Copied Local Baseline
+--------------------------------------------------------------------------------
+Relative Path: ADDENDUM_3_CORRECTION_2_VERIFIED_SOURCE_LINE_REGISTER.txt
+Byte Size: 16,389 bytes
+SHA-256: 522714a92f85599fdeeadcf722a26cf84ce3cf232839028401c51de07da1041b
+Source Origin: Local Correction 2 Suite (VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_2_2026_11_15)
+Classification: Copied Local Baseline
+--------------------------------------------------------------------------------
+Relative Path: ADDENDUM_3_CORRECTION_SUMMARY.txt
+Byte Size: 2,832 bytes
+SHA-256: 44cb8e748686bf1ed2aba30c30fd84b61c808b05c5b782cac7479bed50063882
+Source Origin: Local Correction 1 Suite (VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_2026_11_15)
+Classification: Copied Local Baseline
+--------------------------------------------------------------------------------
+Relative Path: ADDENDUM_3_EXECUTIVE_SUMMARY.txt
+Byte Size: 3,425 bytes
+SHA-256: c114e1afc34279a5bdd07d39a802516f7c1ba59ac25fe305424f6c912ff93392
+Source Origin: Local Original Addendum 3 Suite (VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_2026_11_15)
+Classification: Copied Local Baseline
+--------------------------------------------------------------------------------
+Relative Path: ADDENDUM_3_FINAL_EVIDENCE_STATUS.txt
+Byte Size: 5,457 bytes
+SHA-256: 551371f979b70f3b6e45dbe2dc78c99ab2d4cc9eee925f65d932732a9388d9bb
+Source Origin: Local Correction 1 Suite (VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_2026_11_15)
+Classification: Copied Local Baseline
+--------------------------------------------------------------------------------
+Relative Path: ADDENDUM_3_HISTORICAL_B8665_KV_SHARING_SOURCE_AUDIT.txt
+Byte Size: 6,284 bytes
+SHA-256: c0d97c572a5d7ec0622979d853cac0e1e7c026326aad45a8eb944580150b545c
+Source Origin: Local Original Addendum 3 Suite (VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_2026_11_15)
+Classification: Copied Local Baseline
+--------------------------------------------------------------------------------
+Relative Path: ADDENDUM_3_KV_CACHE_RECALCULATION_AND_EXTERNAL_COMPARISON.txt
+Byte Size: 5,447 bytes
+SHA-256: 011d031897e3be83b877ebdbc9bf0a276bc0bd1d786f32f8f1aa00f76f30145d
+Source Origin: Local Original Addendum 3 Suite (VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_2026_11_15)
+Classification: Copied Local Baseline
+--------------------------------------------------------------------------------
+Relative Path: ADDENDUM_3_TEMPLATE_COMPATIBILITY_AND_FINAL_VERDICT.txt
+Byte Size: 5,149 bytes
+SHA-256: 1f07d4bc8d265d528137b5b4e6de25af4d22361cea1bde56adb2188128d82ad3
+Source Origin: Local Original Addendum 3 Suite (VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_2026_11_15)
+Classification: Copied Local Baseline
+--------------------------------------------------------------------------------
+Relative Path: ADDENDUM_3_VERIFIED_SOURCE_CITATION_REGISTER.txt
+Byte Size: 10,716 bytes
+SHA-256: d4c051929272c00bf4080b1d5f0fd9c1b89251f470bbdab11f7d6a3733c1244b
+Source Origin: Local Correction 1 Suite (VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_2026_11_15)
+Classification: Copied Local Baseline
+--------------------------------------------------------------------------------
+Relative Path: CORRECTION_3_AUTHORITATIVE_SOURCE_REGISTER.txt
+Byte Size: 16,308 bytes
+SHA-256: f5f5b410f010966ca9474df219500c7162bc665d9165e0f34db51567e64413ad
+Source Origin: Local Correction 3 Suite (VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_3_2026_11_15)
+Classification: Newly Generated
+--------------------------------------------------------------------------------
+Relative Path: CORRECTION_3_EXECUTIVE_SUMMARY.txt
+Byte Size: 6,818 bytes
+SHA-256: 78cdc94699344f5a9019042caf4b0faed2ff4c1b630ea9e9011fd572663b3bac
+Source Origin: Local Correction 3 Suite (VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_3_2026_11_15)
+Classification: Newly Generated
+--------------------------------------------------------------------------------
+Relative Path: CORRECTION_3_FINAL_EVIDENCE_STATUS.txt
+Byte Size: 6,367 bytes
+SHA-256: 909912c4c34e8f124bcc39c7f8aba20739a09bf35c71eaeaae0e9f4255605560
+Source Origin: Local Correction 3 Suite (VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_3_2026_11_15)
+Classification: Newly Generated
+--------------------------------------------------------------------------------
+Relative Path: SOURCE_EVIDENCE_B8665/SOURCE_EVIDENCE_README.txt
+Byte Size: 2,479 bytes
+SHA-256: 9f1a29a56c779be3ca3b1007a21c9e8f10c5cede5a8621408a212793a8d863fd
+Source Origin: Newly Generated Provenance Guide
+Classification: Generated
+--------------------------------------------------------------------------------
+Relative Path: SOURCE_EVIDENCE_B8665/arg.cpp
+Byte Size: 181,097 bytes
+SHA-256: 3a2f7a2fd4609d6dd51e8bdec6faea4a7617ec2fd64a6403b8b148affc166113
+Source Origin: Raw ggml-org/llama.cpp at commit b8635075ff
+Classification: Verbatim Historical Raw Source
+--------------------------------------------------------------------------------
+Relative Path: SOURCE_EVIDENCE_B8665/llama-hparams.cpp
+Byte Size: 6,665 bytes
+SHA-256: 4ea911b6564c45878a26e1263139819ebd3691a1732edb1fdfd89655ad416b6a
+Source Origin: Raw ggml-org/llama.cpp at commit b8635075ff
+Classification: Verbatim Historical Raw Source
+--------------------------------------------------------------------------------
+Relative Path: SOURCE_EVIDENCE_B8665/llama-model.cpp
+Byte Size: 558,582 bytes
+SHA-256: b20d272f5623c3de2fbf71cf7bd0111288ea50d684fefbf969e9b62cdb4b6f04
+Source Origin: Raw ggml-org/llama.cpp at commit b8635075ff
+Classification: Verbatim Historical Raw Source
+--------------------------------------------------------------------------------
+Relative Path: SOURCE_EVIDENCE_B8665/test-chat-template.cpp
+Byte Size: 67,203 bytes
+SHA-256: bc70cde18db29d4cdfe248a6d6980fc3896f009e6b9f42b238e4d353f113a1d6
+Source Origin: Raw ggml-org/llama.cpp at commit b8635075ff
+Classification: Verbatim Historical Raw Source
+--------------------------------------------------------------------------------
+TOTAL FILES IN REVIEW PACKAGE: 20
+DETACHED CHECKSUM: See GITHUB_REVIEW_UPLOAD_MANIFEST.sha256
+================================================================================
+END OF MANIFEST
+================================================================================

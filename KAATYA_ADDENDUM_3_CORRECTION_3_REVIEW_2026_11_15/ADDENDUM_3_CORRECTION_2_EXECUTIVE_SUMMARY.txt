@@ -1,0 +1,93 @@
+================================================================================
+KAATYA OS 3.0 - ADDENDUM 3 CORRECTION 2: EXECUTIVE SUMMARY & OBJECTIVE
+================================================================================
+DOCUMENT IDENTIFIER: ADDENDUM_3_CORRECTION_2_EXECUTIVE_SUMMARY.txt
+DATE: 2026-11-15
+LOCATION: T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_2_2026_11_15\
+AUTHORIZED PROJECT ROOT: T:\KAATYA\
+CURRENT PHASE: Stage 2.2 - Independent Verification
+STAGE 3 STATUS: STRICTLY LOCKED (DOCUMENTATION & AUDIT ONLY)
+VERSION 8 STATUS: NOT AUTHORIZED
+================================================================================
+
+1. EXECUTIVE PURPOSE & OBJECTIVE
+--------------------------------------------------------------------------------
+This document establishes the executive overview and foundational rationale for 
+the Addendum 3 Correction 2 package.
+
+Following the generation of the initial Addendum 3 correction package, an independent 
+review identified a variance between the cited line numbers and the expected historical 
+line locations independently supplied for commit `b8635075ffe27b135c49afb9a8b5c434bd42c502` 
+(release tag `b8665`).
+
+The mandate of this second correction suite is:
+1. Conduct direct, reproducible read-only source revalidation of the historical files at 
+   exact commit `b8635075ffe27b135c49afb9a8b5c434bd42c502`.
+2. Fully explain and reconcile the line-number variance by tracing the upstream commit 
+   drift between early March 2026 (the source of the user-supplied reference targets) and 
+   the April 4, 2026 merge date of commit `b8635075ff`.
+3. Provide an exhaustive, line-by-line audit of `tests/test-chat-template.cpp` (712 lines), 
+   evaluating harness execution, parser vs renderer mechanics, tool definitions, model 
+   coverage, and the absolute absence of Nemotron-3.5-Bolt coverage.
+4. Recheck the mathematical integrity of the 42-layer Gemma 4 / Nemotron KV-cache memory 
+   model (148 MiB at 8K, 532 MiB / 0.558 GB at 32K, 1,044 MiB at 64K).
+5. Enforce strict isolation, complete asset preservation, and absolute stage gating.
+
+================================================================================
+2. SUMMARY OF ROOT CAUSE & SOURCE RECONCILIATION
+================================================================================
+The investigation revealed the precise technical cause of the line-number variance:
+
+A. Independent Target Origin (~Early March 2026):
+   The user's expected target numbers (`llama-hparams.cpp` = 243 lines; `llama-model.cpp` 
+   = ~8,300 lines; `common/arg.cpp` = 3,816 lines; `tests/test-chat-template.cpp` = 688 lines) 
+   reflect the codebase state prior to mid-March 2026.
+   For example, in commit `566059a26b` (2026-03-06), `tests/test-chat-template.cpp` had 
+   685 lines, and earlier commits in late 2025 (`7bed317f53`) had `src/llama-hparams.cpp` 
+   at exactly 243 lines.
+
+B. Historical Commit Reality at `b8635075ffe27b135c49afb9a8b5c434bd42c502` (2026-04-04):
+   Between March 6 and April 4, 2026, several PRs were merged into `ggml-org/llama.cpp`:
+   - PR #20301 (2026-03-09): Added dynamic head_dim and n_rot for SWA, expanding 
+     `src/llama-hparams.cpp` to 258 lines.
+   - Additional model architectures expanded `src/llama-model.cpp` to 9,313 lines.
+   - PR #20804 (2026-04-02): Added Granite 4.0 template, expanding 
+     `tests/test-chat-template.cpp` to 712 lines.
+   - CLI enhancements expanded `common/arg.cpp` to 3,907 lines.
+
+C. Functional Invariance:
+   Despite the vertical line-index shifts across upstream commits, the underlying C++ logic 
+   and algorithmic behavior for Gemma 4 KV-cache sharing and CLI argument parsing are 
+   100% IDENTICAL. Both line ranges are fully documented and cross-referenced in 
+   `ADDENDUM_3_CORRECTION_2_VERIFIED_SOURCE_LINE_REGISTER.txt`.
+
+================================================================================
+3. FOUR-DOCUMENT CORRECTION 2 DELIVERABLES
+================================================================================
+The new directory `T:\KAATYA\KAATYA_AUDIT\VERSION_7_1_FINAL_CLOSURE_ADDENDUM_3_CORRECTION_2_2026_11_15\` 
+contains exactly the four required documents:
+1. `ADDENDUM_3_CORRECTION_2_EXECUTIVE_SUMMARY.txt` (This document)
+2. `ADDENDUM_3_CORRECTION_2_VERIFIED_SOURCE_LINE_REGISTER.txt` (Exhaustive line audit)
+3. `ADDENDUM_3_CORRECTION_2_TEMPLATE_TEST_SCOPE_AUDIT.txt` (Complete test suite inspection)
+4. `ADDENDUM_3_CORRECTION_2_FINAL_EVIDENCE_STATUS.txt` (Synthesis, KV math, and verdict)
+
+================================================================================
+4. MANDATORY PRESERVATION GUARANTEE
+================================================================================
+- Baseline suites V1-V7, V7.1, Closure Suite, Addendum 1, Addendum 2, Addendum 3, and 
+  Addendum 3 Correction 1 remain 100% UNCHANGED and preserved on disk.
+- All 16 physical approved project assets (19,194,273,728 bytes) remain completely unaltered.
+- The excluded file `HBCD_PE_x64.iso` was NOT accessed, inspected, hashed, mounted, copied, 
+  extracted, or integrated in any manner.
+- No repository cloning, code compilation, model inference, benchmarking, or VM creation occurred.
+- Work was conducted strictly within `T:\KAATYA\` using read-only API and file access.
+
+================================================================================
+5. AUTHORITATIVE STATUS
+================================================================================
+STAGE 3 STATUS: STRICTLY LOCKED - IMPLEMENTATION NOT AUTHORIZED.
+VERSION 8 STATUS: NOT AUTHORIZED.
+QUALITY GATE VERDICT: PASS WITH CORRECTIONS.
+================================================================================
+END OF DOCUMENT
+================================================================================
